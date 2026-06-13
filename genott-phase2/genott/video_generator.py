@@ -104,7 +104,14 @@ def load_pipeline():
         )
 
 
-def generate_video(prompt, num_frames=16, width=512, height=320, num_steps=25, seed=None):
+# Global store for tracking active generation logs
+generation_logs = {}
+
+def get_generation_logs(generation_id):
+    """Retrieve logs for a specific generation ID."""
+    return generation_logs.get(generation_id, [])
+
+def generate_video(prompt, num_frames=16, width=512, height=320, num_steps=25, seed=None, generation_id=None):
     """
     Generate a video clip from a text prompt.
 
@@ -115,10 +122,19 @@ def generate_video(prompt, num_frames=16, width=512, height=320, num_steps=25, s
         height: Video height
         num_steps: Inference steps (higher = better quality but slower)
         seed: Random seed for reproducibility
+        generation_id: Unique string to track logs for this generation session
 
     Returns:
         dict with 'filename', 'path', 'url', 'duration_sec', 'gen_time_sec'
     """
+    def update_log(msg):
+        if generation_id:
+            if generation_id not in generation_logs:
+                generation_logs[generation_id] = []
+            generation_logs[generation_id].append(f"[{time.strftime('%H:%M:%S')}] {msg}")
+            print(f"[VideoGen Log] {generation_id}: {msg}")
+
+    update_log("Checking system environment...")
     pipeline, ptype = load_pipeline()
 
     if seed is not None:
@@ -136,11 +152,19 @@ def generate_video(prompt, num_frames=16, width=512, height=320, num_steps=25, s
 
     start_time = time.time()
 
+    # Enhance video prompts automatically for superior visual fidelity
+    enhanced_prompt = f"{prompt}, masterpiece, photorealistic, 8k resolution, cinematic lighting, sharp focus, highly detailed, dramatic atmosphere"
+    enhanced_neg_prompt = (
+        "low quality, worst quality, blurry, deformed face, bad eyes, disfigured, "
+        "distorted, ugly, extra limbs, bad proportions, cartoon, anime, 3d render, CGI, doll, painting, drawing"
+    )
+
     try:
         if ptype == "ltx":
+            update_log("Starting LTX-Video generation...")
             output = pipeline(
-                prompt=prompt,
-                negative_prompt="blurry, low quality, distorted, ugly, worst quality",
+                prompt=enhanced_prompt,
+                negative_prompt=enhanced_neg_prompt,
                 num_frames=num_frames,
                 width=width,
                 height=height,
@@ -148,26 +172,53 @@ def generate_video(prompt, num_frames=16, width=512, height=320, num_steps=25, s
                 generator=generator,
             )
             # Export frames to video
+            update_log("Saving video output to disk...")
             from diffusers.utils import export_to_video
             export_to_video(output.frames[0], filepath, fps=8)
 
         elif ptype == "animatediff":
-            output = pipeline(
-                prompt=prompt,
-                negative_prompt="blurry, low quality, distorted, ugly, worst quality",
-                num_frames=num_frames,
-                width=width,
-                height=height,
-                num_inference_steps=num_steps,
-                guidance_scale=7.5,
-                generator=generator,
-            )
+            update_log("Preparing AnimateDiff pipeline inputs...")
+            
+            def pipe_callback(pipe, step, timestep, callback_kwargs):
+                pct = int(((step + 1) / num_steps) * 100)
+                update_log(f"Inference step {step + 1}/{num_steps} ({pct}%)")
+                return callback_kwargs
+
+            try:
+                update_log("Starting AnimateDiff diffusion process...")
+                output = pipeline(
+                    prompt=enhanced_prompt,
+                    negative_prompt=enhanced_neg_prompt,
+                    num_frames=num_frames,
+                    width=width,
+                    height=height,
+                    num_inference_steps=num_steps,
+                    guidance_scale=7.5,
+                    generator=generator,
+                    callback_on_step_end=pipe_callback
+                )
+            except TypeError:
+                # Fallback if callback_on_step_end signature differs
+                update_log("Step progress callback not supported, running standard inference...")
+                output = pipeline(
+                    prompt=enhanced_prompt,
+                    negative_prompt=enhanced_neg_prompt,
+                    num_frames=num_frames,
+                    width=width,
+                    height=height,
+                    num_inference_steps=num_steps,
+                    guidance_scale=7.5,
+                    generator=generator,
+                )
+
+            update_log("Encoding frames into video container (MP4)...")
             from diffusers.utils import export_to_video
             export_to_video(output.frames[0], filepath, fps=8)
 
         gen_time = round(time.time() - start_time, 1)
         duration_sec = round(num_frames / 8, 1)
 
+        update_log(f"Success! Video rendered in {gen_time}s.")
         print(f"[VideoGen] Done! Generated in {gen_time}s -> {filepath}")
 
         return {
@@ -180,10 +231,41 @@ def generate_video(prompt, num_frames=16, width=512, height=320, num_steps=25, s
 
     except torch.cuda.OutOfMemoryError:
         torch.cuda.empty_cache()
+        update_log("ERROR: GPU Out of Memory!")
         raise RuntimeError("GPU out of memory. Try reducing resolution or frame count.")
 
     except Exception as e:
+        update_log(f"ERROR: {str(e)}")
         raise RuntimeError(f"Video generation failed: {str(e)}")
+
+
+def generate_speech(text, output_path, voice="en-US-ChristopherNeural"):
+    """Generate speech using Microsoft Edge TTS (asynchronous library run synchronously)."""
+    import asyncio
+    import edge_tts
+
+    async def _speak():
+        communicate = edge_tts.Communicate(text, voice)
+        await communicate.save(output_path)
+
+    asyncio.run(_speak())
+
+
+def add_audio_to_video(video_path, audio_path, output_path):
+    """Combine video and audio tracks using ffmpeg."""
+    import subprocess
+    cmd = [
+        "ffmpeg", "-y",
+        "-i", video_path,
+        "-i", audio_path,
+        "-c:v", "copy",
+        "-c:a", "aac",
+        "-map", "0:v:0",
+        "-map", "1:a:0",
+        "-shortest",
+        output_path
+    ]
+    subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 def get_pipeline_info():
@@ -196,3 +278,31 @@ def get_pipeline_info():
         "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
         "vram_total_mb": round(torch.cuda.get_device_properties(0).total_mem / 1024**2) if torch.cuda.is_available() else 0,
     }
+
+
+def concatenate_videos(video_paths, output_path):
+    """Concatenate multiple video files into one using ffmpeg concat demuxer."""
+    import subprocess
+    list_path = output_path + ".txt"
+    with open(list_path, "w") as f:
+        for path in video_paths:
+            f.write(f"file '{path}'\n")
+
+    cmd = [
+        "ffmpeg", "-y",
+        "-f", "concat",
+        "-safe", "0",
+        "-i", list_path,
+        "-c", "copy",
+        output_path
+    ]
+    try:
+        subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if os.path.exists(list_path):
+            os.remove(list_path)
+        return True
+    except Exception as e:
+        print(f"[VideoGen] Concat error: {e}")
+        if os.path.exists(list_path):
+            os.remove(list_path)
+        raise e

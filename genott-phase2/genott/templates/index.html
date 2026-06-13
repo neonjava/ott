@@ -643,6 +643,82 @@
     </div>
   </div>
 
+  <!-- AVATAR CINEMA CARD -->
+  <div class="card card-full" style="border-color: var(--accent2); background: linear-gradient(180deg, var(--card) 0%, rgba(124,58,237,0.05) 100%); margin-top: 24px;">
+    <div class="card-label" style="color: var(--gold);">New Feature</div>
+    <h2>🎭 AI Avatar Cinema (30-Sec Clip Generator)</h2>
+    <p style="color: var(--muted); font-size: 13px; margin-bottom: 24px;">
+      Select an avatar character. AI will write a custom 6-scene storyboard, render 5-second video sequences for each beat, and stitch them into a continuous 30-second final video.
+    </p>
+
+    <!-- Avatar Grid Selectors -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+      <!-- Tony Stark -->
+      <div id="avatar-tony_stark" onclick="selectAvatar('tony_stark')" style="border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; background: var(--surface); transition: all 0.2s;">
+        <div style="font-size: 40px; margin-bottom: 12px;">🦾</div>
+        <div style="font-weight: 700; font-size: 16px; color: var(--text);">Tony Stark</div>
+        <div style="font-size: 11px; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; font-weight: 600;">Iron Man</div>
+        <p style="font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.4;">High-tech lab workshop, glowing arc reactor, holographic displays.</p>
+      </div>
+
+      <!-- Thor -->
+      <div id="avatar-thor" onclick="selectAvatar('thor')" style="border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; background: var(--surface); transition: all 0.2s;">
+        <div style="font-size: 40px; margin-bottom: 12px;">⚡</div>
+        <div style="font-weight: 700; font-size: 16px; color: var(--text);">Thor Odinson</div>
+        <div style="font-size: 11px; color: var(--accent2); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; font-weight: 600;">God of Thunder</div>
+        <p style="font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.4;">Stormy skies, lightning reflecting in eyes, holding glowing Mjolnir.</p>
+      </div>
+
+      <!-- Hulk -->
+      <div id="avatar-hulk" onclick="selectAvatar('hulk')" style="border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; background: var(--surface); transition: all 0.2s;">
+        <div style="font-size: 40px; margin-bottom: 12px;">🟢</div>
+        <div style="font-weight: 700; font-size: 16px; color: var(--text);">The Hulk</div>
+        <div style="font-size: 11px; color: var(--success); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; font-weight: 600;">Green Goliath</div>
+        <p style="font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.4;">Ruined city streets, massive muscles, heavy breathing, raw rage.</p>
+      </div>
+    </div>
+
+    <!-- Hidden Selected Avatar state -->
+    <input type="hidden" id="selectedAvatar" value="">
+
+    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 24px;">
+      <button class="btn btn-primary" id="avatarGenScriptBtn" onclick="generateAvatarScript()" style="padding: 10px 20px;">
+        ⚙️ Create Storyboard Script
+      </button>
+      <span id="avatarScriptStatus" style="font-size: 13px; color: var(--muted);"></span>
+    </div>
+
+    <!-- Avatar Storyboard Area -->
+    <div id="avatarStoryboardArea" style="display: none; border-top: 1px solid var(--border); padding-top: 20px; text-align: left;">
+      <h3 id="avatarStoryboardTitle" style="font-size: 16px; font-weight: 700; margin-bottom: 16px; font-family: 'Syne', sans-serif;">Generated Storyboard</h3>
+      
+      <div id="avatarStoryboardGrid" style="display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 24px;"></div>
+
+      <!-- Render Button & Console -->
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+        <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">Compile Final 30-Second Cut</h4>
+        <p style="font-size: 12px; color: var(--muted); margin-bottom: 16px;">
+          This will render all 6 segments sequentially and stitch them into a single 30-second final video.
+        </p>
+
+        <button class="btn btn-primary" id="renderAvatarBtn" onclick="compileAvatarVideo()" style="background: linear-gradient(135deg, var(--gold), #d97706); box-shadow: 0 4px 20px rgba(245,158,11,0.25);">
+          🎬 Render 30s Final Video
+        </button>
+
+        <div id="avatar-render-console" style="display: none; margin-top: 16px; font-family: 'Courier New', Courier, monospace; font-size: 11px; background: #07070a; border: 1px solid var(--border); border-radius: 8px; padding: 12px; color: #10b981; max-height: 180px; overflow-y: auto; text-align: left; line-height: 1.5; white-space: pre-wrap;"></div>
+
+        <!-- Stitched Video Player -->
+        <div id="avatar-video-player" style="display: none; margin-top: 20px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); background: #000;">
+          <video id="avatar-video-el" controls style="width: 100%; display: block; border-radius: 10px;"></video>
+          <div style="padding: 10px 14px; font-size: 12px; color: var(--success); font-weight: 600; background: var(--surface); display: flex; justify-content: space-between; align-items: center;">
+            <span>✓ Final 30-Second Stitched HD Clip Ready!</span>
+            <a id="avatar-download-link" href="#" download style="color: var(--gold); text-decoration: none; font-weight: bold;">📥 Download MP4</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -745,6 +821,7 @@
               </button>
               <span id="vidgen-status-${i}" style="font-size: 12px; color: var(--muted);"></span>
             </div>
+            <div id="log-console-${i}" style="display: none; margin-top: 12px; font-family: 'Courier New', Courier, monospace; font-size: 11px; background: #07070a; border: 1px solid var(--border); border-radius: 8px; padding: 12px; color: #10b981; max-height: 120px; overflow-y: auto; text-align: left; line-height: 1.5; white-space: pre-wrap;"></div>
           </div>
 
           <div id="video-player-${i}" style="display: none; margin-top: 14px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); background: #000;">
@@ -775,6 +852,7 @@
     const playerEl = document.getElementById(`video-player-${sceneIndex}`);
     const videoEl = document.getElementById(`video-el-${sceneIndex}`);
     const infoEl = document.getElementById(`video-info-${sceneIndex}`);
+    const consoleEl = document.getElementById(`log-console-${sceneIndex}`);
 
     if (!promptEl) return;
 
@@ -784,11 +862,46 @@
       return;
     }
 
+    const genId = 'gen_' + Math.random().toString(36).substr(2, 9);
+
+    // Reset console and show it
+    consoleEl.innerHTML = '';
+    consoleEl.style.display = 'block';
+    consoleEl.innerHTML = '⚙️ [Client] Initializing session...';
+
     // Disable button and show progress
     btn.disabled = true;
     btn.innerHTML = '<div class="spinner" style="width:12px;height:12px;border-width:2px;"></div> Generating…';
-    statusEl.textContent = 'Loading AI model & generating video… This may take 1-3 minutes on first run.';
+    statusEl.textContent = 'AI is processing logs...';
     statusEl.style.color = 'var(--accent2)';
+
+    let pollInterval = null;
+
+    // Start polling progress logs
+    const pollProgress = async () => {
+      try {
+        const response = await fetch(`/api/video-progress/${genId}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.logs && data.logs.length > 0) {
+            consoleEl.innerHTML = data.logs.map(log => {
+              if (log.includes('Success')) {
+                return `<span style="color: var(--success); font-weight: bold;">${log}</span>`;
+              } else if (log.includes('ERROR')) {
+                return `<span style="color: var(--error); font-weight: bold;">${log}</span>`;
+              }
+              return log;
+            }).join('\n');
+            // Auto scroll console to bottom
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+          }
+        }
+      } catch (e) {
+        console.error('Error polling progress logs:', e);
+      }
+    };
+
+    pollInterval = setInterval(pollProgress, 1500);
 
     try {
       const response = await fetch('/api/generate-video', {
@@ -799,9 +912,14 @@
           num_frames: 16,
           width: 512,
           height: 320,
-          steps: 25
+          steps: 25,
+          generation_id: genId
         })
       });
+
+      // Clear polling interval
+      clearInterval(pollInterval);
+      await pollProgress(); // Final update
 
       const data = await response.json();
 
@@ -818,8 +936,14 @@
       statusEl.style.color = 'var(--success)';
 
     } catch (err) {
+      clearInterval(pollInterval);
       statusEl.textContent = 'Error: ' + err.message;
       statusEl.style.color = 'var(--error)';
+      if (consoleEl.innerHTML.trim() === '⚙️ [Client] Initializing session...') {
+        consoleEl.innerHTML += `\n❌ [Client] Error: ${err.message}`;
+      } else {
+        consoleEl.innerHTML += `\n❌ [Client] Pipeline execution failed: ${err.message}`;
+      }
     } finally {
       btn.disabled = false;
       btn.innerHTML = '🎬 Generate Video';
@@ -1026,6 +1150,184 @@ Return exactly ${count} scenes as the JSON format specified.`;
 
     renderScenes(demoScenes, genre, style);
     setStep(3);
+  }
+
+  // ── AVATAR CINEMA JAVASCRIPT LOGIC ──
+  let avatarStoryboardScenes = [];
+
+  function selectAvatar(name) {
+    document.getElementById('selectedAvatar').value = name;
+    
+    // Highlight selected card
+    ['tony_stark', 'thor', 'hulk'].forEach(n => {
+      const el = document.getElementById('avatar-' + n);
+      if (el) {
+        if (n === name) {
+          el.style.borderColor = 'var(--accent)';
+          el.style.background = 'rgba(124,58,237,0.1)';
+          el.style.boxShadow = '0 0 15px var(--glow)';
+        } else {
+          el.style.borderColor = 'var(--border)';
+          el.style.background = 'var(--surface)';
+          el.style.boxShadow = 'none';
+        }
+      }
+    });
+
+    const status = document.getElementById('avatarScriptStatus');
+    status.textContent = 'Selected ' + name.replace('_', ' ') + '. Click "Create Storyboard Script" to generate stories.';
+    status.style.color = 'var(--text)';
+  }
+
+  async function generateAvatarScript() {
+    const avatar = document.getElementById('selectedAvatar').value;
+    if (!avatar) {
+      alert('Please select an avatar first.');
+      return;
+    }
+
+    const btn = document.getElementById('avatarGenScriptBtn');
+    const status = document.getElementById('avatarScriptStatus');
+    const storyboardArea = document.getElementById('avatarStoryboardArea');
+    const grid = document.getElementById('avatarStoryboardGrid');
+    const titleEl = document.getElementById('avatarStoryboardTitle');
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="width:12px;height:12px;border-width:2px;"></div> Generating...';
+    status.textContent = 'Consulting Ollama LLM for story beats...';
+    status.style.color = 'var(--accent2)';
+
+    try {
+      const response = await fetch('/api/generate-avatar-script', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatar: avatar })
+      });
+
+      if (!response.ok) throw new Error('Failed to generate script');
+      const data = await response.json();
+
+      avatarStoryboardScenes = data.scenes || [];
+      titleEl.textContent = `Storyboard: "${data.title || 'Avatar Heroics'}"`;
+
+      grid.innerHTML = '';
+      avatarStoryboardScenes.forEach((scene, i) => {
+        const promptText = scene.video_prompt || scene.videoPrompt || scene.prompt || (scene.description + ' ' + (scene.dialogue || ''));
+        // Save back into scene object so compile function sends the corrected key
+        scene.video_prompt = promptText;
+
+        const item = document.createElement('div');
+        item.style.background = 'var(--surface)';
+        item.style.border = '1px solid var(--border)';
+        item.style.borderRadius = '10px';
+        item.style.padding = '14px';
+        item.style.display = 'flex';
+        item.style.flexDirection = 'column';
+        item.style.gap = '6px';
+        item.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="color:var(--accent2); font-size:13px; font-family:'Syne', sans-serif;">BEAT 0${i+1} (5 SEC) — ${scene.title}</strong>
+          </div>
+          <div style="font-size:13px; color:var(--text); font-style:italic;">"${scene.dialogue}"</div>
+          <div style="font-size:12px; color:var(--muted);">${scene.description}</div>
+          <div style="font-size:11px; background:var(--card); padding:8px; border-radius:6px; font-family:monospace; border:1px solid var(--border); color:var(--text); margin-top:4px;">
+            <strong>Prompt:</strong> ${promptText}
+          </div>
+        `;
+        grid.appendChild(item);
+      });
+
+      storyboardArea.style.display = 'block';
+      status.textContent = '✓ Storyboard script loaded successfully!';
+      status.style.color = 'var(--success)';
+    } catch (e) {
+      status.textContent = 'Error: ' + e.message;
+      status.style.color = 'var(--error)';
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '⚙️ Create Storyboard Script';
+    }
+  }
+
+  async function compileAvatarVideo() {
+    if (avatarStoryboardScenes.length === 0) {
+      alert('Please generate a storyboard script first.');
+      return;
+    }
+
+    const btn = document.getElementById('renderAvatarBtn');
+    const consoleEl = document.getElementById('avatar-render-console');
+    const playerEl = document.getElementById('avatar-video-player');
+    const videoEl = document.getElementById('avatar-video-el');
+    const downloadLink = document.getElementById('avatar-download-link');
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="width:12px;height:12px;border-width:2px;"></div> Rendering 30s Movie...';
+    consoleEl.style.display = 'block';
+    consoleEl.innerHTML = '⚙️ [Client] Initializing 30-second rendering sequence...';
+
+    const genId = 'avatar_' + Math.random().toString(36).substr(2, 9);
+    let pollInterval = null;
+
+    const pollProgress = async () => {
+      try {
+        const response = await fetch(`/api/video-progress/${genId}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.logs && data.logs.length > 0) {
+            consoleEl.innerHTML = data.logs.map(log => {
+              if (log.includes('Success')) {
+                return `<span style="color: var(--success); font-weight: bold;">${log}</span>`;
+              } else if (log.includes('ERROR')) {
+                return `<span style="color: var(--error); font-weight: bold;">${log}</span>`;
+              }
+              return log;
+            }).join('\n');
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    pollInterval = setInterval(pollProgress, 1500);
+
+    try {
+      const response = await fetch('/api/generate-avatar-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          scenes: avatarStoryboardScenes,
+          avatar: document.getElementById('selectedAvatar').value,
+          generation_id: genId
+        })
+      });
+
+      clearInterval(pollInterval);
+      await pollProgress(); // Final update
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || 'Rendering failed');
+      }
+
+      const resData = await response.json();
+      videoEl.src = resData.url;
+      downloadLink.href = resData.url;
+      playerEl.style.display = 'block';
+
+      consoleEl.innerHTML += `\n🎉 [Client] Rendering sequence complete! Stitched video generated at: ${resData.url}`;
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+
+    } catch (e) {
+      clearInterval(pollInterval);
+      consoleEl.innerHTML += `\n❌ [Client] Error compiled video: ${e.message}`;
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '🎬 Render 30s Final Video';
+    }
   }
 </script>
 </body>

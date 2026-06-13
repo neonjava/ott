@@ -1,0 +1,30 @@
+=== Antigravity Agent Session Log: Sat Jun 13 2026 ===
+
+1. [FIX] Corrected "Prompt: undefined" issue in UI storyboard display:
+   - Added robust javascript fallback checks in templates/index.html to look for "video_prompt", "videoPrompt", and "prompt" keys from the LLM JSON response.
+   - Saves the resolved prompt text back into the scene array so correct values are passed to the compile endpoint.
+
+2. [FEATURE] AI Avatar Cinema (30-Sec Clip Generator):
+   - Added UI selector cards for Tony Stark, Thor Odinson, and Hulk.
+   - Integrates Ollama (Llama 3.2) script generator to draft character-specific dialogues and prompts.
+   - Stitches multiple short video segments together using ffmpeg to deliver a combined video cut.
+
+3. [FEATURE] Real-time Step Log Monitor:
+   - Installed event step-callback listeners inside diffusers pipeline loop.
+   - Created `/api/video-progress/<id>` REST endpoints.
+   - Built a custom glowing log terminal box in the web UI cards to display inference steps dynamically.
+
+4. [FEATURE] Free Voice synthesis:
+   - Installed edge-tts python package to run local high-fidelity narration synthesis.
+   - Integrated custom voice characters:
+     - Tony Stark: Deep intelligent American male (en-US-ChristopherNeural)
+     - Thor: Heroic British male (en-GB-RyanNeural)
+     - Hulk: Husky deep American male (en-US-GuyNeural)
+   - Automatically mixes speech narration into each video segment using ffmpeg overlay.
+
+5. [OPTIMIZATION] GPU Memory Safeguards:
+   - Reduced frame rendering counts to 16 frames per segment to fit inside RTX 4060 VRAM limits and prevent CUDA Out Of Memory errors.
+   - Embedded torch.cuda.empty_cache() at the end of each segment rendering cycle.
+
+6. [BASH RUNNER] run.sh script:
+   - Created run.sh with unbuffered output (python3 -u) and nohup commands to spin up Ollama and Flask background processes under a single project.log output stream.

@@ -211,6 +211,7 @@ def generate_video_route():
     width = int(data.get("width", 512))
     height = int(data.get("height", 320))
     steps = int(data.get("steps", 25))
+    generation_id = data.get("generation_id")
 
     try:
         from video_generator import generate_video
@@ -220,6 +221,7 @@ def generate_video_route():
             width=width,
             height=height,
             num_steps=steps,
+            generation_id=generation_id,
         )
         return jsonify(result)
 
@@ -231,6 +233,184 @@ def generate_video_route():
         return jsonify({"error": str(e)}), 500
     except Exception as e:
         return jsonify({"error": f"Video generation failed: {str(e)}"}), 500
+
+
+@app.route("/api/video-progress/<generation_id>", methods=["GET"])
+def video_progress_route(generation_id):
+    """Retrieve generation logs/steps in real-time."""
+    try:
+        from video_generator import get_generation_logs
+        logs = get_generation_logs(generation_id)
+        return jsonify({"logs": logs})
+    except Exception as e:
+        return jsonify({"logs": [], "error": str(e)})
+
+
+@app.route("/api/generate-avatar-script", methods=["POST"])
+def generate_avatar_script():
+    data = request.get_json()
+    avatar = data.get("avatar", "tony_stark")
+
+    avatar_prompts = {
+        "tony_stark": "Tony Stark (Iron Man) in his high-tech workshop, glowing chest arc reactor, adjusting holographic designs, cinematic lighting, 4k",
+        "thor": "Thor (God of Thunder) standing on a cliff with dark storm clouds, holding glowing Mjolnir, lightning reflecting in his eyes, cinematic, 4k",
+        "hulk": "Hulk (Green Giant) in a ruined urban street, green skin, massive muscles, breathing heavily, angry expressions, grit realism, 4k"
+    }
+
+    avatar_name = {
+        "tony_stark": "Tony Stark / Iron Man",
+        "thor": "Thor Odinson",
+        "hulk": "The Incredible Hulk"
+    }.get(avatar, "Tony Stark / Iron Man")
+
+    OLLAMA_URL = "http://localhost:11434/api/chat"
+    OLLAMA_MODEL = "llama3.2"
+
+    system_prompt = """You are a professional cinematic storyteller. Generate a short 30-second storyboard script.
+Return ONLY valid JSON. Format:
+{
+  "title": "Story Title",
+  "scenes": [
+    {
+      "title": "Scene Name",
+      "dialogue": "Short dialogue or internal monologue (1-2 sentences)",
+      "description": "Cinematic visual description of the character performing an action.",
+      "video_prompt": "A highly detailed text-to-video generation prompt describing the character, action, lighting, and camera movement. Focus heavily on character consistency."
+    }
+  ]
+}"""
+
+    user_prompt = f"""Write a short story breakdown consisting of exactly 10 short scenes (each representing 2 seconds of footage) for the avatar: {avatar_name}.
+The visual style is cinematic action. Make sure each scene's video_prompt starts with: '{avatar_prompts.get(avatar, avatar_prompts["tony_stark"])}'.
+Keep description and dialogue very dramatic and matching the character's personality."""
+
+    try:
+        response = requests.post(
+            OLLAMA_URL,
+            json={
+                "model": OLLAMA_MODEL,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                "format": "json",
+                "stream": False
+            },
+            timeout=120,
+        )
+        resp_data = response.json()
+        raw = resp_data.get("message", {}).get("content", "{}")
+        parsed = json.loads(raw)
+        return jsonify(parsed)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/generate-avatar-video", methods=["POST"])
+def generate_avatar_video_route():
+    data = request.get_json()
+    scenes = data.get("scenes", [])
+    avatar = data.get("avatar", "tony_stark")
+    generation_id = data.get("generation_id", "avatar_gen")
+
+    if not scenes:
+        return jsonify({"error": "No scenes provided"}), 400
+
+    from video_generator import generate_video, concatenate_videos, generate_speech, add_audio_to_video, VIDEO_DIR, generation_logs
+    import time
+    import uuid
+    import torch
+
+    # Map avatar to edge-tts voice
+    voice_map = {
+        "tony_stark": "en-US-ChristopherNeural",  # Deep intelligent American male
+        "thor": "en-GB-RyanNeural",                # Strong British male
+        "hulk": "en-US-GuyNeural"                  # Deep husky American male
+    }
+    selected_voice = voice_map.get(avatar, "en-US-ChristopherNeural")
+
+    def update_log(msg):
+        if generation_id not in generation_logs:
+            generation_logs[generation_id] = []
+        generation_logs[generation_id].append(f"[{time.strftime('%H:%M:%S')}] {msg}")
+        print(f"[AvatarGen Log] {generation_id}: {msg}")
+
+    temp_paths = []
+    garbage_files = []
+
+    try:
+        for idx, scene in enumerate(scenes):
+            update_log(f"Rendering segment {idx+1}/{len(scenes)}: {scene.get('title', 'Scene')}...")
+            prompt = scene.get("video_prompt", "").strip()
+            dialogue = scene.get("dialogue", "").strip()
+            
+            # 1. Render Video segment (2 seconds, 16 frames @ 8fps to prevent GPU OOM)
+            res = generate_video(
+                prompt=prompt,
+                num_frames=16,
+                width=512,
+                height=320,
+                num_steps=20,
+                generation_id=f"{generation_id}_part_{idx}"
+            )
+            raw_video_path = res["path"]
+            garbage_files.append(raw_video_path)
+
+            # Clear CUDA Cache to free VRAM for next segment
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+
+            # 2. Render Dialogue Audio segment using Edge TTS
+            if dialogue:
+                update_log(f"Synthesizing speech voiceover for beat {idx+1} using {selected_voice}...")
+                audio_filename = f"speech_temp_{str(uuid.uuid4())[:8]}.mp3"
+                audio_path = os.path.join(VIDEO_DIR, audio_filename)
+                generate_speech(dialogue, audio_path, voice=selected_voice)
+                garbage_files.append(audio_path)
+
+                # 3. Merge Video + Audio into a single segment
+                update_log(f"Stitching audio track into segment {idx+1}...")
+                mixed_filename = f"mixed_temp_{str(uuid.uuid4())[:8]}.mp4"
+                mixed_path = os.path.join(VIDEO_DIR, mixed_filename)
+                add_audio_to_video(raw_video_path, audio_path, mixed_path)
+                
+                temp_paths.append(mixed_path)
+                garbage_files.append(mixed_path)
+            else:
+                # Fallback to raw video if dialogue is empty
+                temp_paths.append(raw_video_path)
+
+        update_log("Compiling final cut: stitching all audio-video segments together...")
+        final_filename = f"avatar_final_{str(uuid.uuid4())[:8]}.mp4"
+        final_filepath = os.path.join(VIDEO_DIR, final_filename)
+
+        concatenate_videos(temp_paths, final_filepath)
+
+        # Cleanup all temporary segment and audio files
+        for path in garbage_files:
+            if os.path.exists(path):
+                try:
+                    os.remove(path)
+                except Exception:
+                    pass
+
+        update_log("Success! Final 30-second avatar clip with audio/narration is ready.")
+
+        return jsonify({
+            "url": f"/static/videos/{final_filename}",
+            "filename": final_filename,
+            "duration_sec": 30.0
+        })
+    except Exception as e:
+        # Cleanup all temporary files on failure
+        for path in garbage_files:
+            if os.path.exists(path):
+                try:
+                    os.remove(path)
+                except Exception:
+                    pass
+        update_log(f"ERROR: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 
 # ── RUN ──
