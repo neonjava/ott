@@ -38,44 +38,19 @@ def load_pipeline():
     device = get_device()
     print(f"\n[VideoGen] Loading pipeline on device: {device}")
 
-    # Try LTX-Video (Lightricks text-to-video)
-    try:
-        from diffusers import LTXPipeline
-        print("[VideoGen] Loading LTX-Video pipeline...")
-        _pipeline = LTXPipeline.from_pretrained(
-            "Lightricks/LTX-Video",
-            torch_dtype=torch.float16 if device == "cuda" else torch.float32,
-        )
-        _pipeline.to(device)
-
-        # Enable memory optimizations for 8GB VRAM
-        if device == "cuda":
-            _pipeline.enable_model_cpu_offload()
-            try:
-                _pipeline.enable_vae_slicing()
-            except Exception:
-                pass
-
-        _pipeline_type = "ltx"
-        print("[VideoGen] LTX-Video pipeline loaded successfully!")
-        return _pipeline, _pipeline_type
-
-    except Exception as e:
-        print(f"[VideoGen] LTX-Video failed to load: {e}")
-
-    # Fallback: AnimateDiff (lighter, works on 8GB)
+    # Try AnimateDiff first (lighter, works on 8GB VRAM, only ~3GB download)
     try:
         from diffusers import AnimateDiffPipeline, MotionAdapter, DDIMScheduler
 
-        print("[VideoGen] Falling back to AnimateDiff pipeline...")
+        print("[VideoGen] Loading AnimateDiff pipeline...")
         adapter = MotionAdapter.from_pretrained(
             "guoyww/animatediff-motion-adapter-v1-5-2",
-            torch_dtype=torch.float16,
+            torch_dtype=torch.float16 if device == "cuda" else torch.float32,
         )
         _pipeline = AnimateDiffPipeline.from_pretrained(
             "emilianJR/epiCRealism",
             motion_adapter=adapter,
-            torch_dtype=torch.float16,
+            torch_dtype=torch.float16 if device == "cuda" else torch.float32,
         )
         _pipeline.scheduler = DDIMScheduler.from_config(
             _pipeline.scheduler.config,
@@ -97,7 +72,32 @@ def load_pipeline():
         return _pipeline, _pipeline_type
 
     except Exception as e:
-        print(f"[VideoGen] AnimateDiff also failed: {e}")
+        print(f"[VideoGen] AnimateDiff failed to load: {e}")
+
+    # Fallback: Try LTX-Video (Lightricks text-to-video, 28GB download)
+    try:
+        from diffusers import LTXPipeline
+        print("[VideoGen] Falling back to LTX-Video pipeline...")
+        _pipeline = LTXPipeline.from_pretrained(
+            "Lightricks/LTX-Video",
+            torch_dtype=torch.float16 if device == "cuda" else torch.float32,
+        )
+        _pipeline.to(device)
+
+        # Enable memory optimizations for 8GB VRAM
+        if device == "cuda":
+            _pipeline.enable_model_cpu_offload()
+            try:
+                _pipeline.enable_vae_slicing()
+            except Exception:
+                pass
+
+        _pipeline_type = "ltx"
+        print("[VideoGen] LTX-Video pipeline loaded successfully!")
+        return _pipeline, _pipeline_type
+
+    except Exception as e:
+        print(f"[VideoGen] LTX-Video also failed: {e}")
         raise RuntimeError(
             "No video generation pipeline could be loaded. "
             "Ensure torch and diffusers are installed with CUDA support."

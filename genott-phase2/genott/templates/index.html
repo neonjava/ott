@@ -767,6 +767,65 @@
   // Global variable to hold current scenes
   let currentGeneration = null;
 
+  // ── GENERATE VIDEO FOR A SCENE ──
+  async function generateSceneVideo(sceneIndex) {
+    const promptEl = document.getElementById(`prompt-${sceneIndex}`);
+    const btn = document.getElementById(`vidgen-btn-${sceneIndex}`);
+    const statusEl = document.getElementById(`vidgen-status-${sceneIndex}`);
+    const playerEl = document.getElementById(`video-player-${sceneIndex}`);
+    const videoEl = document.getElementById(`video-el-${sceneIndex}`);
+    const infoEl = document.getElementById(`video-info-${sceneIndex}`);
+
+    if (!promptEl) return;
+
+    const prompt = promptEl.textContent.trim();
+    if (!prompt) {
+      statusEl.textContent = 'No prompt available.';
+      return;
+    }
+
+    // Disable button and show progress
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="width:12px;height:12px;border-width:2px;"></div> Generating…';
+    statusEl.textContent = 'Loading AI model & generating video… This may take 1-3 minutes on first run.';
+    statusEl.style.color = 'var(--accent2)';
+
+    try {
+      const response = await fetch('/api/generate-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: prompt,
+          num_frames: 16,
+          width: 512,
+          height: 320,
+          steps: 25
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Video generation failed');
+      }
+
+      // Show the video player
+      videoEl.src = data.url;
+      playerEl.style.display = 'block';
+      infoEl.textContent = `✓ Generated in ${data.gen_time_sec}s · ${data.duration_sec}s clip · ${data.filename}`;
+
+      statusEl.textContent = '✓ Video ready!';
+      statusEl.style.color = 'var(--success)';
+
+    } catch (err) {
+      statusEl.textContent = 'Error: ' + err.message;
+      statusEl.style.color = 'var(--error)';
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '🎬 Generate Video';
+    }
+  }
+
   // ── MAIN GENERATE FUNCTION ──
   async function generateScenes() {
     const script = document.getElementById('scriptInput').value.trim();
