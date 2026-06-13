@@ -33,3 +33,9 @@
    - Implemented a Shared Random Seed (`shared_seed`) generated at the start of compile and passed to all segments. This forces Stable Diffusion to begin from identical composition composition vectors, keeping the background, composition, and character face structure constant across all segments.
    - Refined the Ollama storyboard prompt instructions to strictly command the model to output identical visual parameters (hair, clothing type, background, view height) for all generated scene prompts.
    - Enhanced the diffusion parameters inside video_generator.py, adding masterpiece photo-realistic suffix styling prompts and applying robust negative prompt tags (preventing cartoons, CGI, illustration, dolls, and deformed structures).
+
+8. [FEATURE & ARCHITECTURE FIX] SadTalker Lip-Sync & Face Consistency Pipeline:
+   - Patched and compiled `BasicSR` from source to run seamlessly under Python 3.14.
+   - Downloaded and configured the full `SadTalker` repository with its pre-trained checkpoints (total ~2.4GB including main models, alignments, and the GFPGAN face enhancer).
+   - Generated static, photorealistic starting character portraits of Tony Stark, Thor, and Hulk using the Stable Diffusion `epiCRealism` pipeline.
+   - Re-architected the `POST /api/generate-avatar-video` endpoint to execute SadTalker's talking head generator. It now maps dialogue speech to high-fidelity lipsync movement and micro head poses, resulting in perfect visual consistency.

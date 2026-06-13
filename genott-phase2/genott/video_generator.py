@@ -251,6 +251,83 @@ def generate_speech(text, output_path, voice="en-US-ChristopherNeural"):
     asyncio.run(_speak())
 
 
+def generate_talking_head(image_path, audio_path, output_path, generation_id=None):
+    """Generate a lip-synced talking head video from a source image and audio using SadTalker."""
+    import subprocess
+    import shutil
+    import glob
+
+    def update_log(msg):
+        if generation_id:
+            if generation_id not in generation_logs:
+                generation_logs[generation_id] = []
+            generation_logs[generation_id].append(f"[{time.strftime('%H:%M:%S')}] {msg}")
+            print(f"[SadTalker Log] {generation_id}: {msg}")
+
+    update_log("Initiating SadTalker lip-sync generator...")
+    
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    sadtalker_dir = os.path.join(project_dir, "SadTalker")
+    temp_results_dir = os.path.join(project_dir, "static", "videos", f"sadtalker_temp_{uuid.uuid4().hex[:8]}")
+    os.makedirs(temp_results_dir, exist_ok=True)
+
+    cmd = [
+        os.path.join(project_dir, "venv", "bin", "python3"),
+        os.path.join(sadtalker_dir, "inference.py"),
+        "--driven_audio", audio_path,
+        "--source_image", image_path,
+        "--result_dir", temp_results_dir,
+        "--still",
+        "--preprocess", "full",
+        "--enhancer", "gfpgan"
+    ]
+
+    try:
+        update_log("Running face processing and expression models (GFPGAN enabled)...")
+        # Run process
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            cwd=sadtalker_dir
+        )
+
+        # Monitor output logs in real-time
+        while True:
+            line = process.stdout.readline()
+            if not line:
+                break
+            line_str = line.strip()
+            if line_str:
+                # Capture progress lines and forward to progress log
+                if "%" in line_str or "step" in line_str.lower() or "processing" in line_str.lower():
+                    update_log(line_str)
+
+        process.wait()
+
+        if process.returncode != 0:
+            raise RuntimeError(f"SadTalker process exited with code {process.returncode}")
+
+        # Find the generated video file inside temp results
+        generated_videos = glob.glob(os.path.join(temp_results_dir, "**", "*.mp4"), recursive=True)
+        if not generated_videos:
+            raise FileNotFoundError("SadTalker completed but no output MP4 video was found.")
+
+        # Copy the final video to the desired destination output path
+        shutil.copy(generated_videos[0], output_path)
+        update_log("Stitched talking-head lip sync completed successfully!")
+        return output_path
+
+    except Exception as e:
+        update_log(f"SadTalker inference failed: {str(e)}")
+        raise e
+    finally:
+        # Cleanup temporary outputs
+        if os.path.exists(temp_results_dir):
+            shutil.rmtree(temp_results_dir)
+
+
 def add_audio_to_video(video_path, audio_path, output_path):
     """Combine video and audio tracks using ffmpeg."""
     import subprocess

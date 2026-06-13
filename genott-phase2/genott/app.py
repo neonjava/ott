@@ -266,23 +266,28 @@ def generate_avatar_script():
     OLLAMA_URL = "http://localhost:11434/api/chat"
     OLLAMA_MODEL = "llama3.2"
 
-    system_prompt = """You are a professional cinematic storyteller. Generate a short 30-second storyboard script.
+    system_prompt = """You are a professional cinematic storyboard supervisor. Your job is to generate a short, highly dynamic storyboard script.
 Return ONLY valid JSON. Format:
 {
   "title": "Story Title",
   "scenes": [
     {
       "title": "Scene Name",
-      "dialogue": "Short dialogue or internal monologue (1-2 sentences)",
-      "description": "Cinematic visual description of the character performing an action.",
-      "video_prompt": "A highly detailed text-to-video generation prompt describing the character, action, lighting, and camera movement. Focus heavily on character consistency."
+      "dialogue": "Short dialogue or monologue (1-2 sentences)",
+      "description": "Cinematic visual description of character action and movement.",
+      "video_prompt": "A highly detailed text-to-video prompt. Describe characters, specific movement, camera motion, and composition. Ensure the character is actively moving rather than standing still."
     }
   ]
 }"""
 
     user_prompt = f"""Write a short story breakdown consisting of exactly 10 short scenes (each representing 2 seconds of footage) for the avatar: {avatar_name}.
 The visual style is cinematic action. Make sure each scene's video_prompt starts EXACTLY with: '{avatar_prompts.get(avatar, avatar_prompts["tony_stark"])}'.
-You must keep the character's physical appearance, clothing, hair, facial features, and background scene details completely identical across all scenes to ensure strict temporal visual consistency. Keep dialogues dramatic and matching their personality."""
+
+CRITICAL INSTRUCTIONS FOR MOVEMENT:
+- The storyboard MUST be dynamic: do NOT have the character just standing in one spot.
+- Introduce continuous physical actions and camera movements across scenes (e.g. Scene 1: character walking down a flat road talking to an ally; Scene 2: camera tracking them from the side as they continue walking; Scene 3: character gesturing dynamically while talking; Scene 4: walking forward towards the horizon; Scene 5: panning shot of them running).
+- Clearly describe these actions (walking, gesturing, talking, running, camera panning, tracking shot) inside the 'description' and 'video_prompt' of each scene so the video generator renders natural physical movement.
+- Ensure strict visual consistency of the avatar's appearance (face features, clothes, hair, weather/sky style) across all scenes."""
 
     try:
         response = requests.post(
@@ -343,52 +348,50 @@ def generate_avatar_video_route():
     garbage_files = []
 
     try:
+        # Resolve face image for current avatar
+        face_filename = f"{avatar}.png"
+        face_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "faces", face_filename)
+        
+        # Fallback to tony_stark if custom face image doesn't exist
+        if not os.path.exists(face_path):
+            face_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "faces", "tony_stark.png")
+
+        from video_generator import generate_talking_head, generate_speech, VIDEO_DIR
+
         for idx, scene in enumerate(scenes):
             update_log(f"Rendering segment {idx+1}/{len(scenes)}: {scene.get('title', 'Scene')}...")
-            prompt = scene.get("video_prompt", "").strip()
             dialogue = scene.get("dialogue", "").strip()
             
-            # 1. Render Video segment (2 seconds, 16 frames @ 8fps, using shared seed)
-            res = generate_video(
-                prompt=prompt,
-                num_frames=16,
-                width=512,
-                height=320,
-                num_steps=20,
-                seed=shared_seed,
+            if not dialogue:
+                dialogue = "This is a placeholder narration beat."
+
+            # 1. Render dialogue voiceover
+            update_log(f"Synthesizing speech voiceover for beat {idx+1} using {selected_voice}...")
+            audio_filename = f"speech_temp_{str(uuid.uuid4())[:8]}.mp3"
+            audio_path = os.path.join(VIDEO_DIR, audio_filename)
+            generate_speech(dialogue, audio_path, voice=selected_voice)
+            garbage_files.append(audio_path)
+
+            # 2. Render lip-synced video clip using SadTalker and the static portrait
+            update_log(f"Generating lip sync talking-head sequence for beat {idx+1}...")
+            segment_filename = f"segment_temp_{str(uuid.uuid4())[:8]}.mp4"
+            segment_path = os.path.join(VIDEO_DIR, segment_filename)
+            
+            generate_talking_head(
+                image_path=face_path,
+                audio_path=audio_path,
+                output_path=segment_path,
                 generation_id=f"{generation_id}_part_{idx}"
             )
-            raw_video_path = res["path"]
-            garbage_files.append(raw_video_path)
-
-            # Clear CUDA Cache to free VRAM for next segment
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
-
-            # 2. Render Dialogue Audio segment using Edge TTS
-            if dialogue:
-                update_log(f"Synthesizing speech voiceover for beat {idx+1} using {selected_voice}...")
-                audio_filename = f"speech_temp_{str(uuid.uuid4())[:8]}.mp3"
-                audio_path = os.path.join(VIDEO_DIR, audio_filename)
-                generate_speech(dialogue, audio_path, voice=selected_voice)
-                garbage_files.append(audio_path)
-
-                # 3. Merge Video + Audio into a single segment
-                update_log(f"Stitching audio track into segment {idx+1}...")
-                mixed_filename = f"mixed_temp_{str(uuid.uuid4())[:8]}.mp4"
-                mixed_path = os.path.join(VIDEO_DIR, mixed_filename)
-                add_audio_to_video(raw_video_path, audio_path, mixed_path)
-                
-                temp_paths.append(mixed_path)
-                garbage_files.append(mixed_path)
-            else:
-                # Fallback to raw video if dialogue is empty
-                temp_paths.append(raw_video_path)
+            
+            temp_paths.append(segment_path)
+            garbage_files.append(segment_path)
 
         update_log("Compiling final cut: stitching all audio-video segments together...")
         final_filename = f"avatar_final_{str(uuid.uuid4())[:8]}.mp4"
         final_filepath = os.path.join(VIDEO_DIR, final_filename)
 
+        from video_generator import concatenate_videos
         concatenate_videos(temp_paths, final_filepath)
 
         # Cleanup all temporary segment and audio files
