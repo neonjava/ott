@@ -281,8 +281,8 @@ Return ONLY valid JSON. Format:
 }"""
 
     user_prompt = f"""Write a short story breakdown consisting of exactly 10 short scenes (each representing 2 seconds of footage) for the avatar: {avatar_name}.
-The visual style is cinematic action. Make sure each scene's video_prompt starts with: '{avatar_prompts.get(avatar, avatar_prompts["tony_stark"])}'.
-Keep description and dialogue very dramatic and matching the character's personality."""
+The visual style is cinematic action. Make sure each scene's video_prompt starts EXACTLY with: '{avatar_prompts.get(avatar, avatar_prompts["tony_stark"])}'.
+You must keep the character's physical appearance, clothing, hair, facial features, and background scene details completely identical across all scenes to ensure strict temporal visual consistency. Keep dialogues dramatic and matching their personality."""
 
     try:
         response = requests.post(
@@ -320,6 +320,7 @@ def generate_avatar_video_route():
     import time
     import uuid
     import torch
+    import random
 
     # Map avatar to edge-tts voice
     voice_map = {
@@ -328,6 +329,9 @@ def generate_avatar_video_route():
         "hulk": "en-US-GuyNeural"                  # Deep husky American male
     }
     selected_voice = voice_map.get(avatar, "en-US-ChristopherNeural")
+
+    # Generate a single shared random seed for the entire sequence to keepcomposition and character face consistent
+    shared_seed = random.randint(1, 10000000)
 
     def update_log(msg):
         if generation_id not in generation_logs:
@@ -344,13 +348,14 @@ def generate_avatar_video_route():
             prompt = scene.get("video_prompt", "").strip()
             dialogue = scene.get("dialogue", "").strip()
             
-            # 1. Render Video segment (2 seconds, 16 frames @ 8fps to prevent GPU OOM)
+            # 1. Render Video segment (2 seconds, 16 frames @ 8fps, using shared seed)
             res = generate_video(
                 prompt=prompt,
                 num_frames=16,
                 width=512,
                 height=320,
                 num_steps=20,
+                seed=shared_seed,
                 generation_id=f"{generation_id}_part_{idx}"
             )
             raw_video_path = res["path"]
