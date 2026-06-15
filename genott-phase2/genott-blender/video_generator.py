@@ -367,15 +367,59 @@ def get_pipeline_info():
     }
 
 
-def concatenate_videos(video_paths, output_path):
-    """Concatenate multiple video files into one and transcode to H.264 for browser playback."""
+def _get_video_duration(video_path):
     import subprocess
+    cmd = ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", video_path]
+    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    try:
+        return float(result.stdout.strip())
+    except:
+        return 2.0
+
+def concatenate_videos(video_paths, output_path, transition="fade"):
+    """Concatenate multiple video files into one with optional transitions."""
+    import subprocess
+    import os
+    
+    if not video_paths:
+        raise ValueError("No videos to concatenate")
+        
+    if len(video_paths) == 1:
+        import shutil
+        shutil.copy(video_paths[0], output_path)
+        return True
+
+    processed_paths = []
+    
+    # Apply fade transitions if requested
+    if transition == "fade":
+        for i, path in enumerate(video_paths):
+            dur = _get_video_duration(path)
+            fade_in = 0.5 if i > 0 else 0.0 # Don't fade in first clip
+            fade_out = 0.5 if i < len(video_paths) - 1 else 0.0 # Don't fade out last clip
+            
+            out_fade = f"{path}_faded.mp4"
+            fade_cmd = [
+                "ffmpeg", "-y", "-i", path,
+                "-vf", f"fade=t=in:st=0:d={fade_in},fade=t=out:st={max(0, dur-fade_out)}:d={fade_out}",
+                "-c:v", "h264_nvenc", "-preset", "fast", "-pix_fmt", "yuv420p",
+                out_fade
+            ]
+            try:
+                subprocess.run(fade_cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                processed_paths.append(out_fade)
+            except Exception as e:
+                print(f"[VideoGen] Warning: Fade transition failed for {path}, using original. Error: {e}")
+                processed_paths.append(path)
+    else:
+        processed_paths = video_paths
+
+    # Concatenate
     list_path = output_path + ".txt"
     with open(list_path, "w") as f:
-        for path in video_paths:
-            f.write(f"file '{path}'\n")
+        for path in processed_paths:
+            f.write(f"file '{os.path.abspath(path)}'\n")
 
-    # Transcode concatenated video using H.264/AAC with yuv420p pixel format for browser compatibility (using h264_nvenc)
     cmd = [
         "ffmpeg", "-y",
         "-f", "concat",
@@ -388,8 +432,15 @@ def concatenate_videos(video_paths, output_path):
     ]
     try:
         subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        # Cleanup
         if os.path.exists(list_path):
             os.remove(list_path)
+        if transition == "fade":
+            for p in processed_paths:
+                if p.endswith("_faded.mp4") and os.path.exists(p):
+                    os.remove(p)
+                    
         return True
     except Exception as e:
         print(f"[VideoGen] Concat error: {e}")

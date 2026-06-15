@@ -25,6 +25,8 @@ def setup_and_render_scene(payload_file):
     print(f"[BlenderEngine] Rendering scene: character={character_name}, action={action}")
     print(f"[BlenderEngine] Character file: {character_file}")
     print(f"[BlenderEngine] Output path: {output_path}")
+    start_loc = data.get("start_location", [0.0, 0.0, 0.0])
+    state_file = data.get("state_file_path", "")
 
     try:
         import bpy
@@ -45,6 +47,27 @@ def setup_and_render_scene(payload_file):
         print(f"[BlenderEngine] WARNING: Character file missing or placeholder: {character_file}")
         print("[BlenderEngine] Creating fallback cube character")
         bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, 0.5))
+
+    # Move all newly imported top-level objects to start_location
+    imported_objects = [obj for obj in bpy.context.scene.objects if not obj.parent]
+    for obj in imported_objects:
+        obj.location.x += start_loc[0]
+        obj.location.y += start_loc[1]
+        obj.location.z += start_loc[2]
+        
+    # Create persistent ground plane for scene continuity
+    bpy.ops.mesh.primitive_plane_add(size=200, location=(0, 0, 0))
+    ground = bpy.context.active_object
+    mat = bpy.data.materials.new(name="GroundMaterial")
+    mat.use_nodes = True
+    bsdf = mat.node_tree.nodes.get("Principled BSDF")
+    if bsdf:
+        bsdf.inputs['Base Color'].default_value = (0.15, 0.15, 0.15, 1)
+        bsdf.inputs['Roughness'].default_value = 0.9
+    if ground.data.materials:
+        ground.data.materials[0] = mat
+    else:
+        ground.data.materials.append(mat)
 
     # Find meshes and armatures
     meshes = [obj for obj in bpy.context.scene.objects if obj.type == 'MESH']
@@ -252,6 +275,25 @@ def setup_and_render_scene(payload_file):
     # Cleanup render frames
     import shutil
     shutil.rmtree(render_dir, ignore_errors=True)
+
+    # ── 9. Save State (Character Persistence) ──
+    if state_file:
+        # Determine ending location
+        end_loc = list(start_loc)
+        # Approximate movement (if action is "walk" or "run", they move forward. Blender actions here are in-place or root motion. 
+        # If root motion, we should evaluate the armature at f_end. If in-place, we manually simulate movement.)
+        speed = 0.0
+        if "run" in action.lower(): speed = 4.0
+        elif "walk" in action.lower(): speed = 1.5
+        elif "jump" in action.lower() or "fly" in action.lower(): speed = 2.0
+        
+        distance = speed * duration
+        # Assuming character faces -Y
+        end_loc[1] -= distance
+        
+        with open(state_file, "w") as f:
+            json.dump({"end_location": end_loc}, f)
+        print(f"[BlenderEngine] Saved persistent character state: {end_loc}")
 
     print(f"[BlenderEngine] Scene render complete: {output_path}")
 

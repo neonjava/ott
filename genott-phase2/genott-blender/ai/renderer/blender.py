@@ -193,6 +193,14 @@ class BlenderVideoRenderer(VideoRenderer):
                 f"Please add a real GLB model to assets/characters/"
             )
 
+        # ── Scene Continuity & Character Persistence ──
+        state_path = os.path.abspath(os.path.join(self.project_dir, "static", "videos", f"state_{generation_id or 'default'}.json"))
+        start_location = [0.0, 0.0, 0.0]
+        if os.path.exists(state_path):
+            with open(state_path, "r") as f:
+                state_data = json.load(f)
+                start_location = state_data.get("end_location", [0.0, 0.0, 0.0])
+
         # Build render payload
         render_payload = {
             "character_name": (plan.character_name or "humanoid").lower().replace(" ", "_"),
@@ -202,7 +210,9 @@ class BlenderVideoRenderer(VideoRenderer):
             "location": plan.location or "environment",
             "camera_shot": plan.camera_shot or "cinematic wide",
             "duration": plan.duration or 4.0,
-            "output_path": os.path.abspath(output_path)
+            "output_path": os.path.abspath(output_path),
+            "start_location": start_location,
+            "state_file_path": state_path
         }
 
         # Write payload JSON

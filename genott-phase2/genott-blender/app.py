@@ -275,7 +275,7 @@ def api_generate_movie():
         final_filename = "final_movie.mp4" # As requested by user
         final_filepath = os.path.join(Config.VIDEO_DIR, final_filename)
         
-        concatenate_videos(temp_video_files, final_filepath)
+        concatenate_videos(temp_video_files, final_filepath, transition="fade")
         
         # Cleanup
         for f in temp_video_files:
@@ -398,7 +398,7 @@ def generate_avatar_video_route():
         final_filename = f"cinematic_{generation_id}.mp4"
         final_filepath = os.path.join(Config.VIDEO_DIR, final_filename)
 
-        concatenate_videos(temp_video_files, final_filepath)
+        concatenate_videos(temp_video_files, final_filepath, transition="fade")
 
         # Cleanup all temporary segment assets except if explicitly flagged to keep
         if not data.get("keep_segments", False) and not getattr(Config, "DEBUG_KEEP_INTERMEDIATE", False):
