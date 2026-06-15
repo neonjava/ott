@@ -7,6 +7,7 @@ Based on the proven render_action_blender.py approach.
 import sys
 import os
 import json
+import time
 
 def setup_and_render_scene(payload_file):
     """Load payload config, import character, apply animation, render to MP4."""
@@ -40,6 +41,7 @@ def setup_and_render_scene(payload_file):
     bpy.ops.wm.read_factory_settings(use_empty=True)
 
     # ── 1. Import character GLB ──
+    t_start = time.time()
     if character_file and os.path.exists(character_file) and os.path.getsize(character_file) > 100:
         print(f"[BlenderEngine] Importing GLB: {character_file}")
         bpy.ops.import_scene.gltf(filepath=character_file)
@@ -47,6 +49,8 @@ def setup_and_render_scene(payload_file):
         print(f"[BlenderEngine] WARNING: Character file missing or placeholder: {character_file}")
         print("[BlenderEngine] Creating fallback cube character")
         bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, 0.5))
+    t_import = time.time()
+    print(f"[Timing] GLB Import: {t_import - t_start:.2f}s")
 
     # Move all newly imported top-level objects to start_location
     imported_objects = [obj for obj in bpy.context.scene.objects if not obj.parent]
@@ -195,20 +199,24 @@ def setup_and_render_scene(payload_file):
     tree.links.new(bg_node.outputs['Background'], out_node.inputs['Surface'])
 
     # ── 6. Render settings — Cycles GPU ──
+    t_setup = time.time()
+    print(f"[Timing] Scene Setup: {t_setup - t_import:.2f}s")
     bpy.context.scene.render.engine = 'CYCLES'
     cycles_pref = bpy.context.preferences.addons['cycles'].preferences
-    cycles_pref.refresh_devices()
+    cycles_pref.get_devices()
     
     # Try OPTIX first, fall back to CUDA
     try:
         cycles_pref.compute_device_type = 'OPTIX'
         for device in cycles_pref.devices:
-            device.use = (device.type == 'OPTIX')
+            if device.type == 'OPTIX':
+                device.use = True
     except Exception:
         try:
             cycles_pref.compute_device_type = 'CUDA'
             for device in cycles_pref.devices:
-                device.use = (device.type == 'CUDA')
+                if device.type == 'CUDA':
+                    device.use = True
         except Exception:
             print("[BlenderEngine] WARNING: No GPU found, falling back to CPU")
 
@@ -252,7 +260,10 @@ def setup_and_render_scene(payload_file):
     bpy.context.scene.render.filepath = os.path.join(render_dir, "frame_")
 
     print(f"[BlenderEngine] Rendering {f_end - f_start + 1} frames to {render_dir}...")
+    t_render_start = time.time()
     bpy.ops.render.render(animation=True)
+    t_render_end = time.time()
+    print(f"[Timing] Frame Rendering: {t_render_end - t_render_start:.2f}s")
     print("[BlenderEngine] Frame rendering complete.")
 
     # Save first frame as storyboard thumbnail
@@ -279,10 +290,14 @@ def setup_and_render_scene(payload_file):
     ]
 
     try:
+        t_ffmpeg_start = time.time()
         subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        t_ffmpeg_end = time.time()
+        print(f"[Timing] FFmpeg Compile: {t_ffmpeg_end - t_ffmpeg_start:.2f}s")
         print(f"[BlenderEngine] Video compiled: {output_path}")
     except subprocess.CalledProcessError:
         # Fallback to software encoder
+        t_ffmpeg_start = time.time()
         ffmpeg_cmd_sw = [
             "ffmpeg", "-y",
             "-framerate", str(fps),
@@ -294,6 +309,8 @@ def setup_and_render_scene(payload_file):
             output_path
         ]
         subprocess.run(ffmpeg_cmd_sw, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        t_ffmpeg_end = time.time()
+        print(f"[Timing] FFmpeg Compile (SW): {t_ffmpeg_end - t_ffmpeg_start:.2f}s")
         print(f"[BlenderEngine] Video compiled (software): {output_path}")
 
     # Cleanup render frames
