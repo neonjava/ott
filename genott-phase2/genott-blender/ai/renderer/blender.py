@@ -200,7 +200,7 @@ class BlenderVideoRenderer(VideoRenderer):
             )
 
         # ── Scene Continuity & Character Persistence ──
-        state_path = os.path.abspath(os.path.join(self.project_dir, "static", "videos", f"state_{generation_id or 'default'}.json"))
+        state_path = os.path.abspath(os.path.join(self.project_dir, "scene_state.json"))
         start_location = [0.0, 0.0, 0.0]
         if os.path.exists(state_path):
             with open(state_path, "r") as f:

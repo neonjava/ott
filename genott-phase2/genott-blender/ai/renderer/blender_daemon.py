@@ -67,6 +67,7 @@ class RenderHandler(BaseHTTPRequestHandler):
                 output_path = payload.get("output_path")
                 action_name = payload.get("action", "idle")
                 duration = payload.get("duration", 2.0)
+                state_file_path = payload.get("state_file_path", "")
                 
                 print(f"\\n[BlenderDaemon] Received job: {action_name} for {duration}s -> {output_path}")
                 
@@ -123,8 +124,34 @@ class RenderHandler(BaseHTTPRequestHandler):
                 bpy.context.scene.camera = camera
                 camera.location = (0, -4, 1.5)
                 camera.rotation_euler = (math.radians(80), 0, 0)
+                
+                # --- Continuity: Load State ---
+                start_location = (0, 0, 0)
+                start_rotation = (0, 0, 0)
+                cam_location = None
+                cam_rotation = None
+                if state_file_path and os.path.exists(state_file_path):
+                    with open(state_file_path, "r") as sf:
+                        try:
+                            s_data = json.load(sf)
+                            start_location = tuple(s_data.get("location", (0, 0, 0)))
+                            start_rotation = tuple(s_data.get("rotation", (0, 0, 0)))
+                            if "camera" in s_data:
+                                cam_location = tuple(s_data["camera"].get("location", (0, 0, 0)))
+                                cam_rotation = tuple(s_data["camera"].get("rotation", (0, 0, 0)))
+                        except: pass
+                
                 if armature:
-                    camera.location = (armature.location.x, armature.location.y - 4, armature.location.z + 1.5)
+                    armature.location = start_location
+                    armature.rotation_euler = start_rotation
+                    if not cam_location:
+                        camera.location = (armature.location.x, armature.location.y - 4, armature.location.z + 1.5)
+                    else:
+                        camera.location = cam_location
+                        camera.rotation_euler = cam_rotation
+                        
+                # Update depsgraph to lock transforms
+                bpy.context.view_layer.update()
                 
                 # Render
                 import tempfile
@@ -161,6 +188,38 @@ class RenderHandler(BaseHTTPRequestHandler):
                     
                 shutil.rmtree(render_dir, ignore_errors=True)
                 
+                # --- Continuity: Save State ---
+                if state_file_path and armature:
+                    # evaluate at last frame
+                    bpy.context.scene.frame_set(f_end)
+                    bpy.context.view_layer.update()
+                    
+                    delta_loc = [0.0, 0.0, 0.0]
+                    aname = action_name.lower()
+                    if "walk" in aname:
+                        delta_loc = [0.0, -1.0 * duration, 0.0]
+                    elif "run" in aname:
+                        delta_loc = [0.0, -3.0 * duration, 0.0]
+                    elif "jump" in aname:
+                        delta_loc = [0.0, -0.5 * duration, 0.0]
+                        
+                    final_loc = [armature.location.x + delta_loc[0], armature.location.y + delta_loc[1], armature.location.z]
+                    final_rot = [armature.rotation_euler.x, armature.rotation_euler.y, armature.rotation_euler.z]
+                    cam_loc = [camera.location.x + delta_loc[0], camera.location.y + delta_loc[1], camera.location.z]
+                    cam_rot = [camera.rotation_euler.x, camera.rotation_euler.y, camera.rotation_euler.z]
+                    
+                    state_data = {
+                        "location": final_loc,
+                        "rotation": final_rot,
+                        "camera": {
+                            "location": cam_loc,
+                            "rotation": cam_rot
+                        },
+                        "previous_action": action_name
+                    }
+                    with open(state_file_path, "w") as sf:
+                        json.dump(state_data, sf)
+                        
                 response = {
                     "status": "success",
                     "output_path": output_path,
