@@ -170,13 +170,42 @@ def setup_and_render_scene(payload_file):
     fill.data.energy = 200
     fill.data.size = max_dim
 
-    # Set world background
+    # Set world background (Procedural Sky)
     world = bpy.data.worlds.new("World")
     bpy.context.scene.world = world
     world.use_nodes = True
-    bg_node = world.node_tree.nodes.get("Background")
-    if bg_node:
-        bg_node.inputs[0].default_value = (0.12, 0.12, 0.16, 1.0)
+    tree = world.node_tree
+    
+    # Clear default nodes
+    for node in tree.nodes:
+        tree.nodes.remove(node)
+        
+    # Create Sky Texture
+    sky_node = tree.nodes.new(type="ShaderNodeTexSky")
+    sky_node.sky_type = 'NISHITA'
+    
+    # Adjust sky based on location keywords
+    loc_lower = location.lower()
+    if "dark" in loc_lower or "storm" in loc_lower or "night" in loc_lower:
+        sky_node.sun_elevation = 0.05 # Sunset / dark
+        sky_node.sun_intensity = 0.2
+        sky_node.air_density = 5.0
+        sky_node.dust_density = 10.0
+    elif "forest" in loc_lower or "field" in loc_lower:
+        sky_node.sun_elevation = 0.8 # Midday
+        sky_node.sun_intensity = 1.0
+        sky_node.air_density = 1.0
+        sky_node.dust_density = 1.0
+    else:
+        sky_node.sun_elevation = 0.3 # Morning/afternoon
+        sky_node.sun_intensity = 0.8
+        
+    bg_node = tree.nodes.new(type="ShaderNodeBackground")
+    
+    out_node = tree.nodes.new(type="ShaderNodeOutputWorld")
+    
+    tree.links.new(sky_node.outputs['Color'], bg_node.inputs['Color'])
+    tree.links.new(bg_node.outputs['Background'], out_node.inputs['Surface'])
 
     # ── 6. Render settings — Cycles GPU ──
     bpy.context.scene.render.engine = 'CYCLES'
