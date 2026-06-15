@@ -237,6 +237,68 @@ def generate_avatar_script():
     })
 
 
+@app.route("/api/generate-movie", methods=["POST"])
+def api_generate_movie():
+    """Automated movie generation pipeline (Rule-Based, No LLM)."""
+    data = request.get_json() or {}
+    character = data.get("character", "humanoid")
+    script = data.get("script", "")
+    
+    if not script:
+        return jsonify({"error": "No script provided"}), 400
+        
+    generation_id = f"movie_{uuid.uuid4().hex[:8]}"
+    update_execution_log(generation_id, "Starting automated movie generation...")
+    
+    # 1. & 2. & 3. Parse script, extract scenes, determine actions
+    try:
+        scenes = scene_planner.plan_rule_based(script, character)
+    except Exception as e:
+        return jsonify({"error": f"Scene planning failed: {str(e)}"}), 500
+        
+    update_execution_log(generation_id, f"Extracted {len(scenes)} scenes.")
+    
+    # Render scenes
+    shared_seed = random.randint(1, 999999)
+    temp_video_files = []
+    
+    try:
+        for idx, plan in enumerate(scenes):
+            update_execution_log(generation_id, f"Rendering Scene {idx+1}: {plan.action}...")
+            scene_mp4 = os.path.join(Config.VIDEO_DIR, f"scene_{generation_id}_{idx}.mp4")
+            # 6. Render every scene using Blender
+            video_renderer.render_scene(plan, shared_seed, scene_mp4, generation_id=generation_id)
+            temp_video_files.append(scene_mp4)
+            
+        # 7. Stitch scenes together
+        update_execution_log(generation_id, "Stitching scenes together...")
+        final_filename = "final_movie.mp4" # As requested by user
+        final_filepath = os.path.join(Config.VIDEO_DIR, final_filename)
+        
+        concatenate_videos(temp_video_files, final_filepath)
+        
+        # Cleanup
+        for f in temp_video_files:
+            if os.path.exists(f):
+                os.remove(f)
+                
+        # 8. Produce final movie
+        update_execution_log(generation_id, "Movie compilation finished.")
+        return jsonify({
+            "status": "success",
+            "movie": f"/static/videos/{final_filename}"
+        })
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        # Cleanup on failure
+        for f in temp_video_files:
+            if os.path.exists(f):
+                try: os.remove(f)
+                except: pass
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/api/generate-avatar-video", methods=["POST"])
 def generate_avatar_video_route():
     """Structured Cinematic Pipeline execution route."""

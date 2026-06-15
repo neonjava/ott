@@ -211,6 +211,48 @@ class ScenePlanner:
         self.ollama_url = ollama_url
         self.model = model
 
+    def plan_rule_based(self, script: str, character: str) -> List[ScenePlan]:
+        import re
+        script_lower = script.lower()
+        
+        # Rule-based verb extraction
+        verbs = ["walk", "wave", "jump", "idle", "attack", "run"]
+        found_actions = []
+        
+        # Extract verbs in order they appear in text
+        words = re.findall(r'\b[a-z]+\b', script_lower)
+        for word in words:
+            for verb in verbs:
+                if verb in word and verb not in [a["action"] for a in found_actions]:
+                    # Default duration mappings
+                    duration = 4.0
+                    if verb == "walk": duration = 5.0
+                    elif verb == "wave": duration = 3.0
+                    elif verb == "jump": duration = 4.0
+                    elif verb == "attack": duration = 4.0
+                    
+                    found_actions.append({"action": verb, "duration": duration})
+                    
+        # Fallback if no verbs found
+        if not found_actions:
+            found_actions.append({"action": "idle", "duration": 4.0})
+            
+        plans = []
+        for i, act in enumerate(found_actions):
+            plan = ScenePlan(
+                scene_number=i + 1,
+                character_name=character,
+                location="environment",
+                action=act["action"],
+                camera_shot="cinematic wide",
+                duration=act["duration"],
+                dialogue=None,
+                narration=None
+            )
+            plans.append(plan)
+            
+        return plans
+
     def plan_story(self, user_prompt: str, scene_count: int = 3) -> List[ScenePlan]:
         # First try to detect if this is a known hero and use built-in stories
         prompt_lower = user_prompt.lower()
