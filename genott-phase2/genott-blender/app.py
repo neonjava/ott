@@ -8,7 +8,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 
 from database import init_db, save_project, get_all_projects, get_project, delete_project
-from video_generator import load_pipeline, concatenate_videos, add_audio_to_video, get_pipeline_info
+from video_generator import load_pipeline, concatenate_videos, add_audio_to_video, get_pipeline_info, score_movie_quality
 
 # Import the new modular architectural library layout
 from ai.config import Config
@@ -322,11 +322,17 @@ def api_generate_movie():
                 
         # 8. Produce final movie
         update_execution_log(generation_id, "Movie compilation finished.")
+        # Score final quality
+        expected_dur = sum(s.duration for s in scenes)
+        quality_metrics = score_movie_quality(final_filepath, expected_dur)
+        update_execution_log(generation_id, f"Movie Quality Score: {quality_metrics.get('score')}/100")
+
         return jsonify({
             "status": "success",
             "movie": f"/static/videos/{final_filename}",
             "storyboard": storyboard_thumbs,
-            "scenes": [s.__dict__ if hasattr(s, "__dict__") else s for s in scenes]
+            "scenes": [s.__dict__ if hasattr(s, "__dict__") else s for s in scenes],
+            "quality": quality_metrics
         })
         
     except Exception as e:

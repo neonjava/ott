@@ -367,6 +367,72 @@ def get_pipeline_info():
     }
 
 
+def score_movie_quality(filepath: str, expected_duration: float = None) -> dict:
+    """Evaluate movie quality and return a score and metrics."""
+    import json
+    if not os.path.exists(filepath):
+        return {"score": 0, "status": "missing_file"}
+        
+    try:
+        # Use ffprobe to get video streams and format
+        cmd = [
+            "ffprobe", "-v", "quiet", "-print_format", "json",
+            "-show_format", "-show_streams", filepath
+        ]
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        data = json.loads(result.stdout)
+        
+        streams = data.get("streams", [])
+        format_data = data.get("format", {})
+        
+        has_video = False
+        has_audio = False
+        resolution = 0
+        fps = 0
+        
+        for s in streams:
+            if s.get("codec_type") == "video":
+                has_video = True
+                resolution = int(s.get("height", 0))
+                # framerate is like "24/1"
+                fr_str = s.get("r_frame_rate", "0/1").split('/')
+                if len(fr_str) == 2 and int(fr_str[1]) > 0:
+                    fps = int(fr_str[0]) / int(fr_str[1])
+            elif s.get("codec_type") == "audio":
+                has_audio = True
+                
+        actual_duration = float(format_data.get("duration", 0))
+        bitrate = int(format_data.get("bit_rate", 0))
+        
+        score = 0
+        if has_video: score += 20
+        if has_audio: score += 20
+        if resolution >= 540: score += 20
+        if fps >= 23.9: score += 20
+        
+        if expected_duration:
+            # Score duration accuracy (within 10%)
+            if abs(actual_duration - expected_duration) / expected_duration <= 0.1:
+                score += 20
+            else:
+                score += 10
+        else:
+            score += 20
+            
+        return {
+            "score": score,
+            "has_video": has_video,
+            "has_audio": has_audio,
+            "resolution": resolution,
+            "fps": round(fps, 2),
+            "duration": round(actual_duration, 2),
+            "bitrate": bitrate
+        }
+    except Exception as e:
+        print(f"Quality scoring error: {e}")
+        return {"score": 0, "error": str(e)}
+
+
 def _get_video_duration(video_path):
     import subprocess
     cmd = ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", video_path]

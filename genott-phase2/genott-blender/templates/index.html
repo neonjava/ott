@@ -1446,7 +1446,11 @@ Return exactly ${count} scenes as the JSON format specified.`;
 
       const data = await response.json();
       
-      consoleEl.innerHTML += '\n✓ Complete! Movie successfully generated.';
+      let qualityStr = "";
+      if (data.quality) {
+        qualityStr = `\n📊 Quality Score: ${data.quality.score}/100 (Res: ${data.quality.resolution}p, FPS: ${data.quality.fps}, Audio: ${data.quality.has_audio ? 'Yes' : 'No'})`;
+      }
+      consoleEl.innerHTML += `\n✓ Complete! Movie successfully generated. ${qualityStr}`;
       
       // Render Storyboard Visualization
       if (data.storyboard && data.storyboard.length > 0) {
