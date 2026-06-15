@@ -262,6 +262,7 @@ def api_generate_movie():
     shared_seed = random.randint(1, 999999)
     temp_video_files = []
     temp_audio_files = []
+    storyboard_thumbs = []
     
     try:
         for idx, plan in enumerate(scenes):
@@ -279,6 +280,11 @@ def api_generate_movie():
             scene_mp4 = os.path.join(Config.VIDEO_DIR, f"scene_{generation_id}_{idx}.mp4")
             video_renderer.render_scene(plan, shared_seed, scene_mp4, generation_id=generation_id)
             temp_video_files.append(scene_mp4)
+            
+            # Collect storyboard thumbnail
+            thumb_path = scene_mp4.replace(".mp4", "_thumb.png")
+            if os.path.exists(thumb_path):
+                storyboard_thumbs.append(f"/static/videos/scene_{generation_id}_{idx}_thumb.png")
             
             # 5. Apply Lip Sync or Audio Merge
             char_profile = char_library.get_character(plan.character_name)
@@ -318,7 +324,9 @@ def api_generate_movie():
         update_execution_log(generation_id, "Movie compilation finished.")
         return jsonify({
             "status": "success",
-            "movie": f"/static/videos/{final_filename}"
+            "movie": f"/static/videos/{final_filename}",
+            "storyboard": storyboard_thumbs,
+            "scenes": [s.__dict__ if hasattr(s, "__dict__") else s for s in scenes]
         })
         
     except Exception as e:

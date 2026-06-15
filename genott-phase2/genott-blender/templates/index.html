@@ -528,6 +528,48 @@
 <!-- MAIN -->
 <div class="main">
 
+  <!-- AUTONOMOUS PIPELINE CARD -->
+  <div class="card card-full" style="border-color: var(--accent); background: linear-gradient(180deg, var(--card) 0%, rgba(124,58,237,0.08) 100%);">
+    <div class="card-label" style="color: var(--accent2);">Fully Autonomous Pipeline</div>
+    <h2>🎬 One-Click Movie Generator</h2>
+    <p style="color: var(--muted); font-size: 13px; margin-bottom: 24px;">
+      Select a character and write a script. AI will automatically plan scenes, generate voice, render visuals in Blender, and stitch it all together into a final MP4.
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 20px;">
+      <div>
+        <label>Character</label>
+        <select id="autoCharacter">
+          <option value="humanoid">Standard Humanoid (Rule-based actions)</option>
+          <option value="thor">Thor</option>
+          <option value="tony_stark">Iron Man</option>
+          <option value="hulk">Hulk</option>
+        </select>
+      </div>
+      <div>
+        <label>Script Instructions</label>
+        <textarea id="autoScript" style="min-height: 80px;" placeholder="hero walks, waves, jumps"></textarea>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="autoGenerateBtn" onclick="autoGenerateMovie()" style="width: 100%; justify-content: center; font-size: 16px; padding: 14px;">
+      🎥 Generate Movie
+    </button>
+    <div id="autoGenerateConsole" style="display: none; margin-top: 16px; font-family: 'Courier New', monospace; font-size: 11px; background: #07070a; border: 1px solid var(--border); border-radius: 8px; padding: 12px; color: #10b981; max-height: 180px; overflow-y: auto; text-align: left;"></div>
+
+    <div id="autoStoryboardArea" style="display: none; margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px;">
+      <h3 style="font-size: 15px; margin-bottom: 12px;">Storyboard Visualization</h3>
+      <div id="autoStoryboardGrid" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 12px;"></div>
+    </div>
+
+    <div id="autoVideoPlayer" style="display: none; margin-top: 20px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); background: #000;">
+      <video id="autoVideoEl" controls style="width: 100%; display: block;"></video>
+      <div style="padding: 10px 14px; font-size: 12px; color: var(--success); font-weight: 600; background: var(--surface);">
+        ✓ Final Stitched Movie Ready!
+      </div>
+    </div>
+  </div>
+
   <!-- INPUT CARD -->
   <div class="card">
     <div class="card-label">Step 1</div>
@@ -1368,6 +1410,82 @@ Return exactly ${count} scenes as the JSON format specified.`;
       btn.innerHTML = '🛠️ Render Test';
     }
   }
+  async function autoGenerateMovie() {
+    const character = document.getElementById('autoCharacter').value;
+    const script = document.getElementById('autoScript').value.trim();
+    if (!script) {
+      alert("Please enter a script");
+      return;
+    }
+
+    const btn = document.getElementById('autoGenerateBtn');
+    const consoleEl = document.getElementById('autoGenerateConsole');
+    const playerBox = document.getElementById('autoVideoPlayer');
+    const videoEl = document.getElementById('autoVideoEl');
+    const storyboardArea = document.getElementById('autoStoryboardArea');
+    const storyboardGrid = document.getElementById('autoStoryboardGrid');
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;border-top-color:#fff;"></div> Generating...';
+    consoleEl.style.display = 'block';
+    consoleEl.innerHTML = '⚙️ Executing autonomous pipeline...';
+    playerBox.style.display = 'none';
+    storyboardArea.style.display = 'none';
+
+    try {
+      const response = await fetch('/api/generate-movie', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ character, script })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      const data = await response.json();
+      
+      consoleEl.innerHTML += '\n✓ Complete! Movie successfully generated.';
+      
+      // Render Storyboard Visualization
+      if (data.storyboard && data.storyboard.length > 0) {
+        storyboardGrid.innerHTML = '';
+        data.storyboard.forEach((thumb, idx) => {
+          const img = document.createElement('img');
+          img.src = thumb;
+          img.style.height = '120px';
+          img.style.borderRadius = '8px';
+          img.style.border = '1px solid var(--border)';
+          
+          const wrapper = document.createElement('div');
+          wrapper.style.display = 'flex';
+          wrapper.style.flexDirection = 'column';
+          wrapper.style.gap = '4px';
+          
+          const label = document.createElement('span');
+          label.style.fontSize = '11px';
+          label.style.color = 'var(--muted)';
+          label.textContent = `Scene ${idx + 1}`;
+          
+          wrapper.appendChild(img);
+          wrapper.appendChild(label);
+          storyboardGrid.appendChild(wrapper);
+        });
+        storyboardArea.style.display = 'block';
+      }
+
+      videoEl.src = data.movie;
+      playerBox.style.display = 'block';
+
+    } catch (e) {
+      consoleEl.innerHTML += `\n❌ Error: ${e.message}`;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '🎥 Generate Movie';
+    }
+  }
+
 </script>
 </body>
 </html>
