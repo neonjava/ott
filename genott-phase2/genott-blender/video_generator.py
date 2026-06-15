@@ -370,6 +370,7 @@ def get_pipeline_info():
 def score_movie_quality(filepath: str, expected_duration: float = None) -> dict:
     """Evaluate movie quality and return a score and metrics."""
     import json
+    import subprocess
     if not os.path.exists(filepath):
         return {"score": 0, "status": "missing_file"}
         
