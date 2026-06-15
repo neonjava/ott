@@ -261,14 +261,46 @@ def api_generate_movie():
     # Render scenes
     shared_seed = random.randint(1, 999999)
     temp_video_files = []
+    temp_audio_files = []
     
     try:
         for idx, plan in enumerate(scenes):
-            update_execution_log(generation_id, f"Rendering Scene {idx+1}: {plan.action}...")
-            scene_mp4 = os.path.join(Config.VIDEO_DIR, f"scene_{generation_id}_{idx}.mp4")
+            update_execution_log(generation_id, f"Processing Scene {idx+1}: {plan.action}...")
+            
+            # 4. Voice Generation
+            voice_file = None
+            if plan.dialogue:
+                update_execution_log(generation_id, f"Synthesizing voice for: {plan.character_name}...")
+                audio_res = voice_system.synthesize_dialogue(plan.dialogue.text, plan.dialogue.voice_profile)
+                voice_file = audio_res["audio_path"]
+                temp_audio_files.append(voice_file)
+            
             # 6. Render every scene using Blender
+            scene_mp4 = os.path.join(Config.VIDEO_DIR, f"scene_{generation_id}_{idx}.mp4")
             video_renderer.render_scene(plan, shared_seed, scene_mp4, generation_id=generation_id)
             temp_video_files.append(scene_mp4)
+            
+            # 5. Apply Lip Sync or Audio Merge
+            char_profile = char_library.get_character(plan.character_name)
+            if plan.dialogue and getattr(Config, "ENABLE_LIPSYNC", False) and lipsync_provider and char_profile:
+                update_execution_log(generation_id, "Applying Lip-Sync engine...")
+                lip_synced_mp4 = os.path.join(Config.VIDEO_DIR, f"lipsync_{generation_id}_{idx}.mp4")
+                lipsync_provider.run_lipsync(
+                    image_path=char_profile.face_reference_img,
+                    audio_path=voice_file,
+                    output_path=lip_synced_mp4,
+                    generation_id=generation_id
+                )
+                temp_video_files[-1] = lip_synced_mp4
+                if os.path.exists(scene_mp4):
+                    os.remove(scene_mp4)
+            elif voice_file:
+                merged_mp4 = os.path.join(Config.VIDEO_DIR, f"final_scene_{generation_id}_{idx}.mp4")
+                update_execution_log(generation_id, "Merging dialogue audio...")
+                add_audio_to_video(scene_mp4, voice_file, merged_mp4)
+                temp_video_files[-1] = merged_mp4
+                if os.path.exists(scene_mp4):
+                    os.remove(scene_mp4)
             
         # 7. Stitch scenes together
         update_execution_log(generation_id, "Stitching scenes together...")
@@ -278,7 +310,7 @@ def api_generate_movie():
         concatenate_videos(temp_video_files, final_filepath, transition="fade")
         
         # Cleanup
-        for f in temp_video_files:
+        for f in temp_video_files + temp_audio_files:
             if os.path.exists(f):
                 os.remove(f)
                 

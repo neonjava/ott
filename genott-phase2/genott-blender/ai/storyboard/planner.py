@@ -237,8 +237,19 @@ class ScenePlanner:
         if not found_actions:
             found_actions.append({"action": "idle", "duration": 4.0})
             
+        # Extract potential dialogue from quotes
+        dialogue_match = re.search(r'\"([^\"]+)\"|\'([^\']+)\'', script)
+        dialogue_text = dialogue_match.group(1) or dialogue_match.group(2) if dialogue_match else None
+
         plans = []
         for i, act in enumerate(found_actions):
+            # Only assign dialogue to the first scene to avoid repeating it
+            scene_diag = None
+            if i == 0 and dialogue_text:
+                char_profile = self.char_library.get_character(character)
+                voice = char_profile.voice_profile if char_profile else "en-US-ChristopherNeural"
+                scene_diag = DialogueLine(speaker=character, text=dialogue_text, voice_profile=voice)
+                
             plan = ScenePlan(
                 scene_number=i + 1,
                 character_name=character,
@@ -246,7 +257,7 @@ class ScenePlanner:
                 action=act["action"],
                 camera_shot="cinematic wide",
                 duration=act["duration"],
-                dialogue=None,
+                dialogue=scene_diag,
                 narration=None
             )
             plans.append(plan)
