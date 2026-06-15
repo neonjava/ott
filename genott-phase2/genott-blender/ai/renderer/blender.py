@@ -5,10 +5,45 @@ Invokes Blender CLI with render_script.py to produce real rendered MP4 videos.
 """
 import os
 import json
+import uuid
 import subprocess
+import requests
+import time
+from typing import Dict, Any
+
 from ai.renderer.base import VideoRenderer
 from ai.storyboard.models import ScenePlan
 from ai.renderer.action_mapper import ActionMapper
+from ai.config import Config
+
+DAEMON_URL = "http://127.0.0.1:5005"
+
+def ensure_blender_daemon():
+    """Ensure the Blender HTTP daemon is running."""
+    try:
+        resp = requests.get(f"{DAEMON_URL}/ping", timeout=2)
+        if resp.status_code == 200:
+            return
+    except requests.RequestException:
+        pass
+        
+    print("[BlenderRenderer] Starting BlenderDaemon in background...")
+    daemon_script = os.path.join(os.path.dirname(__file__), "blender_daemon.py")
+    cmd = ["flatpak", "run", "org.blender.Blender", "-b", "--python", daemon_script]
+    subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    
+    # Wait for daemon to become ready (up to 120s since Blender initialization takes ~45-65s)
+    for _ in range(60):
+        time.sleep(2)
+        try:
+            resp = requests.get(f"{DAEMON_URL}/ping", timeout=2)
+            if resp.status_code == 200:
+                print("[BlenderRenderer] BlenderDaemon is ready!")
+                return
+        except requests.RequestException:
+            pass
+            
+    raise RuntimeError("Timed out waiting for BlenderDaemon to start.")
 
 # Map character names to their GLB files and embedded action names
 CHARACTER_REGISTRY = {
@@ -151,40 +186,11 @@ class BlenderVideoRenderer(VideoRenderer):
         # Default to idle
         return action_map.get("idle", action_map.get("standing", list(action_map.values())[0])), None
 
-    def _find_blender(self) -> str:
-        """Find Blender executable."""
-        # Try flatpak first
-        try:
-            result = subprocess.run(
-                ["flatpak", "run", "org.blender.Blender", "--version"],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10
-            )
-            if result.returncode == 0:
-                return "flatpak"
-        except (FileNotFoundError, subprocess.TimeoutExpired):
-            pass
-        
-        # Try system blender
-        try:
-            result = subprocess.run(
-                ["blender", "--version"],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10
-            )
-            if result.returncode == 0:
-                return "system"
-        except (FileNotFoundError, subprocess.TimeoutExpired):
-            pass
-        
-        return None
-
     def render_scene(self, plan: ScenePlan, seed: int, output_path: str, generation_id: str = None) -> str:
-        """Render a scene using real Blender CLI."""
+        """Render a scene using BlenderDaemon."""
         # Resolve character and action
         char_path, action_map = self._resolve_character(plan.character_name or "humanoid")
         blender_action, fbx_path = self._resolve_action(plan.action or "idle", action_map)
-
-        print(f"[BlenderRenderer] Scene {plan.scene_number}: {plan.character_name} -> {blender_action}")
-        print(f"[BlenderRenderer] Character: {char_path} (exists: {os.path.exists(char_path)})")
 
         # Verify character file is real (not a placeholder)
         if not os.path.exists(char_path) or os.path.getsize(char_path) < 100:
@@ -202,7 +208,7 @@ class BlenderVideoRenderer(VideoRenderer):
                 start_location = state_data.get("end_location", [0.0, 0.0, 0.0])
 
         # Build render payload
-        render_payload = {
+        payload = {
             "character_name": (plan.character_name or "humanoid").lower().replace(" ", "_"),
             "action": blender_action,
             "action_file": fbx_path or "",
@@ -215,42 +221,22 @@ class BlenderVideoRenderer(VideoRenderer):
             "state_file_path": state_path
         }
 
-        # Write payload JSON
+        # Write payload JSON for logging
         payload_path = os.path.abspath(os.path.join(
             self.project_dir, "static", "videos",
             f"payload_{generation_id or 'scene'}_{plan.scene_number}.json"
         ))
         os.makedirs(os.path.dirname(payload_path), exist_ok=True)
         with open(payload_path, "w") as f:
-            json.dump(render_payload, f)
+            json.dump(payload, f)
+        print(f"[BlenderRenderer] Payload created: {payload_path}")
 
-        # Find render script
-        script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "blender_render_script.py"))
+        # Ensure Daemon is running
+        ensure_blender_daemon()
 
-        # Find Blender
-        blender_mode = self._find_blender()
-
-        if blender_mode == "flatpak":
-            cmd = [
-                "flatpak", "run", "org.blender.Blender",
-                "-b", "--python", script_path,
-                "--", payload_path
-            ]
-        elif blender_mode == "system":
-            cmd = [
-                "blender", "-b",
-                "--python", script_path,
-                "--", payload_path
-            ]
-        else:
-            raise RuntimeError(
-                "Blender not found. Install via: flatpak install org.blender.Blender "
-                "or install blender system package."
-            )
-
-        print(f"[BlenderRenderer] Executing Blender CLI ({blender_mode})...")
+        print(f"[BlenderRenderer] Sending job to BlenderDaemon...")
         
-        # Auto-retry logic
+        # Auto-retry logic for network issues to daemon
         max_retries = 3
         attempt = 0
         success = False
@@ -259,33 +245,39 @@ class BlenderVideoRenderer(VideoRenderer):
         while attempt < max_retries and not success:
             attempt += 1
             try:
-                process = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=300)
-                
-                if process.returncode != 0:
-                    error_msg = process.stderr or process.stdout
-                    last_error = f"Blender render failed (exit {process.returncode}): {error_msg[-300:]}"
-                    print(f"[BlenderRenderer] Attempt {attempt} failed: {last_error}")
-                    if attempt < max_retries:
-                        import time
-                        time.sleep(2)
-                        continue
+                resp = requests.post(f"{DAEMON_URL}/render", json=payload, timeout=300)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    if data.get("status") == "success":
+                        success = True
                     else:
-                        raise RuntimeError(last_error)
-
+                        raise RuntimeError(f"Daemon reported error: {data}")
+                else:
+                    raise RuntimeError(f"Daemon returned HTTP {resp.status_code}")
+                    
                 # Verify output exists
                 if not os.path.exists(output_path):
                     last_error = f"Blender completed but output file missing: {output_path}"
                     print(f"[BlenderRenderer] Attempt {attempt} failed: {last_error}")
                     if attempt < max_retries:
+                        time.sleep(2)
                         continue
                     else:
                         raise RuntimeError(last_error)
                         
                 success = True
-            except subprocess.TimeoutExpired:
+            except requests.exceptions.Timeout:
                 last_error = "Blender render timed out after 300s"
                 print(f"[BlenderRenderer] Attempt {attempt} failed: {last_error}")
                 if attempt < max_retries:
+                    continue
+                else:
+                    raise RuntimeError(last_error)
+            except Exception as e:
+                last_error = str(e)
+                print(f"[BlenderRenderer] Attempt {attempt} failed: {last_error}")
+                if attempt < max_retries:
+                    time.sleep(2)
                     continue
                 else:
                     raise RuntimeError(last_error)
