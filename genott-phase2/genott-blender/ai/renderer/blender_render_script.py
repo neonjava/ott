@@ -170,7 +170,7 @@ def setup_and_render_scene(payload_file):
     fill.data.energy = 200
     fill.data.size = max_dim
 
-    # Set world background (Procedural Sky)
+    # Set world background (Colors)
     world = bpy.data.worlds.new("World")
     bpy.context.scene.world = world
     world.use_nodes = True
@@ -180,31 +180,18 @@ def setup_and_render_scene(payload_file):
     for node in tree.nodes:
         tree.nodes.remove(node)
         
-    # Create Sky Texture
-    sky_node = tree.nodes.new(type="ShaderNodeTexSky")
-    sky_node.sky_type = 'NISHITA'
+    bg_node = tree.nodes.new(type="ShaderNodeBackground")
+    out_node = tree.nodes.new(type="ShaderNodeOutputWorld")
     
     # Adjust sky based on location keywords
     loc_lower = location.lower()
     if "dark" in loc_lower or "storm" in loc_lower or "night" in loc_lower:
-        sky_node.sun_elevation = 0.05 # Sunset / dark
-        sky_node.sun_intensity = 0.2
-        sky_node.air_density = 5.0
-        sky_node.dust_density = 10.0
+        bg_node.inputs['Color'].default_value = (0.02, 0.02, 0.04, 1.0)
     elif "forest" in loc_lower or "field" in loc_lower:
-        sky_node.sun_elevation = 0.8 # Midday
-        sky_node.sun_intensity = 1.0
-        sky_node.air_density = 1.0
-        sky_node.dust_density = 1.0
+        bg_node.inputs['Color'].default_value = (0.3, 0.5, 0.8, 1.0)
     else:
-        sky_node.sun_elevation = 0.3 # Morning/afternoon
-        sky_node.sun_intensity = 0.8
+        bg_node.inputs['Color'].default_value = (0.5, 0.6, 0.7, 1.0)
         
-    bg_node = tree.nodes.new(type="ShaderNodeBackground")
-    
-    out_node = tree.nodes.new(type="ShaderNodeOutputWorld")
-    
-    tree.links.new(sky_node.outputs['Color'], bg_node.inputs['Color'])
     tree.links.new(bg_node.outputs['Background'], out_node.inputs['Surface'])
 
     # ── 6. Render settings — Cycles GPU ──
@@ -267,6 +254,14 @@ def setup_and_render_scene(payload_file):
     print(f"[BlenderEngine] Rendering {f_end - f_start + 1} frames to {render_dir}...")
     bpy.ops.render.render(animation=True)
     print("[BlenderEngine] Frame rendering complete.")
+
+    # Save first frame as storyboard thumbnail
+    first_frame_src = os.path.join(render_dir, f"frame_{str(f_start).zfill(4)}.png")
+    storyboard_out = output_path.replace(".mp4", "_thumb.png")
+    if os.path.exists(first_frame_src):
+        import shutil
+        shutil.copy(first_frame_src, storyboard_out)
+        print(f"[BlenderEngine] Saved storyboard thumbnail: {storyboard_out}")
 
     # Compile frames to MP4 using FFmpeg
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
