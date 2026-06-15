@@ -249,16 +249,46 @@ class BlenderVideoRenderer(VideoRenderer):
             )
 
         print(f"[BlenderRenderer] Executing Blender CLI ({blender_mode})...")
-        process = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=300)
         
-        if process.returncode != 0:
-            error_msg = process.stderr or process.stdout
-            print(f"[BlenderRenderer] STDERR: {error_msg[-500:]}")
-            raise RuntimeError(f"Blender render failed (exit {process.returncode}): {error_msg[-300:]}")
+        # Auto-retry logic
+        max_retries = 3
+        attempt = 0
+        success = False
+        last_error = ""
+        
+        while attempt < max_retries and not success:
+            attempt += 1
+            try:
+                process = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=300)
+                
+                if process.returncode != 0:
+                    error_msg = process.stderr or process.stdout
+                    last_error = f"Blender render failed (exit {process.returncode}): {error_msg[-300:]}"
+                    print(f"[BlenderRenderer] Attempt {attempt} failed: {last_error}")
+                    if attempt < max_retries:
+                        import time
+                        time.sleep(2)
+                        continue
+                    else:
+                        raise RuntimeError(last_error)
 
-        # Verify output exists
-        if not os.path.exists(output_path):
-            raise RuntimeError(f"Blender completed but output file missing: {output_path}")
+                # Verify output exists
+                if not os.path.exists(output_path):
+                    last_error = f"Blender completed but output file missing: {output_path}"
+                    print(f"[BlenderRenderer] Attempt {attempt} failed: {last_error}")
+                    if attempt < max_retries:
+                        continue
+                    else:
+                        raise RuntimeError(last_error)
+                        
+                success = True
+            except subprocess.TimeoutExpired:
+                last_error = "Blender render timed out after 300s"
+                print(f"[BlenderRenderer] Attempt {attempt} failed: {last_error}")
+                if attempt < max_retries:
+                    continue
+                else:
+                    raise RuntimeError(last_error)
 
         # Cleanup payload
         if os.path.exists(payload_path):
