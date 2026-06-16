@@ -268,12 +268,19 @@ def api_generate_movie():
         for idx, plan in enumerate(scenes):
             update_execution_log(generation_id, f"Processing Scene {idx+1}: {plan.action}...")
             
-            # 4. Voice Generation
+            # 4. Voice Generation (Dialogue or Narration)
             voice_file = None
             if plan.dialogue:
                 update_execution_log(generation_id, f"Synthesizing voice for: {plan.character_name}...")
                 audio_res = voice_system.synthesize_dialogue(plan.dialogue.text, plan.dialogue.voice_profile)
                 voice_file = audio_res["audio_path"]
+            else:
+                update_execution_log(generation_id, f"Synthesizing narration for scene...")
+                narration_text = f"The {plan.character_name} prepares to {plan.action}."
+                audio_res = voice_system.synthesize_narration(narration_text)
+                voice_file = audio_res["audio_path"]
+                
+            if voice_file:
                 temp_audio_files.append(voice_file)
             
             # 6. Render every scene using Blender
@@ -313,8 +320,12 @@ def api_generate_movie():
         final_filename = "final_movie.mp4" # As requested by user
         final_filepath = os.path.join(Config.VIDEO_DIR, final_filename)
         
-        concatenate_videos(temp_video_files, final_filepath, transition="fade")
-        
+        from movie_assembler import assemble_movie
+        success, result_path_or_err, final_dur = assemble_movie(generation_id, Config.VIDEO_DIR, "final_movie.mp4")
+        if not success:
+            raise RuntimeError(f"Movie Assembly Failed: {result_path_or_err}")
+            
+        final_filepath = result_path_or_err
         # Cleanup
         for f in temp_video_files + temp_audio_files:
             if os.path.exists(f):
@@ -329,7 +340,8 @@ def api_generate_movie():
 
         return jsonify({
             "status": "success",
-            "movie": f"/static/videos/{final_filename}",
+            "movie": f"/static/videos/{os.path.basename(final_filepath)}",
+            "duration": final_dur,
             "storyboard": storyboard_thumbs,
             "scenes": [s.__dict__ if hasattr(s, "__dict__") else s for s in scenes],
             "quality": quality_metrics
@@ -344,6 +356,21 @@ def api_generate_movie():
                 try: os.remove(f)
                 except: pass
         return jsonify({"error": str(e)}), 500
+
+@app.route('/api/movie/<generation_id>', methods=['GET'])
+def api_get_movie(generation_id):
+    """Retrieve a generated movie by its generation ID."""
+    filepath = os.path.join(Config.VIDEO_DIR, f"{generation_id}_final_movie.mp4")
+    if os.path.exists(filepath):
+        from movie_assembler import get_video_info
+        info = get_video_info(filepath)
+        dur = float(info.get("format", {}).get("duration", 0)) if info else 0.0
+        return jsonify({
+            "status": "success",
+            "movie": f"/static/videos/{generation_id}_final_movie.mp4",
+            "duration": dur
+        })
+    return jsonify({"status": "error", "message": "Movie not found"}), 404
 
 @app.route("/api/generate-avatar-video", methods=["POST"])
 def generate_avatar_video_route():
