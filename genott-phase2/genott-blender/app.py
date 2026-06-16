@@ -321,7 +321,10 @@ def api_generate_movie():
         final_filepath = os.path.join(Config.VIDEO_DIR, final_filename)
         
         from movie_assembler import assemble_movie
-        success, result_path_or_err, final_dur = assemble_movie(generation_id, Config.VIDEO_DIR, "final_movie.mp4")
+        success, result_path_or_err, final_dur = assemble_movie(
+            generation_id, Config.VIDEO_DIR, "final_movie.mp4",
+            scene_files=temp_video_files
+        )
         if not success:
             raise RuntimeError(f"Movie Assembly Failed: {result_path_or_err}")
             
