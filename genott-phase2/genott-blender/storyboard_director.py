@@ -50,7 +50,7 @@ MOOD_MAP = {
 # Prepositions and markers for location extraction
 LOCATION_PREPOSITIONS = [
     "through", "into", "inside", "across", "along", "towards", 
-    "around", "under", "above", "before", "over", "near", 
+    "around", "under", "above", "before", "near", 
     "in", "into", "at", "on", "to", "from"
 ]
 
