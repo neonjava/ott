@@ -153,11 +153,15 @@ def parse_script_to_storyboard(script: str, default_character: str = "humanoid")
                 
         # 4. Detect camera suggestion
         detected_camera = CAMERA_MAP.get(detected_action, "wide_shot")
-        if "close-up" in sentence_lower or "closeup" in sentence_lower or "close up" in sentence_lower:
+        if "close-up" in sentence_lower or "closeup" in sentence_lower or "close up" in sentence_lower or "face" in sentence_lower or "expression" in sentence_lower:
             detected_camera = "close_up"
-        elif "wide" in sentence_lower or "establishing" in sentence_lower:
+        elif "establishing" in sentence_lower or "panorama" in sentence_lower:
+            detected_camera = "establishing_shot"
+        elif "over the shoulder" in sentence_lower or "over shoulder" in sentence_lower or "looking at" in sentence_lower:
+            detected_camera = "over_shoulder"
+        elif "wide" in sentence_lower or "distant" in sentence_lower or "far away" in sentence_lower:
             detected_camera = "wide_shot"
-        elif "tracking" in sentence_lower:
+        elif "tracking" in sentence_lower or "track" in sentence_lower or "follow" in sentence_lower:
             detected_camera = "tracking_shot"
             
         # 5. Detect mood
