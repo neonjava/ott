@@ -153,13 +153,19 @@ class BlenderVideoRenderer(VideoRenderer):
         continuity = ContinuityEngineV2(os.path.join(self.project_dir, "continuity_state.json"))
         
         # Build plan dict for continuity engine
+        description_str = getattr(plan, "visual_description", "") or getattr(plan, "narration", "") or ""
         plan_dict = {
             "location": plan.location or "environment",
             "character_name": plan.character_name or "humanoid",
             "action": plan.action or "idle",
-            "description": getattr(plan, "visual_description", "") or getattr(plan, "narration", "") or ""
+            "description": description_str
         }
         visual_state = continuity.process_scene(plan_dict, plan.scene_number)
+
+        # Extract and resolve visual assets
+        from asset_director import AssetDirector
+        asset_director = AssetDirector()
+        scene_assets = asset_director.get_scene_assets(description_str)
 
         # Build render payload
         payload = {
@@ -174,6 +180,7 @@ class BlenderVideoRenderer(VideoRenderer):
             "start_location": start_location,
             "state_file_path": state_path,
             "mood": getattr(plan, "mood", "neutral"),
+            "assets": scene_assets,
             
             # Advanced Visual Continuity state keys
             "held_item": visual_state.get("held_item"),

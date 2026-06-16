@@ -410,7 +410,8 @@ class RenderHandler(BaseHTTPRequestHandler):
                     env_config = get_environment_for_location(location_str)
                     weather_str = payload.get("weather", "clear")
                     props_list = payload.get("environment_props", [])
-                    build_environment_in_blender(env_config, start_location, weather_str, props_list)
+                    assets_list = payload.get("assets", [])
+                    build_environment_in_blender(env_config, start_location, weather_str, props_list, assets_list)
                 except Exception as env_err:
                     print(f"[BlenderDaemon] Failed to build environment: {env_err}")
 

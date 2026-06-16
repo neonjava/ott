@@ -137,7 +137,7 @@ def create_colored_material(name: str, color_key: str):
     mat.diffuse_color = rgba
     return mat
 
-def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0, 0), weather: str = "clear", environment_props: List[str] = None):
+def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0, 0), weather: str = "clear", environment_props: List[str] = None, resolved_assets: List[Dict[str, Any]] = None):
     """
     Blender Scene Builder integration.
     Configures terrain, sky, lighting, atmosphere, and places primitive asset structures.
@@ -147,7 +147,7 @@ def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0
         return
         
     env_type = env_config.get("environment_type", "arena")
-    print(f"[EnvironmentDirector] Building '{env_type}' environment in Blender (Weather: {weather}, Props: {environment_props})...")
+    print(f"[EnvironmentDirector] Building '{env_type}' environment in Blender (Weather: {weather}, Props: {environment_props}, Assets: {len(resolved_assets) if resolved_assets else 0})...")
     
     # Clear old environment meshes & lights (keep armature and camera)
     objs_to_delete = []
@@ -411,9 +411,103 @@ def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0
         except Exception as p_err:
             print(f"[EnvironmentDirector] Failed to spawn props: {p_err}")
 
+    # 8. SPAWN RESOLVED ASSETS
+    if resolved_assets:
+        try:
+            spawn_resolved_assets(resolved_assets, character_pos)
+        except Exception as a_err:
+            print(f"[EnvironmentDirector] Failed to spawn resolved assets: {a_err}")
+
     # Force viewport/dependency graph updates to ensure visual changes register
     bpy.context.view_layer.update()
     print("[EnvironmentDirector] Environment successfully built.")
+
+def spawn_resolved_assets(assets: List[Dict[str, Any]], character_pos=(0, 0, 0)):
+    if not bpy: return
+    if not assets: return
+    
+    print(f"[EnvironmentDirector] Spawning resolved assets: {len(assets)}")
+    
+    trunk_mat = create_colored_material("TrunkMat", "trunk_brown")
+    stone_mat = create_colored_material("StoneMat", "dark_stone")
+    sand_mat = create_colored_material("SandMat", "yellow_sand")
+    leaf_mat = create_colored_material("LeafMat", "leaf_green")
+    
+    # PROJECT_DIR resolution inside Blender sandbox
+    daemon_dir = os.path.dirname(os.path.abspath(__file__))
+    project_dir = os.path.dirname(os.path.dirname(daemon_dir)) if "ai" in daemon_dir else daemon_dir
+    
+    slots = [
+        (character_pos[0] + 1.3, character_pos[1] - 1.2, 0.0), # Slot 1 (front right)
+        (character_pos[0] - 1.3, character_pos[1] - 1.2, 0.0), # Slot 2 (front left)
+        (character_pos[0] + 1.7, character_pos[1] - 2.8, 0.0), # Slot 3 (mid right)
+        (character_pos[0] - 1.7, character_pos[1] - 2.8, 0.0), # Slot 4 (mid left)
+        (character_pos[0], character_pos[1] + 2.0, 0.0)        # Slot 5 (behind)
+    ]
+    
+    slot_idx = 0
+    for asset in assets:
+        atype = asset.get("type", "prop")
+        placement = asset.get("placement", "ground")
+        if atype == "character" or placement in ["right_hand", "left_hand", "head", "torso", "feet", "neck", "back"]:
+            continue
+            
+        slot = slots[slot_idx % len(slots)]
+        slot_idx += 1
+        
+        noun = asset.get("noun", "object")
+        scale = asset.get("scale", [1.0, 1.0, 1.0])
+        fallback = asset.get("fallback", "cube")
+        is_missing = asset.get("missing", True)
+        model_path = asset.get("model", "")
+        
+        model_loaded = False
+        if not is_missing and model_path:
+            full_path = os.path.join(project_dir, model_path)
+            if os.path.exists(full_path) and os.path.getsize(full_path) > 100:
+                try:
+                    print(f"[EnvironmentDirector] Importing asset GLB: {full_path}")
+                    bpy.ops.import_scene.gltf(filepath=full_path)
+                    imported_obj = bpy.context.active_object
+                    if imported_obj:
+                        imported_obj.name = f"Asset_{noun}"
+                        imported_obj.location = (slot[0], slot[1], slot[2] + 0.1)
+                        imported_obj.scale = scale
+                        model_loaded = True
+                except Exception as import_err:
+                    print(f"[EnvironmentDirector] Error importing GLB for {noun}: {import_err}")
+                    
+        if not model_loaded:
+            print(f"[EnvironmentDirector] Spawning procedural fallback for: {noun} (type: {fallback})")
+            
+            z_offset = scale[2] / 2.0 if fallback in ["cube", "cylinder"] else 0.0
+            loc = (slot[0], slot[1], slot[2] + z_offset)
+            
+            if fallback == "cylinder":
+                bpy.ops.mesh.primitive_cylinder_add(radius=scale[0]/2.0, depth=scale[2], location=loc)
+            elif fallback == "cone":
+                bpy.ops.mesh.primitive_cone_add(radius=scale[0]/2.0, depth=scale[2], location=loc)
+            elif fallback == "sphere":
+                bpy.ops.mesh.primitive_uv_sphere_add(radius=scale[0]/2.0, location=loc)
+            else:
+                bpy.ops.mesh.primitive_cube_add(size=1.0, location=loc)
+                obj = bpy.context.active_object
+                if obj:
+                    obj.scale = scale
+                    
+            obj = bpy.context.active_object
+            if obj:
+                obj.name = f"FallbackAsset_{noun}"
+                if any(x in noun for x in ["tree", "wood", "log", "campfire", "table", "chair", "bed", "crate", "barrel"]):
+                    if trunk_mat: obj.data.materials.append(trunk_mat)
+                elif any(x in noun for x in ["rock", "stone", "giant", "monster", "dungeon", "wall"]):
+                    if stone_mat: obj.data.materials.append(stone_mat)
+                elif any(x in noun for x in ["gold", "crown", "chest", "key", "coin", "gem"]):
+                    if sand_mat: obj.data.materials.append(sand_mat)
+                elif any(x in noun for x in ["flower", "grass", "plant", "bush", "leaf"]):
+                    if leaf_mat: obj.data.materials.append(leaf_mat)
+                else:
+                    if stone_mat: obj.data.materials.append(stone_mat)
 
 def spawn_weather_effects(weather_type: str, character_pos=(0, 0, 0)):
     if not bpy: return
