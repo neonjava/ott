@@ -212,39 +212,18 @@ class ScenePlanner:
         self.model = model
 
     def plan_rule_based(self, script: str, character: str) -> List[ScenePlan]:
-        import re
-        from dialogue_engine import generate_dialogue_timeline, get_voice_for_speaker
+        from dialogue_engine import generate_dialogue_timeline
+        from storyboard_director import parse_script_to_storyboard
         
-        script_lower = script.lower()
-        
-        # Generate structured dialogue timeline
+        # 1. Generate structured dialogue timeline
         timeline = generate_dialogue_timeline(script, character)
         
-        # Rule-based verb extraction
-        verbs = ["walk", "wave", "jump", "idle", "attack", "run"]
-        found_actions = []
+        # 2. Parse script into storyboard
+        storyboard = parse_script_to_storyboard(script, character)
         
-        # Extract verbs in order they appear in text
-        words = re.findall(r'\b[a-z]+\b', script_lower)
-        for word in words:
-            for verb in verbs:
-                if verb in word and verb not in [a["action"] for a in found_actions]:
-                    # Default duration mappings
-                    duration = 4.0
-                    if verb == "walk": duration = 5.0
-                    elif verb == "wave": duration = 3.0
-                    elif verb == "jump": duration = 4.0
-                    elif verb == "attack": duration = 4.0
-                    
-                    found_actions.append({"action": verb, "duration": duration})
-                    
-        # Fallback if no verbs found
-        if not found_actions:
-            found_actions.append({"action": "idle", "duration": 4.0})
-
         plans = []
-        for i, act in enumerate(found_actions):
-            # Find matching dialogue/narration from timeline for this scene
+        for i, sb_scene in enumerate(storyboard["scenes"]):
+            # Find matching dialogue/narration from timeline for this scene index
             scene_diag = None
             scene_narration = None
             
@@ -262,15 +241,36 @@ class ScenePlanner:
             
             # Fallback: generate narration from action if none found
             if scene_narration is None:
-                scene_narration = f"The {character} prepares to {act['action']}."
+                scene_narration = f"The {sb_scene['character']} prepares to {sb_scene['action']}."
+            
+            # Map storyboard camera suggestion to BlenderVideoRenderer shot type
+            camera_map = {
+                "wide_shot": "cinematic wide",
+                "tracking_shot": "close-up tracking shot",
+                "close_up": "close-up helmet shot",
+                "low_angle": "low-angle dramatic wide shot",
+                "medium_shot": "rotating orbit shot around the character"
+            }
+            camera_shot = camera_map.get(sb_scene["camera"], "cinematic wide")
+            
+            # Map action duration
+            duration = 4.0
+            if sb_scene["action"] == "walk":
+                duration = 5.0
+            elif sb_scene["action"] == "wave":
+                duration = 3.0
+            elif sb_scene["action"] == "jump":
+                duration = 4.0
+            elif sb_scene["action"] == "attack":
+                duration = 4.0
                 
             plan = ScenePlan(
                 scene_number=i + 1,
-                character_name=character,
-                location="environment",
-                action=act["action"],
-                camera_shot="cinematic wide",
-                duration=act["duration"],
+                character_name=sb_scene["character"],
+                location=sb_scene["location"],
+                action=sb_scene["action"],
+                camera_shot=camera_shot,
+                duration=duration,
                 dialogue=scene_diag,
                 narration=scene_narration,
             )
