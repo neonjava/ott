@@ -213,7 +213,12 @@ class ScenePlanner:
 
     def plan_rule_based(self, script: str, character: str) -> List[ScenePlan]:
         import re
+        from dialogue_engine import generate_dialogue_timeline, get_voice_for_speaker
+        
         script_lower = script.lower()
+        
+        # Generate structured dialogue timeline
+        timeline = generate_dialogue_timeline(script, character)
         
         # Rule-based verb extraction
         verbs = ["walk", "wave", "jump", "idle", "attack", "run"]
@@ -236,19 +241,28 @@ class ScenePlanner:
         # Fallback if no verbs found
         if not found_actions:
             found_actions.append({"action": "idle", "duration": 4.0})
-            
-        # Extract potential dialogue from quotes
-        dialogue_match = re.search(r'\"([^\"]+)\"|\'([^\']+)\'', script)
-        dialogue_text = dialogue_match.group(1) or dialogue_match.group(2) if dialogue_match else None
 
         plans = []
         for i, act in enumerate(found_actions):
-            # Only assign dialogue to the first scene to avoid repeating it
+            # Find matching dialogue/narration from timeline for this scene
             scene_diag = None
-            if i == 0 and dialogue_text:
-                char_profile = self.char_library.get_character(character)
-                voice = char_profile.voice_profile if char_profile else "en-US-ChristopherNeural"
-                scene_diag = DialogueLine(speaker=character, text=dialogue_text, voice_profile=voice)
+            scene_narration = None
+            
+            for entry in timeline:
+                if entry["scene_index"] == i or (i == 0 and entry["scene_index"] == 0):
+                    if entry["type"] == "dialogue" and scene_diag is None:
+                        voice = entry.get("voice", "en-US-ChristopherNeural")
+                        scene_diag = DialogueLine(
+                            speaker=entry.get("speaker", character),
+                            text=entry["text"],
+                            voice_profile=voice,
+                        )
+                    elif entry["type"] == "narration" and scene_narration is None:
+                        scene_narration = entry["text"]
+            
+            # Fallback: generate narration from action if none found
+            if scene_narration is None:
+                scene_narration = f"The {character} prepares to {act['action']}."
                 
             plan = ScenePlan(
                 scene_number=i + 1,
@@ -258,7 +272,7 @@ class ScenePlanner:
                 camera_shot="cinematic wide",
                 duration=act["duration"],
                 dialogue=scene_diag,
-                narration=None
+                narration=scene_narration,
             )
             plans.append(plan)
             
