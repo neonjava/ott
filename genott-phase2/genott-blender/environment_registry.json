@@ -1,0 +1,58 @@
+{
+  "forest": {
+    "terrain": "green_grass",
+    "sky": "light_blue_green",
+    "lighting": "sun_filtered",
+    "atmosphere": "green_fog",
+    "assets": ["pine_tree_1", "pine_tree_2"]
+  },
+  "castle": {
+    "terrain": "dark_stone",
+    "sky": "dark_grey",
+    "lighting": "dim_cool",
+    "atmosphere": "shadowy",
+    "assets": ["stone_pillar", "stone_wall"]
+  },
+  "village": {
+    "terrain": "brown_dirt",
+    "sky": "sunny_blue",
+    "lighting": "bright_sun",
+    "atmosphere": "warm_haze",
+    "assets": ["house_cube", "roof_cone"]
+  },
+  "cave": {
+    "terrain": "dark_rock",
+    "sky": "pitch_black",
+    "lighting": "point_torches",
+    "atmosphere": "darkness",
+    "assets": ["stalagmite"]
+  },
+  "beach": {
+    "terrain": "yellow_sand",
+    "sky": "golden_sunset",
+    "lighting": "warm_gold",
+    "atmosphere": "clear",
+    "assets": ["ocean_plane", "palm_trunk"]
+  },
+  "mountain": {
+    "terrain": "snowy_rock",
+    "sky": "cold_grey",
+    "lighting": "bright_cool",
+    "atmosphere": "white_mist",
+    "assets": ["mountain_peak"]
+  },
+  "city": {
+    "terrain": "grey_asphalt",
+    "sky": "night_sky",
+    "lighting": "neon_spotlights",
+    "atmosphere": "urban_haze",
+    "assets": ["building_cube_1", "building_cube_2"]
+  },
+  "arena": {
+    "terrain": "sand_dirt",
+    "sky": "clear_day",
+    "lighting": "overhead_spots",
+    "atmosphere": "dusty",
+    "assets": ["ring_fence"]
+  }
+}
