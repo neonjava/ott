@@ -161,9 +161,10 @@ def get_voice_for_speaker(speaker: str, main_character: str = None) -> str:
     if target_char in registry:
         return registry[target_char].get("voice", VOICE_PROFILES["default"])
         
-    # Also check if target_char matches the name of any character in the registry
+    # Check if any registry key or name is a substring of target_char (e.g. "anime girl" inside "anime girl runs and then says")
     for key, val in registry.items():
-        if target_char == val.get("name", "").lower():
+        name_lower = val.get("name", "").lower()
+        if (key.lower() in target_char) or (name_lower and name_lower in target_char):
             return val.get("voice", VOICE_PROFILES["default"])
 
     if "narrator" in speaker_lower:
