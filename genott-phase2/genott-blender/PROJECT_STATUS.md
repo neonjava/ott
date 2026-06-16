@@ -5,6 +5,6 @@
 - **Phase 2: Asset Registry System**: COMPLETE
 - **Phase 3: Visual Continuity Engine**: COMPLETE
 - **Phase 4: Camera Director**: COMPLETE
-- **Phase 5: Story Understanding Audit**: IN_PROGRESS
-- **Phase 6: Automatic GitHub Issue System**: NOT_STARTED
+- **Phase 5: Story Understanding Audit**: COMPLETE
+- **Phase 6: Automatic GitHub Issue System**: IN_PROGRESS
 - **Phase 7: Reality Audit**: NOT_STARTED
