@@ -45,85 +45,26 @@ def ensure_blender_daemon():
             
     raise RuntimeError("Timed out waiting for BlenderDaemon to start.")
 
-# Map character names to their GLB files and embedded action names
-CHARACTER_REGISTRY = {
-    "thor": {
-        "glb": "humanoid.glb",
-        "action_map": {
-            "idle": "CharacterArmature|Idle",
-            "walk": "CharacterArmature|Run", 
-            "run": "CharacterArmature|Run",
-            "attack": "CharacterArmature|Punch",
-            "punch": "CharacterArmature|Punch",
-            "jump": "CharacterArmature|Jump",
-            "death": "CharacterArmature|Death",
-            "wave": "CharacterArmature|Wave",
-            "duck": "CharacterArmature|Duck",
-            "landing": "CharacterArmature|Jump_Land",
-            "standing": "CharacterArmature|Idle",
-            "talk": "CharacterArmature|Idle",
-            "raise_weapon": "CharacterArmature|Punch",
-            "fly": "CharacterArmature|Jump",
-            "victory": "CharacterArmature|Wave",
-        }
-    },
-    "tony_stark": {
-        "glb": "humanoid.glb",
-        "action_map": {
-            "idle": "CharacterArmature|Idle",
-            "walk": "CharacterArmature|Run",
-            "run": "CharacterArmature|Run",
-            "attack": "CharacterArmature|Punch",
-            "fly": "CharacterArmature|Jump",
-            "landing": "CharacterArmature|Jump_Land",
-            "standing": "CharacterArmature|Idle",
-            "talk": "CharacterArmature|Idle",
-            "victory": "CharacterArmature|Wave",
-        }
-    },
-    "hulk": {
-        "glb": "humanoid.glb",
-        "action_map": {
-            "idle": "CharacterArmature|Idle",
-            "walk": "CharacterArmature|Run",
-            "run": "CharacterArmature|Run",
-            "attack": "CharacterArmature|Punch",
-            "smash": "CharacterArmature|Punch",
-            "jump": "CharacterArmature|Jump",
-            "landing": "CharacterArmature|Jump_Land",
-            "standing": "CharacterArmature|Idle",
-            "roar": "CharacterArmature|HitReact",
-            "talk": "CharacterArmature|Idle",
-        }
-    },
-    "humanoid": {
-        "glb": "humanoid.glb",
-        "action_map": {
-            "idle": "CharacterArmature|Idle",
-            "walk": "CharacterArmature|Run",
-            "run": "CharacterArmature|Run",
-            "attack": "CharacterArmature|Punch",
-            "jump": "CharacterArmature|Jump",
-            "death": "CharacterArmature|Death",
-            "wave": "CharacterArmature|Wave",
-            "duck": "CharacterArmature|Duck",
-            "landing": "CharacterArmature|Jump_Land",
-            "standing": "CharacterArmature|Idle",
-            "talk": "CharacterArmature|Idle",
-        }
-    },
-    "fox": {
-        "glb": "fox.glb",
-        "action_map": {
-            "walk": "Walk",
-            "run": "Run",
-            "survey": "Survey",
-            "idle": "Survey",
-            "standing": "Survey",
-            "talk": "Survey",
-        }
-    }
-}
+# Load character registry from JSON file
+def _load_character_registry():
+    registry_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+        "character_registry.json"
+    )
+    if os.path.exists(registry_path):
+        with open(registry_path, "r") as f:
+            raw = json.load(f)
+        # Convert to internal format: {"name": {"glb": ..., "action_map": ...}}
+        registry = {}
+        for key, val in raw.items():
+            registry[key] = {
+                "glb": val.get("model", "humanoid.glb"),
+                "action_map": val.get("action_map", {}),
+            }
+        return registry
+    return {"humanoid": {"glb": "humanoid.glb", "action_map": {}}}
+
+CHARACTER_REGISTRY = _load_character_registry()
 
 
 class BlenderVideoRenderer(VideoRenderer):
