@@ -8,43 +8,29 @@ Detects scenes, locations, characters, actions, moods, and camera suggestions.
 import re
 from typing import Dict, Any, List
 
-# Map actions to camera suggestions
-CAMERA_MAP = {
-    "walk": "wide_shot",
-    "run": "tracking_shot",
-    "jump": "low_angle",
-    "attack": "close_up",
-    "wave": "medium_shot",
-    "idle": "wide_shot",
-    "enter": "tracking_shot",
-    "discover": "medium_shot",
-    "say": "close_up",
-    "talk": "close_up",
-    "stand": "wide_shot"
+# Expanded synonym mapping from verbs to standard animation action keys
+ACTION_SYNONYMS = {
+    "walk": ["walk", "walks", "walking", "travel", "travels", "travelling", "traveling", "wander", "wandering", "wanders", "march", "marching", "marches", "journey", "journeying", "stroll", "strolling", "strolls", "move", "moving", "moves", "approach", "approaches", "approaching", "trek", "treks", "trekking"],
+    "run": ["run", "runs", "running", "sprint", "sprints", "sprinting", "charge", "charges", "charging", "rush", "rushes", "rushing", "dash", "dashing", "dashes", "flee", "fleeing", "flees", "escape", "escaping", "escapes"],
+    "jump": ["jump", "jumps", "jumping", "leap", "leaps", "leaping", "bound", "bounding", "bounds", "vault", "vaulting", "hop", "hopping", "hops"],
+    "attack": ["attack", "attacks", "attacking", "fight", "fights", "fighting", "strike", "strikes", "striking", "slash", "slashes", "slashing", "swing", "swings", "swinging", "hit", "hits", "hitting", "smash", "smashes", "smashing", "punch", "punches", "punching", "kick", "kicks", "kicking", "battle", "battles", "battling"],
+    "wave": ["wave", "waves", "waving", "greet", "greets", "greeting", "salute", "saluting", "salutes", "gesture", "gesturing", "gestures"],
+    "duck": ["duck", "ducks", "ducking", "crouch", "crouching", "crouches", "dodge", "dodging", "dodges", "cower", "cowering", "cowers", "hide", "hiding", "hides"],
+    "enter": ["enter", "enters", "entering", "penetrate", "penetrating", "go inside", "goes inside", "cross", "crosses", "crossing"],
+    "discover": ["discover", "discovers", "discovering", "find", "finds", "finding", "see", "sees", "seeing", "spot", "spots", "spotting", "notice", "notices", "noticing", "locate", "locating", "locates"],
+    "idle": ["idle", "idles", "idling", "stand", "stands", "standing", "wait", "waits", "waiting", "pause", "pauses", "pausing", "stop", "stops", "stopping", "stay", "stays", "staying", "rest", "rests", "resting", "sit", "sits", "sitting"],
+    "talk": ["talk", "talks", "talking", "say", "says", "saying", "speak", "speaks", "speaking", "tell", "tells", "telling", "whisper", "whispers", "whispering", "shout", "shouts", "shouting", "yell", "yells", "yelling", "scream", "screams", "screaming", "converse", "conversing", "chat", "chats", "chatting"]
 }
 
-# Map keywords/locations/actions to moods
-MOOD_MAP = {
-    "dark": "mysterious",
-    "forest": "mysterious",
-    "castle": "mysterious",
-    "ruins": "mysterious",
-    "mountain": "epic",
-    "storm": "epic",
-    "lightning": "epic",
-    "carefully": "tense",
-    "quietly": "tense",
-    "scared": "tense",
-    "cautious": "tense",
-    "attack": "aggressive",
-    "fight": "aggressive",
-    "battle": "aggressive",
-    "smash": "aggressive",
-    "wave": "cheerful",
-    "victory": "triumphant",
-    "triumph": "triumphant",
-    "land": "dramatic",
-    "impact": "dramatic"
+# Rich emotional state mapping to storyboard moods
+EMOTION_MAP = {
+    "sad": ["sad", "sadly", "lonely", "sorrowful", "depressed", "unhappy", "grief", "mournful", "faith"],
+    "aggressive": ["angry", "angrily", "furious", "furiously", "rage", "mad", "attack", "fight", "battle", "smash"],
+    "cheerful": ["happy", "happily", "cheerful", "cheerfully", "joyful", "joyfully", "excited", "excitedly", "wave", "greet"],
+    "tense": ["scared", "fearful", "terrified", "frightened", "afraid", "tense", "tensely", "nervous", "carefully", "quietly", "cautious", "cautiously"],
+    "triumphant": ["proud", "proudly", "triumphant", "triumphant", "victory", "victorious", "triumph"],
+    "mysterious": ["dark", "forest", "castle", "ruins", "shadow", "shadowy", "ancient"],
+    "epic": ["mountain", "storm", "lightning", "glacier", "abyss"]
 }
 
 # Prepositions and markers for location extraction
@@ -57,12 +43,43 @@ LOCATION_PREPOSITIONS = [
 # Verbs/actions that can precede location direct objects
 LOCATION_VERBS = ["discovers", "enters", "approaches", "reaches", "explores", "sees", "visits"]
 
-# Known characters in the system
-KNOWN_CHARACTERS = ["anime_girl", "anime_boy", "knight", "mage", "robot", "humanoid", "fox", "thor", "tony stark", "hulk", "hero"]
+import json
+import os
+
+def load_known_characters() -> List[str]:
+    # Hardcoded defaults
+    chars = ["anime_girl", "anime_boy", "knight", "mage", "robot", "humanoid", "fox", "thor", "tony stark", "hulk", "hero"]
+    
+    # Try loading from character_registry.json
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    char_reg_path = os.path.join(project_dir, "character_registry.json")
+    if os.path.exists(char_reg_path):
+        try:
+            with open(char_reg_path, "r") as f:
+                data = json.load(f)
+                for key in data.keys():
+                    if key not in chars:
+                        chars.append(key)
+        except: pass
+        
+    # Try loading from asset_registry.json
+    asset_reg_path = os.path.join(project_dir, "asset_registry.json")
+    if os.path.exists(asset_reg_path):
+        try:
+            with open(asset_reg_path, "r") as f:
+                data = json.load(f)
+                for key, val in data.items():
+                    if val.get("type") == "character" and key not in chars:
+                        chars.append(key)
+        except: pass
+        
+    return chars
+
+KNOWN_CHARACTERS = load_known_characters()
 
 def parse_script_to_storyboard(script: str, default_character: str = "humanoid") -> Dict[str, Any]:
     """
-    Parse a raw script into a structured storyboard dictionary.
+    Parse a raw script into a structured storyboard dictionary with semantic understanding.
     """
     sentences = []
     # Split by sentence endings (. ! ?)
@@ -137,22 +154,26 @@ def parse_script_to_storyboard(script: str, default_character: str = "humanoid")
         if detected_loc:
             current_location = detected_loc
             
-        # 3. Detect action
+        # 3. Detect action using priority-based synonym mapping
         detected_action = "idle"
-        action_keywords = ["walk", "run", "jump", "attack", "wave", "duck", "enter", "discover", "stand", "say", "talk", "speak"]
-        for act in action_keywords:
-            if act in sentence_lower:
-                # normalize common synonyms
-                if act in ["say", "talk", "speak"]:
-                    detected_action = "talk"
-                elif act == "stand":
-                    detected_action = "idle"
-                else:
-                    detected_action = act
+        words_in_sentence = re.findall(r'\b[a-z]+\b', sentence_lower)
+        
+        # Priority order: combat/gestures -> interaction -> locomotion -> resting
+        action_priority = ["attack", "jump", "duck", "wave", "enter", "discover", "talk", "run", "walk", "idle"]
+        
+        found_action = False
+        for action_key in action_priority:
+            synonyms = ACTION_SYNONYMS[action_key]
+            for syn in synonyms:
+                if syn in words_in_sentence:
+                    detected_action = action_key
+                    found_action = True
+                    break
+            if found_action:
                 break
                 
         # 4. Detect camera suggestion
-        detected_camera = CAMERA_MAP.get(detected_action, "wide_shot")
+        detected_camera = "wide_shot"
         if "close-up" in sentence_lower or "closeup" in sentence_lower or "close up" in sentence_lower or "face" in sentence_lower or "expression" in sentence_lower:
             detected_camera = "close_up"
         elif "establishing" in sentence_lower or "panorama" in sentence_lower:
@@ -163,14 +184,44 @@ def parse_script_to_storyboard(script: str, default_character: str = "humanoid")
             detected_camera = "wide_shot"
         elif "tracking" in sentence_lower or "track" in sentence_lower or "follow" in sentence_lower:
             detected_camera = "tracking_shot"
+        else:
+            # Action fallback
+            if detected_action in ["walk", "idle"]:
+                detected_camera = "wide_shot"
+            elif detected_action in ["run", "enter"]:
+                detected_camera = "tracking_shot"
+            elif detected_action in ["attack", "talk"]:
+                detected_camera = "close_up"
+            elif detected_action in ["wave", "discover"]:
+                detected_camera = "medium_shot"
             
-        # 5. Detect mood
+        # 5. Detect mood/emotion
         detected_mood = "neutral"
-        for kw, md in MOOD_MAP.items():
-            if kw in sentence_lower:
-                detected_mood = md
+        
+        def is_mood_match(kw: str, word: str) -> bool:
+            if kw == word:
+                return True
+            if word == kw + "s" or word == kw + "es" or word == kw + "ly":
+                return True
+            if kw == word + "s" or kw == word + "es" or kw == word + "ly":
+                return True
+            return False
+
+        for mood_key, keywords in EMOTION_MAP.items():
+            for kw in keywords:
+                if any(is_mood_match(kw, w) for w in words_in_sentence):
+                    detected_mood = mood_key
+                    break
+            if detected_mood != "neutral":
                 break
                 
+        # 6. Adverb/Speed Modifiers detection
+        speed_modifier = "normal"
+        if "slowly" in sentence_lower or "calmly" in sentence_lower or "leisurely" in sentence_lower:
+            speed_modifier = "slow"
+        elif "quickly" in sentence_lower or "rapidly" in sentence_lower or "hastily" in sentence_lower or "hurriedly" in sentence_lower:
+            speed_modifier = "fast"
+            
         # Standardize naming to match character registration IDs
         char_id = current_character.lower().replace(" ", "_")
         
@@ -179,7 +230,8 @@ def parse_script_to_storyboard(script: str, default_character: str = "humanoid")
             "character": char_id,
             "action": detected_action,
             "camera": detected_camera,
-            "mood": detected_mood
+            "mood": detected_mood,
+            "speed": speed_modifier
         })
         
     return {"scenes": scenes}

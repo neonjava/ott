@@ -148,6 +148,19 @@ class BlenderVideoRenderer(VideoRenderer):
                 state_data = json.load(f)
                 start_location = state_data.get("end_location", [0.0, 0.0, 0.0])
 
+        # Update/Get Visual Continuity state
+        from continuity_engine_v2 import ContinuityEngineV2
+        continuity = ContinuityEngineV2(os.path.join(self.project_dir, "continuity_state.json"))
+        
+        # Build plan dict for continuity engine
+        plan_dict = {
+            "location": plan.location or "environment",
+            "character_name": plan.character_name or "humanoid",
+            "action": plan.action or "idle",
+            "description": getattr(plan, "visual_description", "") or getattr(plan, "narration", "") or ""
+        }
+        visual_state = continuity.process_scene(plan_dict, plan.scene_number)
+
         # Build render payload
         payload = {
             "character_name": (plan.character_name or "humanoid").lower().replace(" ", "_"),
@@ -159,7 +172,13 @@ class BlenderVideoRenderer(VideoRenderer):
             "duration": plan.duration or 4.0,
             "output_path": os.path.abspath(output_path),
             "start_location": start_location,
-            "state_file_path": state_path
+            "state_file_path": state_path,
+            
+            # Advanced Visual Continuity state keys
+            "held_item": visual_state.get("held_item"),
+            "weather": visual_state.get("weather"),
+            "outfits": visual_state.get("outfits"),
+            "environment_props": visual_state.get("environment_props")
         }
 
         # Write payload JSON for logging

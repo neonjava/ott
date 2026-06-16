@@ -52,6 +52,123 @@ def init_blender_env():
     
     print("[BlenderDaemon] Initialization complete.")
 
+def customize_character(character_name: str, held_item: str = None):
+    if not bpy: return
+    name_clean = character_name.lower().replace(" ", "_")
+    print(f"[BlenderDaemon] Customizing character meshes and materials for: {name_clean}")
+    
+    # Define color mappings for each character type
+    char_styles = {
+        "knight": {
+            "Skin": (0.6, 0.6, 0.65, 1.0),
+            "Character_Main": (0.7, 0.7, 0.75, 1.0), # silver steel armor
+            "Pants": (0.25, 0.25, 0.3, 1.0),
+            "ShoulderPads": True,
+            "scale": (1.1, 1.1, 1.1)
+        },
+        "mage": {
+            "Skin": (0.95, 0.8, 0.7, 1.0),
+            "Character_Main": (0.3, 0.1, 0.5, 1.0), # royal purple robes
+            "Pants": (0.15, 0.08, 0.25, 1.0),
+            "ShoulderPads": False,
+            "scale": (0.95, 0.95, 0.95)
+        },
+        "robot": {
+            "Skin": (0.8, 0.8, 0.85, 1.0), # chrome skin
+            "Character_Main": (0.1, 0.15, 0.2, 1.0), # dark carbon body
+            "Pants": (0.05, 0.8, 0.95, 1.0), # glowing cyan accent
+            "ShoulderPads": True,
+            "scale": (1.05, 1.05, 1.05)
+        },
+        "anime_girl": {
+            "Skin": (0.98, 0.82, 0.75, 1.0), # peach skin
+            "Character_Main": (0.95, 0.3, 0.45, 1.0), # pink outfit
+            "Pants": (0.95, 0.95, 0.95, 1.0), # white pants
+            "ShoulderPads": False,
+            "scale": (0.9, 0.9, 0.9)
+        },
+        "anime_boy": {
+            "Skin": (0.98, 0.82, 0.75, 1.0), # peach skin
+            "Character_Main": (0.1, 0.3, 0.6, 1.0), # blue jacket
+            "Pants": (0.2, 0.2, 0.25, 1.0), # dark pants
+            "ShoulderPads": False,
+            "scale": (1.0, 1.0, 1.0)
+        },
+        "humanoid": {
+            "Skin": (0.9, 0.9, 0.9, 1.0),
+            "Character_Main": (0.5, 0.5, 0.5, 1.0),
+            "Pants": (0.3, 0.3, 0.3, 1.0),
+            "ShoulderPads": False,
+            "scale": (1.0, 1.0, 1.0)
+        }
+    }
+    
+    style = char_styles.get(name_clean, char_styles["humanoid"])
+    
+    # 1. Update materials
+    for mat_name in ["Skin", "Character_Main", "Pants"]:
+        mat = bpy.data.materials.get(mat_name)
+        if mat:
+            mat.use_nodes = False
+            mat.diffuse_color = style[mat_name]
+            
+    # Also color the shoulder pad material specifically if knight or robot
+    grey_mat = bpy.data.materials.get("Grey")
+    if grey_mat:
+        grey_mat.use_nodes = False
+        grey_mat.diffuse_color = style["Character_Main"]
+
+    # 2. Hide/Unhide Shoulder Pads
+    pads = ["ShoulderPad.L", "ShoulderPad.R"]
+    for pad_name in pads:
+        pad_obj = bpy.context.scene.objects.get(pad_name)
+        if pad_obj:
+            val = not style["ShoulderPads"]
+            pad_obj.hide_viewport = val
+            pad_obj.hide_render = val
+
+    # 3. Apply scale to armature
+    armature = None
+    for obj in bpy.context.scene.objects:
+        if obj.type == 'ARMATURE':
+            armature = obj
+            break
+    if armature:
+        armature.scale = style["scale"]
+        
+    # 4. Hide all weapon meshes built into the model by default
+    weapons = ["Revolver", "Sniper", "Revolver_Small", "Pistol", "SMG", "GrenadeLauncher", 
+               "ShortCannon", "Shotgun", "Sniper_2", "RocketLauncher", "AK", "Shovel", "Knife_2", "Knife_1"]
+    for w_name in weapons:
+        w_obj = bpy.context.scene.objects.get(w_name)
+        if w_obj:
+            w_obj.hide_viewport = True
+            w_obj.hide_render = True
+
+    # 5. Show matching held item if active
+    if held_item:
+        held_item_clean = held_item.lower()
+        if "shovel" in held_item_clean:
+            w_obj = bpy.context.scene.objects.get("Shovel")
+            if w_obj:
+                w_obj.hide_viewport = False
+                w_obj.hide_render = False
+        elif "knife" in held_item_clean:
+            w_obj = bpy.context.scene.objects.get("Knife_1")
+            if w_obj:
+                w_obj.hide_viewport = False
+                w_obj.hide_render = False
+        elif "gun" in held_item_clean or "pistol" in held_item_clean:
+            w_obj = bpy.context.scene.objects.get("Pistol")
+            if w_obj:
+                w_obj.hide_viewport = False
+                w_obj.hide_render = False
+        elif "rifle" in held_item_clean or "ak" in held_item_clean:
+            w_obj = bpy.context.scene.objects.get("AK")
+            if w_obj:
+                w_obj.hide_viewport = False
+                w_obj.hide_render = False
+
 class RenderHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/ping':
@@ -153,6 +270,14 @@ class RenderHandler(BaseHTTPRequestHandler):
                     build_environment_in_blender(env_config, start_location)
                 except Exception as env_err:
                     print(f"[BlenderDaemon] Failed to build environment: {env_err}")
+
+                # --- Character Customization ---
+                char_name = payload.get("character_name", payload.get("character", "humanoid"))
+                held_item = payload.get("held_item", None)
+                try:
+                    customize_character(char_name, held_item)
+                except Exception as char_err:
+                    print(f"[BlenderDaemon] Failed to customize character: {char_err}")
 
                 # Camera Framing offsets
                 camera_shot = payload.get("camera_shot", payload.get("camera", "wide_shot")).lower()
