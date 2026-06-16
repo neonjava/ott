@@ -17,15 +17,14 @@ except ImportError:
     math = None
     random = None
 
-# Keywords mapping location strings to the 8 initial environment types
 ENV_KEYWORDS = {
-    "forest": ["forest", "woods", "trees", "jungle", "grove", "woodland", "leaf", "leaves", "canopy"],
-    "castle": ["castle", "palace", "keep", "fortress", "dungeon", "tower", "chamber", "ruins", "stone", "throne"],
-    "village": ["village", "town", "market", "house", "street", "cottage", "yard", "classroom", "library", "school", "office"],
-    "cave": ["cave", "cavern", "tunnel", "mine", "abyss", "darkness", "underground"],
-    "beach": ["beach", "coast", "shore", "sand", "ocean", "sea", "lake", "water", "island"],
-    "mountain": ["mountain", "peak", "cliff", "hill", "slopes", "pass", "ridge", "snowy", "frozen", "ice"],
-    "city": ["city", "street", "highway", "factory", "warehouse", "laboratory", "station", "cafe", "hallway", "road", "lab"],
+    "forest": ["forest", "woods", "trees", "jungle", "grove", "woodland", "leaf", "leaves", "canopy", "rainforest"],
+    "castle": ["castle", "palace", "keep", "fortress", "dungeon", "tower", "chamber", "ruins", "stone", "throne", "kingdom", "royal", "court"],
+    "village": ["village", "town", "market", "house", "street", "cottage", "yard", "classroom", "library", "school", "office", "cabin", "shop", "blacksmith", "tavern"],
+    "cave": ["cave", "cavern", "tunnel", "mine", "abyss", "darkness", "underground", "passage", "subterranean"],
+    "beach": ["beach", "coast", "shore", "sand", "ocean", "sea", "lake", "water", "island", "reef", "coral", "beachfront", "beachside"],
+    "mountain": ["mountain", "peak", "cliff", "hill", "slopes", "pass", "ridge", "snowy", "frozen", "ice", "glacier"],
+    "city": ["city", "street", "highway", "factory", "warehouse", "laboratory", "station", "cafe", "hallway", "road", "lab", "subway"],
     "arena": ["arena", "stadium", "ring", "platform", "conveyor", "training", "field", "environment", "grid", "empty"]
 }
 
@@ -80,10 +79,26 @@ def get_environment_for_location(location_string: str) -> Dict[str, Any]:
     elif "street" in loc_words and "village" not in loc_words:
         selected_type = "city"
     else:
+        # Helper to match plural/singular and stem roots safely
+        def is_match(kw: str, word: str) -> bool:
+            if kw == word:
+                return True
+            # Plural form checks
+            if word == kw + "s" or word == kw + "es":
+                return True
+            if kw == word + "s" or kw == word + "es":
+                return True
+            # Simple y -> ies plural transition
+            if kw.endswith("y") and word == kw[:-1] + "ies":
+                return True
+            if word.endswith("y") and kw == word[:-1] + "ies":
+                return True
+            return False
+
         # Match keywords in location string to find environment type
         best_match_count = 0
         for env_type, keywords in ENV_KEYWORDS.items():
-            match_count = sum(1 for kw in keywords if kw in loc_words)
+            match_count = sum(1 for kw in keywords if any(is_match(kw, w) for w in loc_words))
             if match_count > best_match_count:
                 best_match_count = match_count
                 selected_type = env_type

@@ -9,7 +9,9 @@ import math
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 PORT = 5005
-CHARACTER_FILE = "PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender/assets/characters/humanoid.glb"
+DAEMON_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_DIR = os.path.dirname(os.path.dirname(DAEMON_DIR))
+CHARACTER_FILE = os.path.join(PROJECT_DIR, "assets", "characters", "humanoid.glb")
 
 def init_blender_env():
     print("[BlenderDaemon] Initializing persistent environment...")
@@ -143,9 +145,8 @@ class RenderHandler(BaseHTTPRequestHandler):
                 
                 # --- Environment Composition ---
                 location_str = payload.get("location", "environment")
-                project_dir = "PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender"
-                if project_dir not in sys.path:
-                    sys.path.append(project_dir)
+                if PROJECT_DIR not in sys.path:
+                    sys.path.append(PROJECT_DIR)
                 try:
                     from environment_director import get_environment_for_location, build_environment_in_blender
                     env_config = get_environment_for_location(location_str)
