@@ -258,6 +258,27 @@ def api_get_characters():
     return jsonify([])
 
 
+@app.route("/api/generate-storyboard", methods=["POST"])
+def api_generate_storyboard():
+    """Generates storyboard JSON from character and script."""
+    data = request.get_json() or {}
+    character = data.get("character", "humanoid")
+    script = data.get("script", "")
+    
+    if not script:
+        return jsonify({"error": "No script provided"}), 400
+        
+    try:
+        from storyboard_director import parse_script_to_storyboard
+        storyboard = parse_script_to_storyboard(script, character)
+        return jsonify({
+            "status": "success",
+            "storyboard": storyboard
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/api/generate-movie", methods=["POST"])
 def api_generate_movie():
     """Automated movie generation pipeline (Rule-Based, No LLM)."""
@@ -291,6 +312,18 @@ def api_generate_movie():
     generation_id = f"movie_{uuid.uuid4().hex[:8]}"
     update_execution_log(generation_id, "Starting automated movie generation...")
     
+    # Generate storyboard.json
+    try:
+        from storyboard_director import parse_script_to_storyboard
+        storyboard = parse_script_to_storyboard(script, character)
+        with open("storyboard.json", "w") as f:
+            json.dump(storyboard, f, indent=4)
+        sb_path = os.path.join(Config.VIDEO_DIR, f"{generation_id}_storyboard.json")
+        with open(sb_path, "w") as f:
+            json.dump(storyboard, f, indent=4)
+    except Exception as e:
+        update_execution_log(generation_id, f"Warning: Failed to generate storyboard.json: {e}")
+
     # 1. & 2. & 3. Parse script, extract scenes, determine actions
     try:
         scenes = scene_planner.plan_rule_based(script, character)
