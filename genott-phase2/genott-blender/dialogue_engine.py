@@ -132,9 +132,39 @@ def _extract_speaker(text: str) -> str:
     return "Hero"
 
 
-def get_voice_for_speaker(speaker: str) -> str:
+def get_voice_for_speaker(speaker: str, main_character: str = None) -> str:
     """Map a speaker name to a TTS voice profile."""
-    speaker_lower = speaker.lower()
+    speaker_lower = speaker.lower().strip()
+
+    # Load character registry dynamically to read voice profiles
+    import json
+    import os
+    registry_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "character_registry.json"
+    )
+    
+    registry = {}
+    if os.path.exists(registry_path):
+        try:
+            with open(registry_path, "r") as f:
+                registry = json.load(f)
+        except Exception:
+            pass
+
+    # If speaker is 'hero' and we have a main_character, treat speaker as main_character
+    target_char = speaker_lower
+    if speaker_lower == "hero" and main_character:
+        target_char = main_character.lower().strip()
+
+    # Look up target_char in registry
+    if target_char in registry:
+        return registry[target_char].get("voice", VOICE_PROFILES["default"])
+        
+    # Also check if target_char matches the name of any character in the registry
+    for key, val in registry.items():
+        if target_char == val.get("name", "").lower():
+            return val.get("voice", VOICE_PROFILES["default"])
 
     if "narrator" in speaker_lower:
         return VOICE_PROFILES["narrator"]
@@ -170,8 +200,10 @@ def generate_dialogue_timeline(script: str, character: str = "Hero") -> List[Dic
     for entry in raw_timeline:
         # Assign voice
         if entry["type"] == "dialogue":
-            speaker = entry.get("speaker", character)
-            voice = get_voice_for_speaker(speaker)
+            speaker = entry.get("speaker")
+            if not speaker or speaker.lower() == "hero":
+                speaker = character
+            voice = get_voice_for_speaker(speaker, main_character=character)
         else:
             voice = VOICE_PROFILES["narrator"]
             speaker = None
@@ -196,5 +228,6 @@ def generate_dialogue_timeline(script: str, character: str = "Hero") -> List[Dic
         text_lower = entry["text"].lower()
         if entry["type"] == "narration" and any(v in text_lower for v in ACTION_VERBS):
             scene_idx += 1
+
 
     return enriched
