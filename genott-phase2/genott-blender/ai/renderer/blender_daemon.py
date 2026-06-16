@@ -6,6 +6,7 @@ import time
 import shutil
 import subprocess
 import math
+from typing import List
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 PORT = 5005
@@ -52,10 +53,10 @@ def init_blender_env():
     
     print("[BlenderDaemon] Initialization complete.")
 
-def customize_character(character_name: str, held_item: str = None):
+def customize_character(character_name: str, held_item: str = None, outfits: List[str] = None):
     if not bpy: return
     name_clean = character_name.lower().replace(" ", "_")
-    print(f"[BlenderDaemon] Customizing character meshes and materials for: {name_clean}")
+    print(f"[BlenderDaemon] Customizing character meshes and materials for: {name_clean} (Outfits: {outfits})")
     
     # Define color mappings for each character type
     char_styles = {
@@ -168,6 +169,42 @@ def customize_character(character_name: str, held_item: str = None):
             if w_obj:
                 w_obj.hide_viewport = False
                 w_obj.hide_render = False
+
+    # 6. Apply outfits material/mesh modifications
+    if outfits:
+        from typing import List
+        for outfit in outfits:
+            outfit_clean = outfit.lower().strip()
+            if outfit_clean == "helmet":
+                head_mat = bpy.data.materials.get("Skin")
+                if head_mat:
+                    head_mat.use_nodes = False
+                    head_mat.diffuse_color = (0.85, 0.72, 0.2, 1.0) # gold helmet
+            elif outfit_clean == "armor":
+                for pad_name in ["ShoulderPad.L", "ShoulderPad.R"]:
+                    pad_obj = bpy.context.scene.objects.get(pad_name)
+                    if pad_obj:
+                        pad_obj.hide_viewport = False
+                        pad_obj.hide_render = False
+                main_mat = bpy.data.materials.get("Character_Main")
+                if main_mat:
+                    main_mat.use_nodes = False
+                    main_mat.diffuse_color = (0.42, 0.45, 0.5, 1.0) # steel armor
+            elif outfit_clean == "crown":
+                head_mat = bpy.data.materials.get("Skin")
+                if head_mat:
+                    head_mat.use_nodes = False
+                    head_mat.diffuse_color = (0.95, 0.8, 0.1, 1.0) # golden crown
+            elif outfit_clean == "cloak":
+                pants_mat = bpy.data.materials.get("Pants")
+                if pants_mat:
+                    pants_mat.use_nodes = False
+                    pants_mat.diffuse_color = (0.55, 0.08, 0.08, 1.0) # royal red cloak
+            elif outfit_clean == "boots":
+                pants_mat = bpy.data.materials.get("Pants")
+                if pants_mat:
+                    pants_mat.use_nodes = False
+                    pants_mat.diffuse_color = (0.22, 0.15, 0.1, 1.0) # dark brown boots
 
 def apply_emotion_posture(armature, mood: str, f_start: int, f_end: int):
     if not armature: return
@@ -371,15 +408,18 @@ class RenderHandler(BaseHTTPRequestHandler):
                 try:
                     from environment_director import get_environment_for_location, build_environment_in_blender
                     env_config = get_environment_for_location(location_str)
-                    build_environment_in_blender(env_config, start_location)
+                    weather_str = payload.get("weather", "clear")
+                    props_list = payload.get("environment_props", [])
+                    build_environment_in_blender(env_config, start_location, weather_str, props_list)
                 except Exception as env_err:
                     print(f"[BlenderDaemon] Failed to build environment: {env_err}")
 
                 # --- Character Customization ---
                 char_name = payload.get("character_name", payload.get("character", "humanoid"))
                 held_item = payload.get("held_item", None)
+                outfits_list = payload.get("outfits", [])
                 try:
-                    customize_character(char_name, held_item)
+                    customize_character(char_name, held_item, outfits_list)
                 except Exception as char_err:
                     print(f"[BlenderDaemon] Failed to customize character: {char_err}")
 

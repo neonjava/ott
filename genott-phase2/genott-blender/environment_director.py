@@ -137,7 +137,7 @@ def create_colored_material(name: str, color_key: str):
     mat.diffuse_color = rgba
     return mat
 
-def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0, 0)):
+def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0, 0), weather: str = "clear", environment_props: List[str] = None):
     """
     Blender Scene Builder integration.
     Configures terrain, sky, lighting, atmosphere, and places primitive asset structures.
@@ -147,7 +147,7 @@ def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0
         return
         
     env_type = env_config.get("environment_type", "arena")
-    print(f"[EnvironmentDirector] Building '{env_type}' environment in Blender...")
+    print(f"[EnvironmentDirector] Building '{env_type}' environment in Blender (Weather: {weather}, Props: {environment_props})...")
     
     # Clear old environment meshes & lights (keep armature and camera)
     objs_to_delete = []
@@ -276,6 +276,15 @@ def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0
 
     # 4. CONFIGURE ATMOSPHERE
     atmosphere_type = env_config.get("atmosphere", "clear")
+    # Override atmosphere if weather requires it
+    weather_clean = weather.lower().strip()
+    if weather_clean in ["fog", "mist"]:
+        atmosphere_type = "white_mist"
+    elif weather_clean == "darkness":
+        atmosphere_type = "darkness"
+    elif weather_clean in ["storm", "rain", "snow"]:
+        atmosphere_type = "shadowy"
+        
     if bg_node:
         if atmosphere_type == "green_fog":
             bg_node.inputs['Strength'].default_value = 0.8
@@ -389,6 +398,122 @@ def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0
             fence = bpy.context.active_object
             if stone_mat: fence.data.materials.append(stone_mat)
             
+    # 6. SPAWN WEATHER EFFECTS
+    try:
+        spawn_weather_effects(weather, character_pos)
+    except Exception as w_err:
+        print(f"[EnvironmentDirector] Failed to spawn weather: {w_err}")
+        
+    # 7. SPAWN ENVIRONMENT PROPS
+    if environment_props:
+        try:
+            spawn_environment_props(environment_props, character_pos)
+        except Exception as p_err:
+            print(f"[EnvironmentDirector] Failed to spawn props: {p_err}")
+
     # Force viewport/dependency graph updates to ensure visual changes register
     bpy.context.view_layer.update()
     print("[EnvironmentDirector] Environment successfully built.")
+
+def spawn_weather_effects(weather_type: str, character_pos=(0, 0, 0)):
+    if not bpy: return
+    weather_clean = weather_type.lower().strip()
+    
+    if weather_clean in ["rain", "storm"]:
+        print("[EnvironmentDirector] Spawning procedural rain particles...")
+        rain_mat = create_colored_material("RainMat", "ocean_blue")
+        for i in range(80):
+            rx = character_pos[0] + random.uniform(-6.0, 6.0)
+            ry = character_pos[1] + random.uniform(-8.0, 8.0)
+            rz = character_pos[2] + random.uniform(0.2, 5.0)
+            bpy.ops.mesh.primitive_cylinder_add(radius=0.008, depth=0.25, location=(rx, ry, rz))
+            drop = bpy.context.active_object
+            drop.name = f"RainDrop_{i}"
+            if rain_mat:
+                drop.data.materials.append(rain_mat)
+                
+    elif weather_clean == "snow":
+        print("[EnvironmentDirector] Spawning procedural snow particles...")
+        snow_mat = create_colored_material("SnowMat", "snowy_rock")
+        for i in range(80):
+            rx = character_pos[0] + random.uniform(-6.0, 6.0)
+            ry = character_pos[1] + random.uniform(-8.0, 8.0)
+            rz = character_pos[2] + random.uniform(0.2, 5.0)
+            bpy.ops.mesh.primitive_cube_add(size=0.025, location=(rx, ry, rz))
+            flake = bpy.context.active_object
+            flake.name = f"SnowFlake_{i}"
+            if snow_mat:
+                flake.data.materials.append(snow_mat)
+
+def spawn_environment_props(props: List[str], character_pos=(0, 0, 0)):
+    if not bpy: return
+    if not props: return
+    
+    print(f"[EnvironmentDirector] Spawning environment props: {props}")
+    
+    trunk_mat = create_colored_material("TrunkMat", "trunk_brown")
+    stone_mat = create_colored_material("StoneMat", "dark_stone")
+    roof_mat = create_colored_material("RoofMat", "roof_red")
+    sand_mat = create_colored_material("SandMat", "yellow_sand")
+    
+    for idx, prop in enumerate(props):
+        prop_clean = prop.lower().strip()
+        if prop_clean == "campfire":
+            # Spawn logs
+            for i in range(3):
+                rot = (0, math.radians(90), i * math.radians(60))
+                loc = (character_pos[0], character_pos[1] - 1.8, 0.05)
+                bpy.ops.mesh.primitive_cylinder_add(radius=0.06, depth=0.6, location=loc, rotation=rot)
+                log = bpy.context.active_object
+                log.name = f"CampfireLog_{idx}_{i}"
+                if trunk_mat: log.data.materials.append(trunk_mat)
+            # Spawn fire light
+            light_data = bpy.data.lights.new(name="FireLight", type='POINT')
+            light_data.energy = 45.0
+            light_data.color = (1.0, 0.45, 0.05)
+            light_obj = bpy.data.objects.new(name=f"FireLight_{idx}", object_data=light_data)
+            bpy.context.collection.objects.link(light_obj)
+            light_obj.location = (character_pos[0], character_pos[1] - 1.8, 0.3)
+            
+        elif prop_clean == "chest":
+            loc = (character_pos[0] + 1.4, character_pos[1] - 1.0, 0.2)
+            bpy.ops.mesh.primitive_cube_add(size=0.4, location=loc)
+            chest = bpy.context.active_object
+            chest.name = f"Chest_{idx}"
+            chest.scale = (1.2, 0.7, 0.7)
+            if sand_mat: chest.data.materials.append(sand_mat)
+            
+        elif prop_clean == "table":
+            loc = (character_pos[0] - 1.4, character_pos[1] - 1.2, 0.35)
+            # Table top
+            bpy.ops.mesh.primitive_cube_add(size=0.8, location=loc)
+            table = bpy.context.active_object
+            table.name = f"TableTop_{idx}"
+            table.scale = (1.2, 0.8, 0.1)
+            if trunk_mat: table.data.materials.append(trunk_mat)
+            # Leg
+            bpy.ops.mesh.primitive_cylinder_add(radius=0.08, depth=0.7, location=(loc[0], loc[1], 0.35))
+            leg = bpy.context.active_object
+            leg.name = f"TableLeg_{idx}"
+            if trunk_mat: leg.data.materials.append(trunk_mat)
+            
+        elif prop_clean == "crate":
+            loc = (character_pos[0] + 1.6, character_pos[1] - 2.2, 0.25)
+            bpy.ops.mesh.primitive_cube_add(size=0.5, location=loc)
+            crate = bpy.context.active_object
+            crate.name = f"Crate_{idx}"
+            if trunk_mat: crate.data.materials.append(trunk_mat)
+            
+        elif prop_clean == "barrel":
+            loc = (character_pos[0] - 1.6, character_pos[1] - 2.2, 0.3)
+            bpy.ops.mesh.primitive_cylinder_add(radius=0.2, depth=0.6, location=loc)
+            barrel = bpy.context.active_object
+            barrel.name = f"Barrel_{idx}"
+            if trunk_mat: barrel.data.materials.append(trunk_mat)
+            
+        elif prop_clean == "tent":
+            loc = (character_pos[0] - 2.8, character_pos[1] - 3.5, 1.0)
+            bpy.ops.mesh.primitive_cone_add(radius=1.8, depth=2.0, location=loc)
+            tent = bpy.context.active_object
+            tent.name = f"Tent_{idx}"
+            if roof_mat: tent.data.materials.append(roof_mat)
