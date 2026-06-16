@@ -494,7 +494,8 @@ def generate_avatar_video_route():
                 camera_shot=camera_shot,
                 duration=4.0,
                 dialogue=DialogueLine(char_name, dialogue_text, voice) if dialogue_text else None,
-                narration=narration_text if not dialogue_text else None
+                narration=narration_text if not dialogue_text else None,
+                mood=scene.get("mood") or "neutral"
             )
 
             # 1. Voice Synthesis Pipeline

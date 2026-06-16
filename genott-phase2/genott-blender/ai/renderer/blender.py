@@ -173,6 +173,7 @@ class BlenderVideoRenderer(VideoRenderer):
             "output_path": os.path.abspath(output_path),
             "start_location": start_location,
             "state_file_path": state_path,
+            "mood": getattr(plan, "mood", "neutral"),
             
             # Advanced Visual Continuity state keys
             "held_item": visual_state.get("held_item"),

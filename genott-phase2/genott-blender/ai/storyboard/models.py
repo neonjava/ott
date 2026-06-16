@@ -19,3 +19,5 @@ class ScenePlan:
     dialogue: Optional[DialogueLine] = None
     narration: Optional[str] = None
     visual_description: str = ""
+    mood: Optional[str] = "neutral"
+

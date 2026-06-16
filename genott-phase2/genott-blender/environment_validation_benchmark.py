@@ -130,7 +130,8 @@ def main():
             location=loc,
             action="walk",
             camera_shot="cinematic wide",
-            duration=1.0 # short duration to speed up validation
+            duration=1.0, # short duration to speed up validation
+            mood="neutral"
         )
         
         render_ok = False

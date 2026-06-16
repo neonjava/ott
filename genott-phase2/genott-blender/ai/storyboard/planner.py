@@ -273,6 +273,7 @@ class ScenePlanner:
                 duration=duration,
                 dialogue=scene_diag,
                 narration=scene_narration,
+                mood=sb_scene.get("mood") or "neutral"
             )
             plans.append(plan)
             
@@ -314,7 +315,8 @@ class ScenePlanner:
                 camera_shot=item.get("camera_shot", "cinematic wide"),
                 duration=float(item.get("duration", 5.0)),
                 dialogue=dialogue,
-                narration=item.get("narration")
+                narration=item.get("narration"),
+                mood=item.get("mood") or "neutral"
             )
             plans.append(plan)
         return plans

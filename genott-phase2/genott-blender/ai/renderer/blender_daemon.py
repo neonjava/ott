@@ -169,6 +169,85 @@ def customize_character(character_name: str, held_item: str = None):
                 w_obj.hide_viewport = False
                 w_obj.hide_render = False
 
+def apply_emotion_posture(armature, mood: str, f_start: int, f_end: int):
+    if not armature: return
+    mood_clean = mood.lower().strip()
+    
+    # Define rotation offsets for each mood (Euler in radians)
+    mood_styles = {
+        "sad": {
+            "Shoulder.L": (0.0, -0.2, 0.1),
+            "Shoulder.R": (0.0, 0.2, -0.1),
+            "Neck": (0.2, 0.0, 0.0),
+            "Head": (0.1, 0.0, 0.0),
+            "Torso": (0.1, 0.0, 0.0)
+        },
+        "aggressive": {
+            "Shoulder.L": (0.0, 0.1, -0.1),
+            "Shoulder.R": (0.0, -0.1, 0.1),
+            "Neck": (0.25, 0.0, 0.0),
+            "Head": (-0.1, 0.0, 0.0),
+            "Torso": (0.15, 0.0, 0.0)
+        },
+        "cheerful": {
+            "Neck": (-0.1, 0.0, 0.0),
+            "Head": (-0.1, 0.1, 0.0),
+            "Torso": (-0.05, 0.0, 0.0)
+        },
+        "tense": {
+            "Shoulder.L": (0.0, 0.3, 0.0),
+            "Shoulder.R": (0.0, -0.3, 0.0),
+            "Neck": (0.1, 0.0, 0.0),
+            "Head": (0.05, 0.0, 0.0)
+        },
+        "triumphant": {
+            "Neck": (-0.15, 0.0, 0.0),
+            "Head": (-0.1, 0.0, 0.0),
+            "Torso": (-0.1, 0.0, 0.0)
+        }
+    }
+    
+    if mood_clean not in mood_styles:
+        return
+        
+    rotations = mood_styles[mood_clean]
+    
+    # Create or clean temporary action for this mood posture
+    action_name = f"TempPosture_{mood_clean}"
+    old_act = bpy.data.actions.get(action_name)
+    if old_act:
+        bpy.data.actions.remove(old_act)
+        
+    posture_action = bpy.data.actions.new(name=action_name)
+    
+    # Temporarily set active action to write keyframes
+    armature.animation_data.action = posture_action
+    
+    # Reset pose bones to default before posing, to ensure we keyframe only the offset
+    for bone_name in rotations.keys():
+        pb = armature.pose.bones.get(bone_name)
+        if pb:
+            pb.rotation_euler = (0.0, 0.0, 0.0)
+            
+    # Apply and keyframe rotations
+    for bone_name, rot_offset in rotations.items():
+        pb = armature.pose.bones.get(bone_name)
+        if pb:
+            pb.rotation_mode = 'XYZ'
+            pb.rotation_euler = rot_offset
+            pb.keyframe_insert(data_path="rotation_euler", frame=f_start)
+            
+    # Restore armature active action to None (so NLA takes precedence)
+    armature.animation_data.action = None
+    
+    # Add posture action as NLA strip
+    track_posture = armature.animation_data.nla_tracks.new()
+    track_posture.name = f"Posture_{mood_clean}_Track"
+    strip = track_posture.strips.new(f"Posture_{mood_clean}", f_start, posture_action)
+    strip.frame_end = f_end
+    strip.blend_type = 'ADD'
+    strip.extrapolation = 'HOLD'
+
 class RenderHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/ping':
@@ -202,6 +281,13 @@ class RenderHandler(BaseHTTPRequestHandler):
                 if armature and not armature.animation_data:
                     armature.animation_data_create()
                     
+                # Reset all pose bones to default state to avoid posture leak/accumulation
+                if armature:
+                    for pb in armature.pose.bones:
+                        pb.rotation_euler = (0.0, 0.0, 0.0)
+                        pb.location = (0.0, 0.0, 0.0)
+                        pb.scale = (1.0, 1.0, 1.0)
+                        
                 # Assign action
                 mapped_action = f"CharacterArmature|{action_name.capitalize()}"
                 if "run" in action_name: mapped_action = "CharacterArmature|Run"
@@ -214,9 +300,6 @@ class RenderHandler(BaseHTTPRequestHandler):
                 if not selected_action:
                     selected_action = bpy.data.actions.get("CharacterArmature|Idle")
                     
-                if armature and selected_action:
-                    armature.animation_data.action = selected_action
-                    
                 # Frame range
                 fps = 12
                 if selected_action:
@@ -228,6 +311,27 @@ class RenderHandler(BaseHTTPRequestHandler):
                     
                 bpy.context.scene.frame_start = f_start
                 bpy.context.scene.frame_end = f_end
+                
+                # Clear active action and existing NLA tracks
+                if armature:
+                    armature.animation_data.action = None
+                    while armature.animation_data.nla_tracks:
+                        armature.animation_data.nla_tracks.remove(armature.animation_data.nla_tracks[0])
+                        
+                # Setup Base NLA Track
+                if armature and selected_action:
+                    track_base = armature.animation_data.nla_tracks.new()
+                    track_base.name = "Base_Track"
+                    strip_base = track_base.strips.new("BaseAnimation", f_start, selected_action)
+                    strip_base.frame_end = f_end
+                    
+                # Apply custom emotional posture
+                mood_str = payload.get("mood", "neutral")
+                if armature:
+                    try:
+                        apply_emotion_posture(armature, mood_str, f_start, f_end)
+                    except Exception as mood_err:
+                        print(f"[BlenderDaemon] Failed to apply posture: {mood_err}")
                 
                 # Camera framing
                 camera = None
