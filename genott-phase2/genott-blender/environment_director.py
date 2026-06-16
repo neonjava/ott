@@ -19,7 +19,7 @@ except ImportError:
 
 # Keywords mapping location strings to the 8 initial environment types
 ENV_KEYWORDS = {
-    "forest": ["forest", "woods", "trees", "jungle", "grove", "woodland"],
+    "forest": ["forest", "woods", "trees", "jungle", "grove", "woodland", "leaf", "leaves", "canopy"],
     "castle": ["castle", "palace", "keep", "fortress", "dungeon", "tower", "chamber", "ruins", "stone", "throne"],
     "village": ["village", "town", "market", "house", "street", "cottage", "yard", "classroom", "library", "school", "office"],
     "cave": ["cave", "cavern", "tunnel", "mine", "abyss", "darkness", "underground"],
