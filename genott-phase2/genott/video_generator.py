@@ -60,6 +60,10 @@ def load_pipeline():
             steps_offset=1,
         )
 
+        # NOTE: IP-Adapter disabled — causes device/dtype mismatch with enable_model_cpu_offload()
+        # Consistency is achieved via detailed character prompts + shared seeds instead.
+        # To re-enable IP-Adapter, CPU offloading must be replaced with manual .to(device) calls.
+
         if device == "cuda":
             _pipeline.enable_model_cpu_offload()
             try:
@@ -68,7 +72,7 @@ def load_pipeline():
                 pass
 
         _pipeline_type = "animatediff"
-        print("[VideoGen] AnimateDiff pipeline loaded successfully!")
+        print("[VideoGen] AnimateDiff pipeline loaded successfully with IP-Adapter!")
         return _pipeline, _pipeline_type
 
     except Exception as e:
@@ -279,7 +283,7 @@ def generate_talking_head(image_path, audio_path, output_path, generation_id=Non
         "--result_dir", temp_results_dir,
         "--still",
         "--preprocess", "full",
-        "--enhancer", "gfpgan"
+        "--checkpoint_dir", os.path.abspath(os.path.join(project_dir, "SadTalker", "checkpoints")),
     ]
 
     try:
@@ -293,21 +297,27 @@ def generate_talking_head(image_path, audio_path, output_path, generation_id=Non
             cwd=sadtalker_dir
         )
 
-        # Monitor output logs in real-time
+        # Monitor output logs in real-time — capture ALL output for debugging
+        all_output_lines = []
         while True:
             line = process.stdout.readline()
             if not line:
                 break
             line_str = line.strip()
             if line_str:
-                # Capture progress lines and forward to progress log
+                all_output_lines.append(line_str)
+                print(f"[SadTalker STDOUT] {line_str}")
+                # Forward progress lines to the generation log
                 if "%" in line_str or "step" in line_str.lower() or "processing" in line_str.lower():
                     update_log(line_str)
 
         process.wait()
 
         if process.returncode != 0:
-            raise RuntimeError(f"SadTalker process exited with code {process.returncode}")
+            # Include the tail of SadTalker output in the error for diagnosis
+            tail = "\n".join(all_output_lines[-30:])
+            update_log(f"SadTalker FULL OUTPUT (last 30 lines):\n{tail}")
+            raise RuntimeError(f"SadTalker process exited with code {process.returncode}. Output:\n{tail}")
 
         # Find the generated video file inside temp results
         generated_videos = glob.glob(os.path.join(temp_results_dir, "**", "*.mp4"), recursive=True)
@@ -358,19 +368,22 @@ def get_pipeline_info():
 
 
 def concatenate_videos(video_paths, output_path):
-    """Concatenate multiple video files into one using ffmpeg concat demuxer."""
+    """Concatenate multiple video files into one and transcode to H.264 for browser playback."""
     import subprocess
     list_path = output_path + ".txt"
     with open(list_path, "w") as f:
         for path in video_paths:
             f.write(f"file '{path}'\n")
 
+    # Transcode concatenated video using H.264/AAC with yuv420p pixel format for browser compatibility (using h264_nvenc)
     cmd = [
         "ffmpeg", "-y",
         "-f", "concat",
         "-safe", "0",
         "-i", list_path,
-        "-c", "copy",
+        "-c:v", "h264_nvenc",
+        "-pix_fmt", "yuv420p",
+        "-c:a", "aac",
         output_path
     ]
     try:

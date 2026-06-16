@@ -1,3 +1,1238 @@
-=== Starting GenOTT Project: Sat Jun 13 09:57:47 PM IST 2026 ===
-[✓] Ollama is already running.
+=== Starting GenOTT Project: Mon Jun 15 07:03:07 AM IST 2026 ===
+[*] Starting Ollama server in background...
+time=2026-06-15T07:03:07.223+05:30 level=INFO source=routes.go:1919 msg="server config" env="map[CUDA_VISIBLE_DEVICES: GGML_VK_VISIBLE_DEVICES: GPU_DEVICE_ORDINAL: HIP_VISIBLE_DEVICES: HSA_OVERRIDE_GFX_VERSION: HTTPS_PROXY: HTTP_PROXY: LLAMA_ARG_FIT: LLAMA_ARG_FIT_TARGET: NO_PROXY: OLLAMA_CONTEXT_LENGTH:0 OLLAMA_DEBUG:INFO OLLAMA_DEBUG_LOG_REQUESTS:false OLLAMA_EDITOR: OLLAMA_FLASH_ATTENTION:false OLLAMA_GO_TEMPLATE:true OLLAMA_GPU_OVERHEAD:0 OLLAMA_HOST:http://127.0.0.1:11434 OLLAMA_IGPU_ENABLE: OLLAMA_KEEP_ALIVE:5m0s OLLAMA_KV_CACHE_TYPE: OLLAMA_LLM_LIBRARY: OLLAMA_LOAD_TIMEOUT:5m0s OLLAMA_MAX_LOADED_MODELS:0 OLLAMA_MAX_QUEUE:512 OLLAMA_MAX_TRANSFER_STREAMS:4 OLLAMA_MODELS:PROJECT_ROOT/.ollama/models OLLAMA_NOHISTORY:false OLLAMA_NOPRUNE:false OLLAMA_NO_CLOUD:false OLLAMA_NUM_PARALLEL:1 OLLAMA_ORIGINS:[http://localhost https://localhost http://localhost:* https://localhost:* http://127.0.0.1 https://127.0.0.1 http://127.0.0.1:* https://127.0.0.1:* http://0.0.0.0 https://0.0.0.0 http://0.0.0.0:* https://0.0.0.0:* app://* file://* tauri://* vscode-webview://* vscode-file://*] OLLAMA_REMOTES:[ollama.com] OLLAMA_SCHED_SPREAD:false OLLAMA_VULKAN:true ROCR_VISIBLE_DEVICES: http_proxy: https_proxy: no_proxy:]"
+time=2026-06-15T07:03:07.223+05:30 level=INFO source=routes.go:1921 msg="Ollama cloud disabled: false"
+time=2026-06-15T07:03:07.224+05:30 level=INFO source=images.go:864 msg="total blobs: 11"
+time=2026-06-15T07:03:07.224+05:30 level=INFO source=images.go:871 msg="total unused blobs removed: 0"
+time=2026-06-15T07:03:07.224+05:30 level=INFO source=routes.go:1981 msg="Listening on 127.0.0.1:11434 (version 0.30.7)"
+time=2026-06-15T07:03:07.226+05:30 level=INFO source=runner.go:60 msg="discovering available GPUs..."
+time=2026-06-15T07:03:07.226+05:30 level=INFO source=model_list_cache.go:111 msg="model list cache hydration complete" models=2 failures=0 elapsed=2.18964ms
+time=2026-06-15T07:03:07.793+05:30 level=INFO source=model_recommendations.go:177 msg="model recommendations cache sleep scheduled" wait=4h39m51.722008998s consecutive_failures=0
+time=2026-06-15T07:03:12.138+05:30 level=INFO source=runner.go:396 msg="dropping integrated GPU; to enable, set OLLAMA_IGPU_ENABLE=1" id=0 library=Vulkan compute=0.0 name=Vulkan0 description="Intel(R) Graphics (RPL-S)" pci_id=0000:00:02.0
+time=2026-06-15T07:03:13.350+05:30 level=INFO source=types.go:32 msg="inference compute" id=0 filter_id=0 library=CUDA compute=8.9 name=CUDA0 description="NVIDIA GeForce RTX 4060 Laptop GPU" libdirs=ollama,cuda_v13 driver=13.2 pci_id=0000:01:00.0 type=discrete total="7.6 GiB" available="7.5 GiB"
+time=2026-06-15T07:03:13.350+05:30 level=INFO source=routes.go:2031 msg="vram-based default context" total_vram="7.6 GiB" default_num_ctx=4096
+[GIN] 2026/06/15 - 07:03:13 | 200 |     150.073µs |       127.0.0.1 | GET      "/api/tags"
+[✓] Ollama server started successfully.
 [*] Starting Flask server in background...
+[App] Using DiffusersAI renderer (AnimateDiff, no IP-Adapter)
+[DB] Tables ready.
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+[App] Using DiffusersAI renderer (AnimateDiff, no IP-Adapter)
+[DB] Tables ready.
+ * Debugger is active!
+ * Debugger PIN: 885-773-270
+127.0.0.1 - - [15/Jun/2026 07:03:18] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:03:18] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+[ScenePlanner] Using built-in story template for: thor
+127.0.0.1 - - [15/Jun/2026 07:03:28] "POST /api/generate-avatar-script HTTP/1.1" 200 -
+[Architect Log] avatar_5q9hw82md: Initiating Cinematic Movie Generation pipeline...
+[Architect Log] avatar_5q9hw82md: Processing Segment 1/6...
+[Architect Log] avatar_5q9hw82md: Synthesizing dialogue speech voiceover for speaker: Thor...
+[Architect Log] avatar_5q9hw82md: Rendering scene visual elements...
+
+[VideoGen] Loading pipeline on device: cuda
+127.0.0.1 - - [15/Jun/2026 07:03:33] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:03:33] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:03:35] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:03:36] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[VideoGen] Loading AnimateDiff pipeline...
+PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/venv/lib64/python3.14/site-packages/huggingface_hub/utils/_validators.py:205: UserWarning: The `local_dir_use_symlinks` argument is deprecated and ignored in `hf_hub_download`. Downloading to a local directory does not use symlinks anymore.
+  warnings.warn(
+The config attributes {'motion_activation_fn': 'geglu', 'motion_attention_bias': False, 'motion_cross_attention_dim': None} were passed to MotionAdapter, but are not expected and will be ignored. Please verify your config.json configuration file.
+127.0.0.1 - - [15/Jun/2026 07:03:38] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:03:39] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+Loading pipeline components...:   0%|          | 0/6 [00:00<?, ?it/s]Loading pipeline components...:  17%|█▋        | 1/6 [00:00<00:01,  2.57it/s]CLIPFeatureExtractor appears to have been deprecated in transformers. Using CLIPImageProcessor instead.
+127.0.0.1 - - [15/Jun/2026 07:03:41] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:03:42] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+Loading pipeline components...:  50%|█████     | 3/6 [00:02<00:02,  1.39it/s]
+Loading weights:   0%|          | 0/196 [00:00<?, ?it/s][A
+Loading weights:  68%|██████▊   | 133/196 [00:00<00:00, 1284.81it/s][ALoading weights: 100%|██████████| 196/196 [00:00<00:00, 1313.38it/s]
+Loading pipeline components...:  83%|████████▎ | 5/6 [00:02<00:00,  2.37it/s]Loading pipeline components...: 100%|██████████| 6/6 [00:02<00:00,  2.52it/s]
+127.0.0.1 - - [15/Jun/2026 07:03:44] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:03:46] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:03:47] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/venv/lib64/python3.14/site-packages/diffusers/pipelines/pipeline_utils.py:2267: FutureWarning: `enable_vae_slicing` is deprecated and will be removed in version 0.40.0. Calling `enable_vae_slicing()` on a `AnimateDiffPipeline` is deprecated and this method will be removed in a future version. Please use `pipe.vae.enable_slicing()`.
+  deprecate(
+[VideoGen] AnimateDiff pipeline loaded successfully with IP-Adapter!
+[DiffusersRenderer] Rendering Scene 1 | Seed: 773203
+[DiffusersRenderer] Prompt: 'A cinematic low-angle dramatic wide shot scene of Thor, a muscular Nordic warrior with long blonde hair, blue eyes, and a light beard, wearing heavy s...'
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (100 > 77). Running this sequence through the model will result in indexing errors
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer CLIPTokenizer. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['with lightning trailing behind ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:03:48] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:46,  1.96s/it]127.0.0.1 - - [15/Jun/2026 07:03:50] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:38,  1.65s/it]127.0.0.1 - - [15/Jun/2026 07:03:51] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.55s/it]127.0.0.1 - - [15/Jun/2026 07:03:53] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:31,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:03:54] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:29,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:03:56] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:27,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:03:58] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:26,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:03:59] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:24,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:04:01] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:23,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:04:03] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:14<00:21,  1.45s/it]127.0.0.1 - - [15/Jun/2026 07:04:04] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:20,  1.45s/it]127.0.0.1 - - [15/Jun/2026 07:04:06] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:17<00:18,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:04:07] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:17,  1.45s/it]127.0.0.1 - - [15/Jun/2026 07:04:09] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:20<00:15,  1.45s/it]127.0.0.1 - - [15/Jun/2026 07:04:10] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:14,  1.45s/it]127.0.0.1 - - [15/Jun/2026 07:04:12] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:23<00:13,  1.46s/it][GIN] 2026/06/15 - 07:04:12 | 200 |    2.837412ms |       127.0.0.1 | GET      "/api/tags"
+127.0.0.1 - - [15/Jun/2026 07:04:13] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:11,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:04:14] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:26<00:10,  1.46s/it] 76%|███████▌  | 19/25 [00:28<00:08,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:04:16] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:17] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:29<00:07,  1.46s/it] 84%|████████▍ | 21/25 [00:30<00:05,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:04:19] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:20] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:32<00:04,  1.46s/it] 92%|█████████▏| 23/25 [00:33<00:02,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:04:22] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:23] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:35<00:01,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:04:25] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:36<00:00,  1.46s/it]100%|██████████| 25/25 [00:36<00:00,  1.47s/it]
+127.0.0.1 - - [15/Jun/2026 07:04:26] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 1 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_5q9hw82md_0.mp4
+[Architect Log] avatar_5q9hw82md: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_5q9hw82md...
+127.0.0.1 - - [15/Jun/2026 07:04:27] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:29] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:30] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:32] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:33] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:35] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:36] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:38] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:39] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:41] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:42] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:44] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:45] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:47] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:48] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:50] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:51] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:53] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:54] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:04:56] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[Architect Log] avatar_5q9hw82md: Processing Segment 2/6...
+[Architect Log] avatar_5q9hw82md: Synthesizing dialogue speech voiceover for speaker: Thor...
+127.0.0.1 - - [15/Jun/2026 07:04:57] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[Architect Log] avatar_5q9hw82md: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 2 | Seed: 773203
+[DiffusersRenderer] Prompt: 'A cinematic close-up tracking shot with dust explosion scene of Thor, a muscular Nordic warrior with long blonde hair, blue eyes, and a light beard, w...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['with a thunderous ground - shaking impact ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:04:59] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:46,  1.92s/it]127.0.0.1 - - [15/Jun/2026 07:05:01] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:38,  1.66s/it]127.0.0.1 - - [15/Jun/2026 07:05:02] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.57s/it]127.0.0.1 - - [15/Jun/2026 07:05:04] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:32,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:05:05] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:05:07] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:05:08] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:26,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:05:10] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:11] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:23,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:13] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:14] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:20,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:16] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:17] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:17,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:19] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:20] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:14,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:22] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:23] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:11,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:25] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:26] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:08,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:28] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:29<00:07,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:29] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:05,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:30] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:32<00:04,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:32] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:02,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:33] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:35<00:01,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:05:35] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.48s/it]100%|██████████| 25/25 [00:37<00:00,  1.50s/it]
+127.0.0.1 - - [15/Jun/2026 07:05:36] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 2 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_5q9hw82md_1.mp4
+[Architect Log] avatar_5q9hw82md: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_5q9hw82md...
+127.0.0.1 - - [15/Jun/2026 07:05:38] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:05:39] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:05:41] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:05:42] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:05:44] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:05:45] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:05:47] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:05:48] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:05:50] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:05:51] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:05:53] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:05:54] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:05:56] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:05:57] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:05:59] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:06:00] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:06:02] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[Architect Log] avatar_5q9hw82md: Processing Segment 3/6...
+[Architect Log] avatar_5q9hw82md: Synthesizing dialogue speech voiceover for speaker: Thor...
+127.0.0.1 - - [15/Jun/2026 07:06:03] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[Architect Log] avatar_5q9hw82md: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 3 | Seed: 773203
+[DiffusersRenderer] Prompt: 'A cinematic rotating orbit shot around the character scene of Thor, a muscular Nordic warrior with long blonde hair, blue eyes, and a light beard, wea...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['mbreaker battleaxe overhead summoning lightning ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:06:05] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:43,  1.82s/it]127.0.0.1 - - [15/Jun/2026 07:06:07] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:37,  1.62s/it]127.0.0.1 - - [15/Jun/2026 07:06:08] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.56s/it]127.0.0.1 - - [15/Jun/2026 07:06:10] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:32,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:06:11] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:06:13] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:06:14] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:27,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:06:16] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:06:17] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:23,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:06:19] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:06:20] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:20,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:06:22] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:06:23] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:17,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:06:25] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:06:26] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:14,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:06:28] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:06:29] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:11,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:06:31] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:06:32] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:08,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:06:34] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:30<00:07,  1.49s/it] 84%|████████▍ | 21/25 [00:31<00:05,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:06:35] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:06:37] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:33<00:04,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:06:38] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:02,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:06:40] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:36<00:01,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:06:41] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.50s/it]100%|██████████| 25/25 [00:37<00:00,  1.51s/it]
+127.0.0.1 - - [15/Jun/2026 07:06:42] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 3 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_5q9hw82md_2.mp4
+[Architect Log] avatar_5q9hw82md: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_5q9hw82md...
+127.0.0.1 - - [15/Jun/2026 07:06:44] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:06:45] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:06:47] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:06:48] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:06:50] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:06:51] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:06:53] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:06:54] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:06:56] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:06:57] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:06:59] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:07:00] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:07:02] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:07:03] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:07:05] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:07:06] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[Architect Log] avatar_5q9hw82md: Processing Segment 4/6...
+[Architect Log] avatar_5q9hw82md: Synthesizing dialogue speech voiceover for speaker: Thor...
+127.0.0.1 - - [15/Jun/2026 07:07:08] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[Architect Log] avatar_5q9hw82md: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 4 | Seed: 773203
+[DiffusersRenderer] Prompt: 'A cinematic side-tracking action shot with motion blur scene of Thor, a muscular Nordic warrior with long blonde hair, blue eyes, and a light beard, w...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['is actively charging forward swinging the stormbreaker through enemies ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:07:09] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:44,  1.84s/it]127.0.0.1 - - [15/Jun/2026 07:07:11] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:37,  1.64s/it]127.0.0.1 - - [15/Jun/2026 07:07:12] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.58s/it]127.0.0.1 - - [15/Jun/2026 07:07:14] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:32,  1.55s/it]127.0.0.1 - - [15/Jun/2026 07:07:15] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:07:17] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:07:18] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:27,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:07:20] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:07:21] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:24,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:07:23] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:07:24] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:21,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:07:26] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:07:27] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:18,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:07:29] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:07:32] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:15,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:07:32] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:07:35] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:12,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:07:35] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:07:38] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:09,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:07:38] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:30<00:07,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:07:41] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:06,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:07:41] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:33<00:04,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:07:44] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:03,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:07:44] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:36<00:01,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:07:47] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.51s/it]100%|██████████| 25/25 [00:37<00:00,  1.52s/it]
+127.0.0.1 - - [15/Jun/2026 07:07:47] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:07:49] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 4 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_5q9hw82md_3.mp4
+[Architect Log] avatar_5q9hw82md: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_5q9hw82md...
+127.0.0.1 - - [15/Jun/2026 07:07:50] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:07:52] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:07:53] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:07:55] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:07:56] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:07:58] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:07:59] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:08:01] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:08:02] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:08:04] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:08:05] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:08:07] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:08:08] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[Architect Log] avatar_5q9hw82md: Processing Segment 5/6...
+[Architect Log] avatar_5q9hw82md: Synthesizing dialogue speech voiceover for speaker: Thor...
+127.0.0.1 - - [15/Jun/2026 07:08:10] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[Architect Log] avatar_5q9hw82md: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 5 | Seed: 773203
+[DiffusersRenderer] Prompt: 'A cinematic wide epic aerial shot pulling back scene of Thor, a muscular Nordic warrior with long blonde hair, blue eyes, and a light beard, wearing h...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['slamming the stormbreaker into the ground creating a massive lightning explosion ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:08:11] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:44,  1.84s/it]127.0.0.1 - - [15/Jun/2026 07:08:14] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:37,  1.64s/it]127.0.0.1 - - [15/Jun/2026 07:08:14] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.58s/it]127.0.0.1 - - [15/Jun/2026 07:08:17] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:32,  1.55s/it]127.0.0.1 - - [15/Jun/2026 07:08:17] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:08:20] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:08:20] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:27,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:08:23] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:08:23] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:24,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:08:25] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:08:26] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:21,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:08:28] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:08:29] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:18,  1.51s/it] 56%|█████▌    | 14/25 [00:21<00:16,  1.51s/it] 60%|██████    | 15/25 [00:22<00:15,  1.51s/it] 64%|██████▍   | 16/25 [00:24<00:13,  1.51s/it] 68%|██████▊   | 17/25 [00:25<00:12,  1.51s/it] 72%|███████▏  | 18/25 [00:27<00:10,  1.51s/it] 76%|███████▌  | 19/25 [00:28<00:09,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:08:41] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:30<00:07,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:08:41] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:08:42] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:06,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:08:44] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:33<00:04,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:08:45] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:35<00:03,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:08:47] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:36<00:01,  1.51s/it]100%|██████████| 25/25 [00:38<00:00,  1.51s/it]100%|██████████| 25/25 [00:38<00:00,  1.52s/it]
+127.0.0.1 - - [15/Jun/2026 07:08:49] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:08:50] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 5 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_5q9hw82md_4.mp4
+[Architect Log] avatar_5q9hw82md: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_5q9hw82md...
+127.0.0.1 - - [15/Jun/2026 07:08:52] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:08:53] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:08:55] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:08:56] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:08:58] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:08:59] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:01] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:02] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:04] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:05] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:07] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:08] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:10] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:11] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[Architect Log] avatar_5q9hw82md: Processing Segment 6/6...
+[Architect Log] avatar_5q9hw82md: Synthesizing scene narrator track...
+127.0.0.1 - - [15/Jun/2026 07:09:13] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+[Architect Log] avatar_5q9hw82md: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 6 | Seed: 773203
+[DiffusersRenderer] Prompt: 'A cinematic cinematic silhouette wide shot at golden hour scene of Thor, a muscular Nordic warrior with long blonde hair, blue eyes, and a light beard...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['billowing in the wind looking at the horizon ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:09:14] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:44,  1.85s/it]127.0.0.1 - - [15/Jun/2026 07:09:17] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:37,  1.65s/it]127.0.0.1 - - [15/Jun/2026 07:09:17] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.59s/it]127.0.0.1 - - [15/Jun/2026 07:09:20] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:32,  1.56s/it]127.0.0.1 - - [15/Jun/2026 07:09:20] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.54s/it]127.0.0.1 - - [15/Jun/2026 07:09:23] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:29,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:09:23] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:27,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:09:26] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:09:26] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:24,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:09:28] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:09:29] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:21,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:09:31] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:32] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.52s/it] 52%|█████▏    | 13/25 [00:20<00:18,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:09:34] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:35] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.51s/it] 60%|██████    | 15/25 [00:23<00:15,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:09:37] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:38] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.52s/it] 68%|██████▊   | 17/25 [00:26<00:12,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:09:40] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:41] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.52s/it] 76%|███████▌  | 19/25 [00:29<00:09,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:09:43] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:44] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:30<00:07,  1.52s/it] 84%|████████▍ | 21/25 [00:32<00:06,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:09:46] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:47] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:33<00:04,  1.52s/it] 92%|█████████▏| 23/25 [00:35<00:03,  1.52s/it] 96%|█████████▌| 24/25 [00:36<00:01,  1.52s/it]100%|██████████| 25/25 [00:38<00:00,  1.52s/it]100%|██████████| 25/25 [00:38<00:00,  1.53s/it]
+[DiffusersRenderer] Scene 6 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_5q9hw82md_5.mp4
+[Architect Log] avatar_5q9hw82md: Compiling segments into final movie file cut...
+[Architect Log] avatar_5q9hw82md: Movie compilation finished successfully!
+127.0.0.1 - - [15/Jun/2026 07:09:55] "POST /api/generate-avatar-video HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:55] "GET /api/video-progress/avatar_5q9hw82md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:09:55] "[35m[1mGET /static/videos/cinematic_avatar_5q9hw82md.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:09:55] "[35m[1mGET /static/videos/cinematic_avatar_5q9hw82md.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:09:55] "[35m[1mGET /static/videos/cinematic_avatar_5q9hw82md.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:09:55] "[35m[1mGET /static/videos/cinematic_avatar_5q9hw82md.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:10:27] "[35m[1mGET /static/videos/cinematic_avatar_5q9hw82md.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:10:34] "GET /static/videos/cinematic_avatar_5q9hw82md.mp4 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:10:42] "GET / HTTP/1.1" 200 -
+[ScenePlanner] Using built-in story template for: tony_stark
+127.0.0.1 - - [15/Jun/2026 07:10:46] "POST /api/generate-avatar-script HTTP/1.1" 200 -
+[Architect Log] avatar_sj7ra8z5q: Initiating Cinematic Movie Generation pipeline...
+[Architect Log] avatar_sj7ra8z5q: Processing Segment 1/6...
+[Architect Log] avatar_sj7ra8z5q: Synthesizing dialogue speech voiceover for speaker: Tony Stark...
+[Architect Log] avatar_sj7ra8z5q: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 1 | Seed: 974496
+[DiffusersRenderer] Prompt: 'A cinematic medium shot with blue holographic reflections scene of Tony Stark, an intelligent man with dark hair, a clean-cut goatee beard, and intens...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['graphic displays . the character is actively standing before holographic armor blueprints , touching interface panels ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:10:49] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:44,  1.85s/it]127.0.0.1 - - [15/Jun/2026 07:10:51] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:37,  1.63s/it]127.0.0.1 - - [15/Jun/2026 07:10:52] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.56s/it]127.0.0.1 - - [15/Jun/2026 07:10:54] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:32,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:10:55] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:10:57] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:10:58] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:26,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:11:00] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:01] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:23,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:03] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:04] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:20,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:06] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:07] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:17,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:09] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:10] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:14,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:12] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:13] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:11,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:15] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:16] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:08,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:18] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:30<00:07,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:19] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:05,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:21] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:33<00:04,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:22] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:02,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:24] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:36<00:01,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:11:25] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.49s/it]100%|██████████| 25/25 [00:37<00:00,  1.50s/it]
+127.0.0.1 - - [15/Jun/2026 07:11:27] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:28] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 1 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_sj7ra8z5q_0.mp4
+[Architect Log] avatar_sj7ra8z5q: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_sj7ra8z5q...
+127.0.0.1 - - [15/Jun/2026 07:11:30] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:31] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:33] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:34] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:36] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:37] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:39] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:40] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:42] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:43] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:45] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:46] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:48] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:49] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:11:51] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+[Architect Log] avatar_sj7ra8z5q: Processing Segment 2/6...
+[Architect Log] avatar_sj7ra8z5q: Synthesizing dialogue speech voiceover for speaker: Tony Stark...
+127.0.0.1 - - [15/Jun/2026 07:11:52] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+[Architect Log] avatar_sj7ra8z5q: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 2 | Seed: 974496
+[DiffusersRenderer] Prompt: 'A cinematic tight tracking shot following armor assembly scene of Tony Stark, an intelligent man with dark hair, a clean-cut goatee beard, and intense...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['the suit . the character is actively suiting up as armor plates attach to his body piece by piece ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:11:54] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:43,  1.82s/it]127.0.0.1 - - [15/Jun/2026 07:11:56] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:37,  1.63s/it]127.0.0.1 - - [15/Jun/2026 07:11:57] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.57s/it]127.0.0.1 - - [15/Jun/2026 07:11:59] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:32,  1.54s/it]127.0.0.1 - - [15/Jun/2026 07:12:00] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:12:02] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:12:03] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:27,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:12:05] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:12:06] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:24,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:08] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:09] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:21,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:11] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:12] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:18,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:14] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:15] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:15,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:17] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:18] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:12,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:20] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:21] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:09,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:23] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:30<00:07,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:24] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:05,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:26] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:33<00:04,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:27] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:02,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:29] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:36<00:01,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:12:30] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.50s/it]100%|██████████| 25/25 [00:37<00:00,  1.51s/it]
+127.0.0.1 - - [15/Jun/2026 07:12:31] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 2 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_sj7ra8z5q_1.mp4
+[Architect Log] avatar_sj7ra8z5q: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_sj7ra8z5q...
+127.0.0.1 - - [15/Jun/2026 07:12:33] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:34] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:36] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:37] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:39] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:40] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:42] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:43] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:45] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:46] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:48] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:49] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:51] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:52] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:54] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:55] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:57] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:12:58] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+[Architect Log] avatar_sj7ra8z5q: Processing Segment 3/6...
+[Architect Log] avatar_sj7ra8z5q: Synthesizing dialogue speech voiceover for speaker: Tony Stark...
+127.0.0.1 - - [15/Jun/2026 07:13:00] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+[Architect Log] avatar_sj7ra8z5q: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 3 | Seed: 974496
+[DiffusersRenderer] Prompt: 'A cinematic upward tracking shot following the launch scene of Tony Stark, an intelligent man with dark hair, a clean-cut goatee beard, and intense ey...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['under a night sky . the character is actively blasting off from the tower with repulsor jets firing ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:13:02] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:43,  1.83s/it]127.0.0.1 - - [15/Jun/2026 07:13:03] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:37,  1.63s/it]127.0.0.1 - - [15/Jun/2026 07:13:05] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.57s/it]127.0.0.1 - - [15/Jun/2026 07:13:06] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:32,  1.54s/it]127.0.0.1 - - [15/Jun/2026 07:13:08] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:13:09] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:13:11] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:27,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:13:12] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:13:14] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:24,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:13:15] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:13:17] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:21,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:13:18] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:13:20] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:18,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:13:21] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:13:23] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:15,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:13:24] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:13:26] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:12,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:13:27] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:13:29] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:09,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:13:30] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:30<00:07,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:13:32] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:06,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:13:33] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:33<00:04,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:13:35] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:03,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:13:36] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:36<00:01,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:13:38] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.50s/it]100%|██████████| 25/25 [00:37<00:00,  1.52s/it]
+127.0.0.1 - - [15/Jun/2026 07:13:39] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 3 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_sj7ra8z5q_2.mp4
+[Architect Log] avatar_sj7ra8z5q: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_sj7ra8z5q...
+127.0.0.1 - - [15/Jun/2026 07:13:41] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:13:42] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:13:44] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:13:45] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:13:47] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:13:48] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:13:50] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:13:51] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:13:53] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:13:54] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:13:56] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:13:57] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:13:59] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:14:00] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+[Architect Log] avatar_sj7ra8z5q: Processing Segment 4/6...
+[Architect Log] avatar_sj7ra8z5q: Synthesizing scene narrator track...
+[Architect Log] avatar_sj7ra8z5q: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 4 | Seed: 974496
+[DiffusersRenderer] Prompt: 'A cinematic close-up helmet shot with cloud reflections scene of Tony Stark, an intelligent man with dark hair, a clean-cut goatee beard, and intense ...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['gleaming off the armor . the character is actively flying at high speed through cloud formations ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:14:02] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:14:03] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:43,  1.82s/it]  8%|▊         | 2/25 [00:03<00:37,  1.63s/it]127.0.0.1 - - [15/Jun/2026 07:14:05] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:14:06] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.57s/it] 16%|█▌        | 4/25 [00:06<00:32,  1.54s/it]127.0.0.1 - - [15/Jun/2026 07:14:08] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:14:09] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.53s/it] 24%|██▍       | 6/25 [00:09<00:28,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:14:11] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:14:12] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:27,  1.51s/it] 32%|███▏      | 8/25 [00:12<00:25,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:14:14] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:14:15] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:24,  1.51s/it] 40%|████      | 10/25 [00:15<00:22,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:14:17] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:14:18] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:21,  1.51s/it] 48%|████▊     | 12/25 [00:18<00:19,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:14:20] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:14:21] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:18,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:14:23] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:14:24] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:15,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:14:26] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:14:27] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:12,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:14:29] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:14:30] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:09,  1.51s/it] 80%|████████  | 20/25 [00:30<00:07,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:14:32] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:14:33] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:06,  1.51s/it] 88%|████████▊ | 22/25 [00:33<00:04,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:14:35] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:14:36] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:03,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:14:38] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:36<00:01,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:14:39] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.51s/it]100%|██████████| 25/25 [00:37<00:00,  1.52s/it]
+127.0.0.1 - - [15/Jun/2026 07:14:40] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:14:42] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 4 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_sj7ra8z5q_3.mp4
+[Architect Log] avatar_sj7ra8z5q: Processing Segment 5/6...
+[Architect Log] avatar_sj7ra8z5q: Synthesizing dialogue speech voiceover for speaker: Tony Stark...
+[Architect Log] avatar_sj7ra8z5q: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 5 | Seed: 974496
+[DiffusersRenderer] Prompt: 'A cinematic dynamic low-angle action shot scene of Tony Stark, an intelligent man with dark hair, a clean-cut goatee beard, and intense eyes, dressed ...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['vehicles . the character is actively landing hard and firing repulsor beams at incoming threats ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:14:43] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:14:45] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:44,  1.84s/it]127.0.0.1 - - [15/Jun/2026 07:14:46] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:37,  1.64s/it]127.0.0.1 - - [15/Jun/2026 07:14:48] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.58s/it]127.0.0.1 - - [15/Jun/2026 07:14:49] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:32,  1.55s/it]127.0.0.1 - - [15/Jun/2026 07:14:51] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:14:52] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:14:54] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:27,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:14:55] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:14:57] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:24,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:14:58] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:00] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:21,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:01] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:03] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:18,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:04] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:06] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:15,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:07] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:09] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:12,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:10] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:12] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:09,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:13] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:30<00:07,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:15] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:06,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:16] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:33<00:04,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:18] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:35<00:03,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:19] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:36<00:01,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:15:21] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:38<00:00,  1.51s/it]100%|██████████| 25/25 [00:38<00:00,  1.52s/it]
+127.0.0.1 - - [15/Jun/2026 07:15:22] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 5 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_sj7ra8z5q_4.mp4
+[Architect Log] avatar_sj7ra8z5q: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_sj7ra8z5q...
+127.0.0.1 - - [15/Jun/2026 07:15:24] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:25] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:27] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:28] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:30] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:31] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:33] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:34] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:36] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:37] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:39] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:40] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:42] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:43] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:45] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:15:46] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+[Architect Log] avatar_sj7ra8z5q: Processing Segment 6/6...
+[Architect Log] avatar_sj7ra8z5q: Synthesizing dialogue speech voiceover for speaker: Tony Stark...
+127.0.0.1 - - [15/Jun/2026 07:15:48] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+[Architect Log] avatar_sj7ra8z5q: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 6 | Seed: 974496
+[DiffusersRenderer] Prompt: 'A cinematic wide cinematic shot with sunrise behind scene of Tony Stark, an intelligent man with dark hair, a clean-cut goatee beard, and intense eyes...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['. the character is actively standing with faceplate up , arc reactor glowing softly ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:15:49] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:44,  1.83s/it]127.0.0.1 - - [15/Jun/2026 07:15:51] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:37,  1.64s/it]127.0.0.1 - - [15/Jun/2026 07:15:52] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.58s/it]127.0.0.1 - - [15/Jun/2026 07:15:54] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:32,  1.55s/it]127.0.0.1 - - [15/Jun/2026 07:15:55] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:15:57] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:15:58] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:27,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:16:00] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:01] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:24,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:03] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:04] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:21,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:06] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:07] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:18,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:09] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:10] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:15,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:12] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:13] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:12,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:15] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:16] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:09,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:18] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:30<00:07,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:19] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:06,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:21] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:33<00:04,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:22] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:03,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:24] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:36<00:01,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:16:25] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.51s/it]100%|██████████| 25/25 [00:37<00:00,  1.52s/it]
+127.0.0.1 - - [15/Jun/2026 07:16:27] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:28] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 6 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_sj7ra8z5q_5.mp4
+[Architect Log] avatar_sj7ra8z5q: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_sj7ra8z5q...
+127.0.0.1 - - [15/Jun/2026 07:16:30] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:31] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:33] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:34] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:36] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:37] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:39] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:40] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:42] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:43] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:45] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:46] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:48] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:49] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+[Architect Log] avatar_sj7ra8z5q: Compiling segments into final movie file cut...
+[Architect Log] avatar_sj7ra8z5q: Movie compilation finished successfully!
+127.0.0.1 - - [15/Jun/2026 07:16:50] "POST /api/generate-avatar-video HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:50] "GET /api/video-progress/avatar_sj7ra8z5q HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:16:50] "[35m[1mGET /static/videos/cinematic_avatar_sj7ra8z5q.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:16:50] "[35m[1mGET /static/videos/cinematic_avatar_sj7ra8z5q.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:16:50] "[35m[1mGET /static/videos/cinematic_avatar_sj7ra8z5q.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:16:51] "[35m[1mGET /static/videos/cinematic_avatar_sj7ra8z5q.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:17:25] "[35m[1mGET /static/videos/cinematic_avatar_sj7ra8z5q.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:17:30] "[35m[1mGET /static/videos/cinematic_avatar_sj7ra8z5q.mp4 HTTP/1.1[0m" 206 -
+[ScenePlanner] Using built-in story template for: hulk
+127.0.0.1 - - [15/Jun/2026 07:17:40] "POST /api/generate-avatar-script HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:17:46] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:17:46] "GET / HTTP/1.1" 200 -
+[ScenePlanner] Using built-in story template for: hulk
+127.0.0.1 - - [15/Jun/2026 07:17:51] "POST /api/generate-avatar-script HTTP/1.1" 200 -
+[Architect Log] avatar_twx20tesg: Initiating Cinematic Movie Generation pipeline...
+[Architect Log] avatar_twx20tesg: Processing Segment 1/6...
+[Architect Log] avatar_twx20tesg: Synthesizing dialogue speech voiceover for speaker: Hulk...
+127.0.0.1 - - [15/Jun/2026 07:17:55] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+[Architect Log] avatar_twx20tesg: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 1 | Seed: 403498
+[DiffusersRenderer] Prompt: 'A cinematic extreme close-up on eyes turning green, pulling to wide scene of Hulk, a giant, green-skinned, muscular superhero with dark messy hair and...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['expanding , skin turning green ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:17:57] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:43,  1.80s/it]127.0.0.1 - - [15/Jun/2026 07:17:58] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:36,  1.60s/it]127.0.0.1 - - [15/Jun/2026 07:18:00] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:33,  1.54s/it]127.0.0.1 - - [15/Jun/2026 07:18:01] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:31,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:18:03] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:29,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:18:04] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:18:06] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:26,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:07] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:09] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:23,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:10] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:11] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:20,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:13] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:17<00:19,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:14] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:17,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:16] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:20<00:16,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:17] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:14,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:19] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:23<00:13,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:20] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:11,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:22] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:26<00:10,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:23] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:08,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:25] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:29<00:07,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:26] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:05,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:28] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:32<00:04,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:29] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:02,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:31] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:35<00:01,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:18:32] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.48s/it]100%|██████████| 25/25 [00:37<00:00,  1.49s/it]
+127.0.0.1 - - [15/Jun/2026 07:18:34] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 1 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_twx20tesg_0.mp4
+[Architect Log] avatar_twx20tesg: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_twx20tesg...
+127.0.0.1 - - [15/Jun/2026 07:18:35] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:37] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:38] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:40] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:41] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:43] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:44] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:46] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:47] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:49] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:50] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:52] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:53] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:55] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:56] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:58] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:18:59] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:19:01] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:19:02] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+[SadTalkerProvider] Error: Command '['PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/venv/bin/python3', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/inference.py', '--driven_audio', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/dialogue_1781488073_844bdc41.mp3', '--source_image', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/faces/hulk.png', '--result_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/sadtalker_run_c7c75470', '--still', '--preprocess', 'full', '--checkpoint_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/checkpoints']' returned non-zero exit status 1.
+Traceback (most recent call last):
+  File "PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/app.py", line 196, in generate_avatar_video_route
+    lipsync_provider.run_lipsync(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        image_path=char_profile.face_reference_img,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        generation_id=generation_id
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/ai/lipsync/sadtalker.py", line 42, in run_lipsync
+    raise e
+  File "PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/ai/lipsync/sadtalker.py", line 32, in run_lipsync
+    process = subprocess.run(cmd, cwd=self.sadtalker_dir, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  File "/usr/lib64/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/venv/bin/python3', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/inference.py', '--driven_audio', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/dialogue_1781488073_844bdc41.mp3', '--source_image', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/faces/hulk.png', '--result_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/sadtalker_run_c7c75470', '--still', '--preprocess', 'full', '--checkpoint_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/checkpoints']' returned non-zero exit status 1.
+[Architect Log] avatar_twx20tesg: Pipeline Error: Command '['PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/venv/bin/python3', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/inference.py', '--driven_audio', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/dialogue_1781488073_844bdc41.mp3', '--source_image', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/faces/hulk.png', '--result_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/sadtalker_run_c7c75470', '--still', '--preprocess', 'full', '--checkpoint_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/checkpoints']' returned non-zero exit status 1.
+127.0.0.1 - - [15/Jun/2026 07:19:03] "[35m[1mPOST /api/generate-avatar-video HTTP/1.1[0m" 500 -
+127.0.0.1 - - [15/Jun/2026 07:19:03] "GET /api/video-progress/avatar_twx20tesg HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:20:03] "GET / HTTP/1.1" 200 -
+[ScenePlanner] Using built-in story template for: tony_stark
+127.0.0.1 - - [15/Jun/2026 07:20:05] "POST /api/generate-avatar-script HTTP/1.1" 200 -
+[Architect Log] avatar_co9d0fpls: Initiating Cinematic Movie Generation pipeline...
+[Architect Log] avatar_co9d0fpls: Processing Segment 1/6...
+[Architect Log] avatar_co9d0fpls: Synthesizing dialogue speech voiceover for speaker: Tony Stark...
+[Architect Log] avatar_co9d0fpls: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 1 | Seed: 2831
+[DiffusersRenderer] Prompt: 'A cinematic medium shot with blue holographic reflections scene of Tony Stark, an intelligent man with dark hair, a clean-cut goatee beard, and intens...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['graphic displays . the character is actively standing before holographic armor blueprints , touching interface panels ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:20:08] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:20:09] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:42,  1.78s/it]  8%|▊         | 2/25 [00:03<00:36,  1.59s/it]127.0.0.1 - - [15/Jun/2026 07:20:11] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:33,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:20:12] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:31,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:20:14] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:29,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:20:15] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:20:17] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:26,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:20:18] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:20] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:23,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:21] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:14<00:22,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:23] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:20,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:24] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:17<00:19,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:26] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:17,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:27] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:20<00:16,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:29] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:14,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:30] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:23<00:13,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:32] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:11,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:33] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:26<00:10,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:35] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:08,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:37] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:29<00:07,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:38] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:05,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:40] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:32<00:04,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:41] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:02,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:43] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:35<00:01,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:20:44] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.47s/it]100%|██████████| 25/25 [00:37<00:00,  1.48s/it]
+127.0.0.1 - - [15/Jun/2026 07:20:45] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:20:47] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 1 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_co9d0fpls_0.mp4
+[Architect Log] avatar_co9d0fpls: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_co9d0fpls...
+127.0.0.1 - - [15/Jun/2026 07:20:48] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:20:50] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:20:51] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:20:53] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:20:54] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:20:56] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:20:57] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:20:59] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:21:00] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:21:02] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:21:03] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:21:05] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:21:06] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[Architect Log] avatar_co9d0fpls: Processing Segment 2/6...
+[Architect Log] avatar_co9d0fpls: Synthesizing dialogue speech voiceover for speaker: Tony Stark...
+127.0.0.1 - - [15/Jun/2026 07:21:08] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[Architect Log] avatar_co9d0fpls: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 2 | Seed: 2831
+[DiffusersRenderer] Prompt: 'A cinematic tight tracking shot following armor assembly scene of Tony Stark, an intelligent man with dark hair, a clean-cut goatee beard, and intense...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['the suit . the character is actively suiting up as armor plates attach to his body piece by piece ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:21:09] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:21:11] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:43,  1.81s/it]  8%|▊         | 2/25 [00:03<00:37,  1.61s/it]127.0.0.1 - - [15/Jun/2026 07:21:12] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.55s/it]127.0.0.1 - - [15/Jun/2026 07:21:14] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:31,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:21:15] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:21:17] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:21:18] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:26,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:20] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:21] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:23,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:23] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:24] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:20,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:26] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:21:27] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:17,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:21:29] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:21:30] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:14,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:32] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:33] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:11,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:35] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:36] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:08,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:38] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:29<00:07,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:39] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:05,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:41] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:32<00:04,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:42] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:02,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:44] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:35<00:01,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:21:45] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.49s/it]100%|██████████| 25/25 [00:37<00:00,  1.50s/it]
+127.0.0.1 - - [15/Jun/2026 07:21:47] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:21:48] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 2 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_co9d0fpls_1.mp4
+[Architect Log] avatar_co9d0fpls: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_co9d0fpls...
+127.0.0.1 - - [15/Jun/2026 07:21:50] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:21:51] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:21:53] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:21:54] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:21:56] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:21:57] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:21:59] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:22:00] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:22:02] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:22:03] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:22:05] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:22:06] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:22:08] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:22:09] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:22:11] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:22:12] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:22:14] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[Architect Log] avatar_co9d0fpls: Processing Segment 3/6...
+[Architect Log] avatar_co9d0fpls: Synthesizing dialogue speech voiceover for speaker: Tony Stark...
+[Architect Log] avatar_co9d0fpls: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 3 | Seed: 2831
+[DiffusersRenderer] Prompt: 'A cinematic upward tracking shot following the launch scene of Tony Stark, an intelligent man with dark hair, a clean-cut goatee beard, and intense ey...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['under a night sky . the character is actively blasting off from the tower with repulsor jets firing ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:22:15] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:22:17] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:43,  1.82s/it]127.0.0.1 - - [15/Jun/2026 07:22:18] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:37,  1.63s/it]127.0.0.1 - - [15/Jun/2026 07:22:20] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.56s/it]127.0.0.1 - - [15/Jun/2026 07:22:21] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:32,  1.54s/it]127.0.0.1 - - [15/Jun/2026 07:22:23] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:22:24] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:22:26] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:27,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:22:27] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:22:29] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:24,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:22:30] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:22:32] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:20,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:22:33] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:22:35] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:17,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:22:36] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:22:38] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:14,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:22:39] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:22:41] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:11,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:22:42] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:22:44] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:08,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:22:45] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:30<00:07,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:22:47] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:05,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:22:48] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:33<00:04,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:22:50] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:02,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:22:51] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:36<00:01,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:22:53] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.50s/it]100%|██████████| 25/25 [00:37<00:00,  1.51s/it]
+127.0.0.1 - - [15/Jun/2026 07:22:54] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 3 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_co9d0fpls_2.mp4
+[Architect Log] avatar_co9d0fpls: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_co9d0fpls...
+127.0.0.1 - - [15/Jun/2026 07:22:56] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:22:57] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:22:59] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:23:00] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:23:02] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:23:03] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:23:05] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:23:06] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:23:08] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:23:09] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:23:11] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:23:12] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:23:14] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[Architect Log] avatar_co9d0fpls: Processing Segment 4/6...
+[Architect Log] avatar_co9d0fpls: Synthesizing scene narrator track...
+127.0.0.1 - - [15/Jun/2026 07:23:15] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[Architect Log] avatar_co9d0fpls: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 4 | Seed: 2831
+[DiffusersRenderer] Prompt: 'A cinematic close-up helmet shot with cloud reflections scene of Tony Stark, an intelligent man with dark hair, a clean-cut goatee beard, and intense ...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['gleaming off the armor . the character is actively flying at high speed through cloud formations ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:23:17] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:43,  1.83s/it]127.0.0.1 - - [15/Jun/2026 07:23:19] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:37,  1.63s/it]127.0.0.1 - - [15/Jun/2026 07:23:20] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.57s/it]127.0.0.1 - - [15/Jun/2026 07:23:22] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:32,  1.54s/it]127.0.0.1 - - [15/Jun/2026 07:23:23] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:23:25] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:23:26] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:27,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:23:28] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:23:29] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:24,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:31] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:32] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:21,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:34] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:35] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:18,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:37] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:38] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:15,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:40] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:41] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:11,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:43] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:44] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:08,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:46] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:30<00:07,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:47] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:05,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:49] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:33<00:04,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:50] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:03,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:52] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:36<00:01,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:23:53] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.50s/it]100%|██████████| 25/25 [00:37<00:00,  1.51s/it]
+127.0.0.1 - - [15/Jun/2026 07:23:54] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:23:56] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 4 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_co9d0fpls_3.mp4
+[Architect Log] avatar_co9d0fpls: Processing Segment 5/6...
+[Architect Log] avatar_co9d0fpls: Synthesizing dialogue speech voiceover for speaker: Tony Stark...
+127.0.0.1 - - [15/Jun/2026 07:23:57] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[Architect Log] avatar_co9d0fpls: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 5 | Seed: 2831
+[DiffusersRenderer] Prompt: 'A cinematic dynamic low-angle action shot scene of Tony Stark, an intelligent man with dark hair, a clean-cut goatee beard, and intense eyes, dressed ...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['vehicles . the character is actively landing hard and firing repulsor beams at incoming threats ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:23:59] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:43,  1.82s/it]127.0.0.1 - - [15/Jun/2026 07:24:01] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:37,  1.63s/it]127.0.0.1 - - [15/Jun/2026 07:24:02] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.57s/it]127.0.0.1 - - [15/Jun/2026 07:24:04] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:32,  1.54s/it]127.0.0.1 - - [15/Jun/2026 07:24:05] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:24:07] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:24:08] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:27,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:24:10] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:24:11] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:24,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:24:13] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:14] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:21,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:16] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:17] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:18,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:19] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:20] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:15,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:22] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:23] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:12,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:25] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:26] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:09,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:28] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:30<00:07,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:29] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:06,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:31] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:33<00:04,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:32] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:03,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:34] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:36<00:01,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:24:35] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.50s/it]100%|██████████| 25/25 [00:37<00:00,  1.51s/it]
+127.0.0.1 - - [15/Jun/2026 07:24:36] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:24:38] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 5 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_co9d0fpls_4.mp4
+[Architect Log] avatar_co9d0fpls: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_co9d0fpls...
+127.0.0.1 - - [15/Jun/2026 07:24:39] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:24:41] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:24:42] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:24:44] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:24:45] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:24:47] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:24:48] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:24:50] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:24:51] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:24:53] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:24:54] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:24:56] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:24:57] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:24:59] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:25:00] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[Architect Log] avatar_co9d0fpls: Processing Segment 6/6...
+[Architect Log] avatar_co9d0fpls: Synthesizing dialogue speech voiceover for speaker: Tony Stark...
+127.0.0.1 - - [15/Jun/2026 07:25:02] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[Architect Log] avatar_co9d0fpls: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 6 | Seed: 2831
+[DiffusersRenderer] Prompt: 'A cinematic wide cinematic shot with sunrise behind scene of Tony Stark, an intelligent man with dark hair, a clean-cut goatee beard, and intense eyes...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['. the character is actively standing with faceplate up , arc reactor glowing softly ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:25:03] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:43,  1.82s/it]127.0.0.1 - - [15/Jun/2026 07:25:05] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:37,  1.63s/it]127.0.0.1 - - [15/Jun/2026 07:25:06] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:34,  1.57s/it]127.0.0.1 - - [15/Jun/2026 07:25:08] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:32,  1.54s/it]127.0.0.1 - - [15/Jun/2026 07:25:09] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:30,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:25:11] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:25:12] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:27,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:25:14] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:25:15] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:24,  1.51s/it]127.0.0.1 - - [15/Jun/2026 07:25:17] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:15<00:22,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:18] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:21,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:20] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:18<00:19,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:21] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:18,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:23] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:21<00:16,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:24] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:15,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:26] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:24<00:13,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:27] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:12,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:29] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:27<00:10,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:30] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:09,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:32] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:30<00:07,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:33] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:06,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:35] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:33<00:04,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:36] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:03,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:38] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:36<00:01,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:25:39] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.50s/it]100%|██████████| 25/25 [00:37<00:00,  1.51s/it]
+127.0.0.1 - - [15/Jun/2026 07:25:41] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:25:42] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 6 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_co9d0fpls_5.mp4
+[Architect Log] avatar_co9d0fpls: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_co9d0fpls...
+127.0.0.1 - - [15/Jun/2026 07:25:44] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:25:45] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:25:47] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:25:48] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:25:50] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:25:51] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:25:53] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:25:54] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:25:56] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:25:57] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:25:59] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:26:00] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:26:02] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:26:03] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+[Architect Log] avatar_co9d0fpls: Compiling segments into final movie file cut...
+[Architect Log] avatar_co9d0fpls: Movie compilation finished successfully!
+127.0.0.1 - - [15/Jun/2026 07:26:04] "POST /api/generate-avatar-video HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:26:04] "GET /api/video-progress/avatar_co9d0fpls HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:26:04] "[35m[1mGET /static/videos/cinematic_avatar_co9d0fpls.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:26:04] "[35m[1mGET /static/videos/cinematic_avatar_co9d0fpls.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:27:13] "[35m[1mGET /static/videos/cinematic_avatar_co9d0fpls.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:27:13] "[35m[1mGET /static/videos/cinematic_avatar_co9d0fpls.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:27:17] "[35m[1mGET /static/videos/cinematic_avatar_co9d0fpls.mp4 HTTP/1.1[0m" 206 -
+127.0.0.1 - - [15/Jun/2026 07:27:22] "GET /static/videos/cinematic_avatar_co9d0fpls.mp4 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:27:26] "GET / HTTP/1.1" 200 -
+[ScenePlanner] Using built-in story template for: hulk
+127.0.0.1 - - [15/Jun/2026 07:27:32] "POST /api/generate-avatar-script HTTP/1.1" 200 -
+[Architect Log] avatar_85i2iwg6m: Initiating Cinematic Movie Generation pipeline...
+[Architect Log] avatar_85i2iwg6m: Processing Segment 1/6...
+[Architect Log] avatar_85i2iwg6m: Synthesizing dialogue speech voiceover for speaker: Hulk...
+[Architect Log] avatar_85i2iwg6m: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 1 | Seed: 829555
+[DiffusersRenderer] Prompt: 'A cinematic extreme close-up on eyes turning green, pulling to wide scene of Hulk, a giant, green-skinned, muscular superhero with dark messy hair and...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['expanding , skin turning green ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:27:35] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:42,  1.78s/it]127.0.0.1 - - [15/Jun/2026 07:27:36] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:36,  1.59s/it]127.0.0.1 - - [15/Jun/2026 07:27:38] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:33,  1.53s/it]127.0.0.1 - - [15/Jun/2026 07:27:39] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:31,  1.50s/it]127.0.0.1 - - [15/Jun/2026 07:27:41] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:29,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:27:42] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:09<00:28,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:27:44] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:26,  1.48s/it]127.0.0.1 - - [15/Jun/2026 07:27:45] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:12<00:25,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:27:47] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:23,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:27:48] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:14<00:22,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:27:50] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:20,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:27:51] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:17<00:19,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:27:53] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:17,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:27:54] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:20<00:16,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:27:56] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:14,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:27:57] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:23<00:13,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:28:00] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:11,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:28:01] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:26<00:10,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:28:03] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:28<00:08,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:28:04] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:29<00:07,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:28:06] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:31<00:05,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:28:07] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:32<00:04,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:28:09] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:34<00:02,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:28:10] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:35<00:01,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:28:12] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:37<00:00,  1.48s/it]100%|██████████| 25/25 [00:37<00:00,  1.48s/it]
+127.0.0.1 - - [15/Jun/2026 07:28:12] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:14] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 1 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_85i2iwg6m_0.mp4
+[Architect Log] avatar_85i2iwg6m: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_85i2iwg6m...
+127.0.0.1 - - [15/Jun/2026 07:28:15] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:17] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:18] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:20] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:21] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:23] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:24] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:26] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:27] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:29] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:30] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:32] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:33] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:35] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:36] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:38] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:39] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:41] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:28:42] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+[SadTalkerProvider] Error: Command '['PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/venv/bin/python3', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/inference.py', '--driven_audio', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/dialogue_1781488653_03687a6f.mp3', '--source_image', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/faces/hulk.png', '--result_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/sadtalker_run_47b599c0', '--still', '--preprocess', 'full', '--checkpoint_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/checkpoints']' returned non-zero exit status 1.
+Traceback (most recent call last):
+  File "PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/app.py", line 196, in generate_avatar_video_route
+    lipsync_provider.run_lipsync(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        image_path=char_profile.face_reference_img,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        generation_id=generation_id
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/ai/lipsync/sadtalker.py", line 42, in run_lipsync
+    raise e
+  File "PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/ai/lipsync/sadtalker.py", line 32, in run_lipsync
+    process = subprocess.run(cmd, cwd=self.sadtalker_dir, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  File "/usr/lib64/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/venv/bin/python3', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/inference.py', '--driven_audio', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/dialogue_1781488653_03687a6f.mp3', '--source_image', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/faces/hulk.png', '--result_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/sadtalker_run_47b599c0', '--still', '--preprocess', 'full', '--checkpoint_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/checkpoints']' returned non-zero exit status 1.
+[Architect Log] avatar_85i2iwg6m: Pipeline Error: Command '['PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/venv/bin/python3', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/inference.py', '--driven_audio', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/dialogue_1781488653_03687a6f.mp3', '--source_image', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/faces/hulk.png', '--result_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/sadtalker_run_47b599c0', '--still', '--preprocess', 'full', '--checkpoint_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/checkpoints']' returned non-zero exit status 1.
+127.0.0.1 - - [15/Jun/2026 07:28:43] "[35m[1mPOST /api/generate-avatar-video HTTP/1.1[0m" 500 -
+127.0.0.1 - - [15/Jun/2026 07:28:43] "GET /api/video-progress/avatar_85i2iwg6m HTTP/1.1" 200 -
+[Architect Log] avatar_ssurgdio7: Initiating Cinematic Movie Generation pipeline...
+[Architect Log] avatar_ssurgdio7: Processing Segment 1/6...
+[Architect Log] avatar_ssurgdio7: Synthesizing dialogue speech voiceover for speaker: Hulk...
+[Architect Log] avatar_ssurgdio7: Rendering scene visual elements...
+[DiffusersRenderer] Rendering Scene 1 | Seed: 616891
+[DiffusersRenderer] Prompt: 'A cinematic extreme close-up on eyes turning green, pulling to wide scene of Hulk, a giant, green-skinned, muscular superhero with dark messy hair and...'
+The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['expanding , skin turning green ., masterpiece , photorealistic , 8 k resolution , cinematic lighting , sharp focus , highly detailed , dramatic atmosphere']
+  0%|          | 0/25 [00:00<?, ?it/s]127.0.0.1 - - [15/Jun/2026 07:31:14] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+  4%|▍         | 1/25 [00:01<00:42,  1.77s/it]127.0.0.1 - - [15/Jun/2026 07:31:16] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+  8%|▊         | 2/25 [00:03<00:36,  1.58s/it]127.0.0.1 - - [15/Jun/2026 07:31:17] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 12%|█▏        | 3/25 [00:04<00:33,  1.52s/it]127.0.0.1 - - [15/Jun/2026 07:31:19] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 16%|█▌        | 4/25 [00:06<00:31,  1.49s/it]127.0.0.1 - - [15/Jun/2026 07:31:20] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 20%|██        | 5/25 [00:07<00:29,  1.47s/it]127.0.0.1 - - [15/Jun/2026 07:31:22] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 24%|██▍       | 6/25 [00:08<00:27,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:23] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 28%|██▊       | 7/25 [00:10<00:26,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:25] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 32%|███▏      | 8/25 [00:11<00:24,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:26] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 36%|███▌      | 9/25 [00:13<00:23,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:28] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 40%|████      | 10/25 [00:14<00:21,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:29] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 44%|████▍     | 11/25 [00:16<00:20,  1.45s/it]127.0.0.1 - - [15/Jun/2026 07:31:31] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 48%|████▊     | 12/25 [00:17<00:18,  1.45s/it]127.0.0.1 - - [15/Jun/2026 07:31:33] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 52%|█████▏    | 13/25 [00:19<00:17,  1.45s/it]127.0.0.1 - - [15/Jun/2026 07:31:35] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 56%|█████▌    | 14/25 [00:20<00:16,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:36] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 60%|██████    | 15/25 [00:22<00:14,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:38] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 64%|██████▍   | 16/25 [00:23<00:13,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:39] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 68%|██████▊   | 17/25 [00:25<00:11,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:41] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 72%|███████▏  | 18/25 [00:26<00:10,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:42] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 76%|███████▌  | 19/25 [00:27<00:08,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:44] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 80%|████████  | 20/25 [00:29<00:07,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:45] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 84%|████████▍ | 21/25 [00:30<00:05,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:46] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 88%|████████▊ | 22/25 [00:32<00:04,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:48] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 92%|█████████▏| 23/25 [00:33<00:02,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:49] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+ 96%|█████████▌| 24/25 [00:35<00:01,  1.46s/it]127.0.0.1 - - [15/Jun/2026 07:31:51] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+100%|██████████| 25/25 [00:36<00:00,  1.46s/it]100%|██████████| 25/25 [00:36<00:00,  1.47s/it]
+127.0.0.1 - - [15/Jun/2026 07:31:52] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+[DiffusersRenderer] Scene 1 saved to PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/raw_scene_avatar_ssurgdio7_0.mp4
+[Architect Log] avatar_ssurgdio7: Applying Lip-Sync engine overlay...
+[SadTalkerProvider] Starting lip-sync inference for avatar_ssurgdio7...
+127.0.0.1 - - [15/Jun/2026 07:31:53] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:31:55] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:31:56] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:31:58] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:31:59] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:32:01] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:32:02] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:32:04] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:32:05] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:32:07] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:32:08] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:32:10] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:32:11] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:32:13] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:32:14] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:32:16] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:32:17] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:32:19] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:32:20] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+[SadTalkerProvider] Error: Command '['PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/venv/bin/python3', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/inference.py', '--driven_audio', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/dialogue_1781488873_33f77406.mp3', '--source_image', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/faces/hulk.png', '--result_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/sadtalker_run_2969b170', '--still', '--preprocess', 'full', '--checkpoint_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/checkpoints']' returned non-zero exit status 1.
+Traceback (most recent call last):
+  File "PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/app.py", line 196, in generate_avatar_video_route
+    lipsync_provider.run_lipsync(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        image_path=char_profile.face_reference_img,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        generation_id=generation_id
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/ai/lipsync/sadtalker.py", line 42, in run_lipsync
+    raise e
+  File "PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/ai/lipsync/sadtalker.py", line 32, in run_lipsync
+    process = subprocess.run(cmd, cwd=self.sadtalker_dir, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  File "/usr/lib64/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/venv/bin/python3', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/inference.py', '--driven_audio', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/dialogue_1781488873_33f77406.mp3', '--source_image', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/faces/hulk.png', '--result_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/sadtalker_run_2969b170', '--still', '--preprocess', 'full', '--checkpoint_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/checkpoints']' returned non-zero exit status 1.
+[Architect Log] avatar_ssurgdio7: Pipeline Error: Command '['PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/venv/bin/python3', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/inference.py', '--driven_audio', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/dialogue_1781488873_33f77406.mp3', '--source_image', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/faces/hulk.png', '--result_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/static/videos/sadtalker_run_2969b170', '--still', '--preprocess', 'full', '--checkpoint_dir', 'PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/SadTalker/checkpoints']' returned non-zero exit status 1.
+127.0.0.1 - - [15/Jun/2026 07:32:21] "[35m[1mPOST /api/generate-avatar-video HTTP/1.1[0m" 500 -
+127.0.0.1 - - [15/Jun/2026 07:32:21] "GET /api/video-progress/avatar_ssurgdio7 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jun/2026 07:36:07] "[33mPOST /api/generate HTTP/1.1[0m" 404 -
+127.0.0.1 - - [15/Jun/2026 07:36:08] "[33mPOST /api/generate HTTP/1.1[0m" 404 -
+/usr/lib64/python3.14/multiprocessing/resource_tracker.py:475: UserWarning: resource_tracker: There appear to be 2 leaked semaphore objects to clean up at shutdown: {'/loky-22167-ppu4eutn', '/mp-e0jxtqbc'}
+  warnings.warn(

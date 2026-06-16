@@ -1,19 +1,63 @@
 import os
 import json
-import requests
+import uuid
+import random
+import time
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from dotenv import load_dotenv
+
 from database import init_db, save_project, get_all_projects, get_project, delete_project
+from video_generator import load_pipeline, concatenate_videos, add_audio_to_video, get_pipeline_info
+
+# Import the new modular architectural library layout
+from ai.config import Config
+from ai.character.library import CharacterLibrary
+from ai.storyboard.planner import ScenePlanner
+from ai.voice.generator import VoiceSystem
+from ai.lipsync.sadtalker import SadTalkerProvider
+from ai.renderer.diffusers_ai import DiffusersAIVideoRenderer
+from ai.renderer.blender import BlenderVideoRenderer
+from ai.renderer.unreal import UnrealVideoRenderer
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
-ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
-CLAUDE_MODEL = "claude-sonnet-4-6"
+# Initialize Architectures & Services
+char_library = CharacterLibrary(faces_dir=Config.FACES_DIR)
+scene_planner = ScenePlanner(char_library=char_library)
+voice_system = VoiceSystem(output_dir=Config.VIDEO_DIR)
+
+# Dynamically select rendering engine from config
+if Config.VIDEO_RENDERER == "blender":
+    video_renderer = BlenderVideoRenderer()
+elif Config.VIDEO_RENDERER == "unreal":
+    video_renderer = UnrealVideoRenderer()
+else:
+    video_renderer = DiffusersAIVideoRenderer(char_library=char_library, load_pipeline_fn=load_pipeline)
+    print("[App] Using DiffusersAI renderer (AnimateDiff, no IP-Adapter)")
+
+# Dynamically select lip-sync provider
+if Config.LIP_SYNC_PROVIDER == "sadtalker":
+    lipsync_provider = SadTalkerProvider(
+        python_venv_path=Config.PYTHON_VENV,
+        sadtalker_dir=Config.SADTALKER_DIR,
+        checkpoints_dir=Config.SADTALKER_CHECKPOINTS
+    )
+else:
+    lipsync_provider = None
+
+# Global execution logs
+execution_logs = {}
+
+def update_execution_log(generation_id, msg):
+    if generation_id not in execution_logs:
+        execution_logs[generation_id] = []
+    log_str = f"[{time.strftime('%H:%M:%S')}] {msg}"
+    execution_logs[generation_id].append(log_str)
+    print(f"[Architect Log] {generation_id}: {msg}")
 
 
 # ── PAGES ──
@@ -28,143 +72,207 @@ def project_page(project_id):
     return render_template("index.html")
 
 
-# ── API: GENERATE ──
+# ── API: MIGRATED CINEMATIC GENERATOR ──
 
-@app.route("/api/generate", methods=["POST"])
-def generate():
-    data = request.get_json()
-    script = data.get("script", "").strip()
-    genre  = data.get("genre", "sci-fi thriller")
-    style  = data.get("style", "cinematic")
-    count  = int(data.get("count", 5))
+@app.route("/api/generate-avatar-script", methods=["POST"])
+def generate_avatar_script():
+    """Converts user prompt script request into structured scene plans."""
+    data = request.get_json() or {}
+    avatar = data.get("avatar")
+    
+    if avatar:
+        avatar_clean = avatar.lower().replace("_", " ")
+        if "hulk" in avatar_clean:
+            user_prompt = "A dramatic, high-impact cinematic sequence of the green superhero Hulk leaping into battle, smashing ruins, roaring in anger, and standing victorious."
+            avatar_name = "Hulk"
+        elif "stark" in avatar_clean or "iron" in avatar_clean:
+            user_prompt = "A high-tech cinematic sequence of Tony Stark in the crimson Iron Man armor, launching from a lab, flying through clouds, shooting repulsors, and landing heroically."
+            avatar_name = "Tony Stark"
+        else:
+            user_prompt = "An epic cinematic sequence of Thor wielding the Stormbreaker battleaxe, summoning lightning, fighting villains, and shouting in triumph."
+            avatar_name = "Thor"
+        scene_count = 6  # 6 scenes of 5 seconds = 30 seconds
+    else:
+        user_prompt = data.get("prompt", "Thor arrives from the sky and lands on a battlefield").strip()
+        scene_count = int(data.get("count", 3))
+        avatar_name = "Avatar"
 
-    if not script:
-        return jsonify({"error": "Script is required."}), 400
+    plans = scene_planner.plan_story(user_prompt, scene_count=scene_count)
+    
+    # Format plans back to the legacy UI structure JSON
+    formatted_scenes = []
+    for plan in plans:
+        # Override character name if generating for a specific avatar to ensure consistency
+        if avatar:
+            plan.character_name = avatar_name
+        formatted_scenes.append({
+            "title": f"Scene {plan.scene_number}: {plan.action}",
+            "dialogue": plan.dialogue.text if plan.dialogue else "",
+            "description": plan.narration or f"{plan.character_name} performing {plan.action} in {plan.location}",
+            "video_prompt": f"{plan.character_name} action: {plan.action}, location: {plan.location}, shot: {plan.camera_shot}",
+            # Pass new architectural plan details to frontend
+            "location": plan.location,
+            "action": plan.action,
+            "camera_shot": plan.camera_shot,
+            "character_name": plan.character_name
+        })
 
-    # We now call the local Ollama instance chat API
-    OLLAMA_URL = "http://localhost:11434/api/chat"
-    OLLAMA_MODEL = "llama3.2"
+    return jsonify({
+        "title": f"{avatar_name} 30-Second Cinematic Storyboard",
+        "scenes": formatted_scenes
+    })
 
-    system_prompt = """You are a professional film script supervisor and AI cinematography director for a Generative OTT platform. Your job is to break a story into cinematic scenes and produce structured data for AI video generation.
 
-Return ONLY valid JSON. Use this exact format:
-{
-  "title": "Short film title (4-6 words)",
-  "scenes": [
-    {
-      "title": "Scene title (5 words max)",
-      "type": "Interior or Exterior",
-      "setting": "Specific location description",
-      "mood": "Single mood word",
-      "characters": "Main characters present",
-      "duration": "Estimated screen time e.g. 2 min",
-      "description": "Vivid 2-3 sentence cinematic description of what happens and what the camera sees. Be specific about visuals — lighting, camera angles, action, expressions.",
-      "video_prompt": "A detailed, ready-to-use AI video generation prompt for this scene. Include: the action, setting, lighting style, camera movement, visual aesthetic, mood, and technical specs (e.g. 4K, cinematic, film grain)."
-    }
-  ]
-}"""
+@app.route("/api/generate-avatar-video", methods=["POST"])
+def generate_avatar_video_route():
+    """Structured Cinematic Pipeline execution route."""
+    data = request.get_json() or {}
+    scenes_data = data.get("scenes", [])
+    generation_id = data.get("generation_id", f"cinematic_{uuid.uuid4().hex[:8]}")
 
-    user_prompt = f"""Break this story into exactly {count} cinematic scenes for a {genre} film with {style} visual style.
+    if not scenes_data:
+        return jsonify({"error": "No storyboard scenes provided"}), 400
 
-Story:
-{script}
+    update_execution_log(generation_id, "Initiating Cinematic Movie Generation pipeline...")
 
-Return exactly {count} scenes in the JSON format specified."""
+    # Establish sequence layout seeds to preserve visual composition parameters
+    shared_seed = random.randint(1, 999999)
+    temp_video_files = []
+    temp_audio_files = []
 
     try:
-        response = requests.post(
-            OLLAMA_URL,
-            json={
-                "model": OLLAMA_MODEL,
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                "format": "json",
-                "stream": False
-            },
-            timeout=120,
-        )
+        for idx, scene in enumerate(scenes_data):
+            update_execution_log(generation_id, f"Processing Segment {idx+1}/{len(scenes_data)}...")
+            
+            # Map raw JSON to plan dataclass
+            char_name = scene.get("character_name") or "Thor"
+            action = scene.get("action") or "landing"
+            location = scene.get("location") or "battlefield"
+            camera_shot = scene.get("camera_shot") or "cinematic wide"
+            dialogue_text = scene.get("dialogue", "").strip()
+            narration_text = scene.get("description", "").strip()
 
-        resp_data = response.json()
+            from ai.storyboard.models import ScenePlan, DialogueLine
+            char_profile = char_library.get_character(char_name)
+            voice = char_profile.voice_profile if char_profile else "en-GB-RyanNeural"
 
-        if "error" in resp_data:
-            raise Exception(resp_data["error"])
+            plan = ScenePlan(
+                scene_number=idx + 1,
+                character_name=char_name,
+                location=location,
+                action=action,
+                camera_shot=camera_shot,
+                duration=4.0,
+                dialogue=DialogueLine(char_name, dialogue_text, voice) if dialogue_text else None,
+                narration=narration_text if not dialogue_text else None
+            )
 
-        raw = resp_data.get("message", {}).get("content", "{}")
-        print(f"\n[OLLAMA RAW RESPONSE]: {raw}\n")
-        parsed = json.loads(raw)
-        print(f"\n[OLLAMA PARSED OBJ]: {parsed}\n")
+            # 1. Voice Synthesis Pipeline
+            voice_file = None
+            if plan.dialogue:
+                update_execution_log(generation_id, f"Synthesizing dialogue speech voiceover for speaker: {plan.character_name}...")
+                audio_res = voice_system.synthesize_dialogue(plan.dialogue.text, plan.dialogue.voice_profile)
+                voice_file = audio_res["audio_path"]
+            elif plan.narration:
+                update_execution_log(generation_id, "Synthesizing scene narrator track...")
+                audio_res = voice_system.synthesize_narration(plan.narration)
+                voice_file = audio_res["audio_path"]
 
-        # Handle both {"scenes": [...]} and a direct root array [...]
-        scenes_list = []
-        if isinstance(parsed, list):
-            scenes_list = parsed
-        elif isinstance(parsed, dict):
-            scenes_list = parsed.get("scenes", [])
+            if voice_file:
+                temp_audio_files.append(voice_file)
 
-        # Ensure video_prompt exists for each scene
-        for s in scenes_list:
-            if "video_prompt" not in s:
-                s["video_prompt"] = f"{s.get('description', '')} | Setting: {s.get('setting', '')} | Mood: {s.get('mood', '')} | {style} | {genre}"
+            # 2. Render Scene Visuals
+            scene_raw_mp4 = os.path.join(Config.VIDEO_DIR, f"raw_scene_{generation_id}_{idx}.mp4")
+            update_execution_log(generation_id, "Rendering scene visual elements...")
+            video_renderer.render_scene(plan, shared_seed, scene_raw_mp4, generation_id=generation_id)
+            temp_video_files.append(scene_raw_mp4)
+
+            # 3. Apply optional Lip Sync Provider if dialogue voice is active
+            if plan.dialogue and lipsync_provider and char_profile:
+                update_execution_log(generation_id, "Applying Lip-Sync engine overlay...")
+                lip_synced_mp4 = os.path.join(Config.VIDEO_DIR, f"lipsync_scene_{generation_id}_{idx}.mp4")
+                
+                # Render lip-sync from facial reference caching
+                lipsync_provider.run_lipsync(
+                    image_path=char_profile.face_reference_img,
+                    audio_path=voice_file,
+                    output_path=lip_synced_mp4,
+                    generation_id=generation_id
+                )
+                
+                # Replace segment with lip-synced video clip
+                temp_video_files[-1] = lip_synced_mp4
+                # Remove raw scene segment file
+                if os.path.exists(scene_raw_mp4):
+                    os.remove(scene_raw_mp4)
+            else:
+                # Merge narration audio directly with video track using ffmpeg
+                if voice_file:
+                    merged_mp4 = os.path.join(Config.VIDEO_DIR, f"merged_scene_{generation_id}_{idx}.mp4")
+                    add_audio_to_video(scene_raw_mp4, voice_file, merged_mp4)
+                    temp_video_files[-1] = merged_mp4
+                    if os.path.exists(scene_raw_mp4):
+                        os.remove(scene_raw_mp4)
+
+        # Stitch all segments together
+        update_execution_log(generation_id, "Compiling segments into final movie file cut...")
+        final_filename = f"cinematic_{generation_id}.mp4"
+        final_filepath = os.path.join(Config.VIDEO_DIR, final_filename)
+
+        concatenate_videos(temp_video_files, final_filepath)
+
+        # Cleanup all temporary segment assets except if explicitly flagged to keep
+        if not data.get("keep_segments", False):
+            for f in temp_video_files + temp_audio_files:
+                if os.path.exists(f):
+                    try:
+                        os.remove(f)
+                    except Exception:
+                        pass
+        else:
+            update_execution_log(generation_id, "Preserving scene segments for consistency validation.")
+
+        update_execution_log(generation_id, "Movie compilation finished successfully!")
 
         return jsonify({
-            "title": parsed.get("title", "Untitled Film") if isinstance(parsed, dict) else "Untitled Film",
-            "scenes": scenes_list,
+            "url": f"/static/videos/{final_filename}",
+            "filename": final_filename,
+            "status": "success"
         })
 
     except Exception as e:
-        print(f"\n[OLLAMA ERROR, FALLING BACK]: {str(e)}\n")
-        # Fallback to mock response
-        return jsonify({
-            "title": "Mock Film Title",
-            "scenes": [
-                {
-                    "title": "The Awakening",
-                    "type": "Interior",
-                    "setting": "A dimly lit, futuristic laboratory.",
-                    "mood": "Tense",
-                    "characters": "Dr. Aris",
-                    "duration": "1 min",
-                    "description": "Dr. Aris stares at the glowing monitor, realizing the anomaly is not a glitch but a signal.",
-                    "video_prompt": f"A cinematic tracking shot of a scientist in a futuristic lab. {style} visual style, {genre} genre. 4k, hyper-detailed."
-                },
-                {
-                    "title": "The Chase",
-                    "type": "Exterior",
-                    "setting": "Rain-soaked neon streets.",
-                    "mood": "Action",
-                    "characters": "Dr. Aris, Unknown Pursuers",
-                    "duration": "2 min",
-                    "description": "Aris sprints through the crowded market, looking back as shadowy figures close in.",
-                    "video_prompt": f"Fast-paced handheld camera following a person running through rain-soaked cyberpunk streets. {style} visual style, {genre}. Dynamic lighting."
-                }
-            ]
-        })
+        import traceback
+        traceback.print_exc()
+        update_execution_log(generation_id, f"Pipeline Error: {e}")
+        # Cleanup stubs
+        if not data.get("keep_segments", False):
+            for f in temp_video_files + temp_audio_files:
+                if os.path.exists(f):
+                    try:
+                        os.remove(f)
+                    except Exception:
+                        pass
+        return jsonify({"error": str(e)}), 500
 
 
-# ── API: PROJECTS ──
+@app.route("/api/video-progress/<generation_id>", methods=["GET"])
+def video_progress_route(generation_id):
+    """Retrieve cinematic pipeline build logs."""
+    logs = execution_logs.get(generation_id, [])
+    return jsonify({"logs": logs})
+
+
+# Legacy / Boilerplate routing systems preserved...
 
 @app.route("/api/projects", methods=["GET"])
 def api_get_projects():
     return jsonify(get_all_projects())
 
-
 @app.route("/api/projects", methods=["POST"])
 def api_save_project():
-    data = request.get_json()
-    title  = data.get("title", "Untitled Film")
-    script = data.get("script", "")
-    genre  = data.get("genre", "")
-    style  = data.get("style", "")
-    scenes = data.get("scenes", [])
-
-    if not script or not scenes:
-        return jsonify({"error": "script and scenes are required."}), 400
-
-    project_id = save_project(title, script, genre, style, scenes)
+    data = request.get_json() or {}
+    project_id = save_project(data.get("title", "Untitled Film"), data.get("script", ""), data.get("genre", ""), data.get("style", ""), data.get("scenes", []))
     return jsonify({"id": project_id, "message": "Project saved."}), 201
-
 
 @app.route("/api/projects/<int:project_id>", methods=["GET"])
 def api_get_project(project_id):
@@ -173,261 +281,17 @@ def api_get_project(project_id):
         return jsonify({"error": "Project not found."}), 404
     return jsonify(project)
 
-
 @app.route("/api/projects/<int:project_id>", methods=["DELETE"])
 def api_delete_project(project_id):
     delete_project(project_id)
     return jsonify({"message": "Deleted."})
 
-
-# ── API: VIDEO GENERATION ──
-
 @app.route("/api/gpu-status", methods=["GET"])
 def gpu_status():
-    """Check if GPU and video pipeline are available."""
-    try:
-        from video_generator import get_pipeline_info
-        return jsonify(get_pipeline_info())
-    except ImportError:
-        return jsonify({
-            "loaded": False,
-            "error": "video_generator module not available. Install torch and diffusers.",
-            "cuda_available": False,
-        })
-    except Exception as e:
-        return jsonify({"loaded": False, "error": str(e)})
+    return jsonify(get_pipeline_info())
 
-
-@app.route("/api/generate-video", methods=["POST"])
-def generate_video_route():
-    """Generate a video clip from a scene's video_prompt."""
-    data = request.get_json()
-    prompt = data.get("prompt", "").strip()
-
-    if not prompt:
-        return jsonify({"error": "prompt is required."}), 400
-
-    num_frames = int(data.get("num_frames", 16))
-    width = int(data.get("width", 512))
-    height = int(data.get("height", 320))
-    steps = int(data.get("steps", 25))
-    generation_id = data.get("generation_id")
-
-    try:
-        from video_generator import generate_video
-        result = generate_video(
-            prompt=prompt,
-            num_frames=num_frames,
-            width=width,
-            height=height,
-            num_steps=steps,
-            generation_id=generation_id,
-        )
-        return jsonify(result)
-
-    except ImportError:
-        return jsonify({
-            "error": "Video generation not available. Install torch and diffusers first."
-        }), 503
-    except RuntimeError as e:
-        return jsonify({"error": str(e)}), 500
-    except Exception as e:
-        return jsonify({"error": f"Video generation failed: {str(e)}"}), 500
-
-
-@app.route("/api/video-progress/<generation_id>", methods=["GET"])
-def video_progress_route(generation_id):
-    """Retrieve generation logs/steps in real-time."""
-    try:
-        from video_generator import get_generation_logs
-        logs = get_generation_logs(generation_id)
-        return jsonify({"logs": logs})
-    except Exception as e:
-        return jsonify({"logs": [], "error": str(e)})
-
-
-@app.route("/api/generate-avatar-script", methods=["POST"])
-def generate_avatar_script():
-    data = request.get_json()
-    avatar = data.get("avatar", "tony_stark")
-
-    avatar_prompts = {
-        "tony_stark": "Tony Stark (Iron Man) in his high-tech workshop, glowing chest arc reactor, adjusting holographic designs, cinematic lighting, 4k",
-        "thor": "Thor (God of Thunder) standing on a cliff with dark storm clouds, holding glowing Mjolnir, lightning reflecting in his eyes, cinematic, 4k",
-        "hulk": "Hulk (Green Giant) in a ruined urban street, green skin, massive muscles, breathing heavily, angry expressions, grit realism, 4k"
-    }
-
-    avatar_name = {
-        "tony_stark": "Tony Stark / Iron Man",
-        "thor": "Thor Odinson",
-        "hulk": "The Incredible Hulk"
-    }.get(avatar, "Tony Stark / Iron Man")
-
-    OLLAMA_URL = "http://localhost:11434/api/chat"
-    OLLAMA_MODEL = "llama3.2"
-
-    system_prompt = """You are a professional cinematic storyboard supervisor. Your job is to generate a short, highly dynamic storyboard script.
-Return ONLY valid JSON. Format:
-{
-  "title": "Story Title",
-  "scenes": [
-    {
-      "title": "Scene Name",
-      "dialogue": "Short dialogue or monologue (1-2 sentences)",
-      "description": "Cinematic visual description of character action and movement.",
-      "video_prompt": "A highly detailed text-to-video prompt. Describe characters, specific movement, camera motion, and composition. Ensure the character is actively moving rather than standing still."
-    }
-  ]
-}"""
-
-    user_prompt = f"""Write a short story breakdown consisting of exactly 10 short scenes (each representing 2 seconds of footage) for the avatar: {avatar_name}.
-The visual style is cinematic action. Make sure each scene's video_prompt starts EXACTLY with: '{avatar_prompts.get(avatar, avatar_prompts["tony_stark"])}'.
-
-CRITICAL INSTRUCTIONS FOR MOVEMENT:
-- The storyboard MUST be dynamic: do NOT have the character just standing in one spot.
-- Introduce continuous physical actions and camera movements across scenes (e.g. Scene 1: character walking down a flat road talking to an ally; Scene 2: camera tracking them from the side as they continue walking; Scene 3: character gesturing dynamically while talking; Scene 4: walking forward towards the horizon; Scene 5: panning shot of them running).
-- Clearly describe these actions (walking, gesturing, talking, running, camera panning, tracking shot) inside the 'description' and 'video_prompt' of each scene so the video generator renders natural physical movement.
-- Ensure strict visual consistency of the avatar's appearance (face features, clothes, hair, weather/sky style) across all scenes."""
-
-    try:
-        response = requests.post(
-            OLLAMA_URL,
-            json={
-                "model": OLLAMA_MODEL,
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                "format": "json",
-                "stream": False
-            },
-            timeout=120,
-        )
-        resp_data = response.json()
-        raw = resp_data.get("message", {}).get("content", "{}")
-        parsed = json.loads(raw)
-        return jsonify(parsed)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/api/generate-avatar-video", methods=["POST"])
-def generate_avatar_video_route():
-    data = request.get_json()
-    scenes = data.get("scenes", [])
-    avatar = data.get("avatar", "tony_stark")
-    generation_id = data.get("generation_id", "avatar_gen")
-
-    if not scenes:
-        return jsonify({"error": "No scenes provided"}), 400
-
-    from video_generator import generate_video, concatenate_videos, generate_speech, add_audio_to_video, VIDEO_DIR, generation_logs
-    import time
-    import uuid
-    import torch
-    import random
-
-    # Map avatar to edge-tts voice
-    voice_map = {
-        "tony_stark": "en-US-ChristopherNeural",  # Deep intelligent American male
-        "thor": "en-GB-RyanNeural",                # Strong British male
-        "hulk": "en-US-GuyNeural"                  # Deep husky American male
-    }
-    selected_voice = voice_map.get(avatar, "en-US-ChristopherNeural")
-
-    # Generate a single shared random seed for the entire sequence to keepcomposition and character face consistent
-    shared_seed = random.randint(1, 10000000)
-
-    def update_log(msg):
-        if generation_id not in generation_logs:
-            generation_logs[generation_id] = []
-        generation_logs[generation_id].append(f"[{time.strftime('%H:%M:%S')}] {msg}")
-        print(f"[AvatarGen Log] {generation_id}: {msg}")
-
-    temp_paths = []
-    garbage_files = []
-
-    try:
-        # Resolve face image for current avatar
-        face_filename = f"{avatar}.png"
-        face_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "faces", face_filename)
-        
-        # Fallback to tony_stark if custom face image doesn't exist
-        if not os.path.exists(face_path):
-            face_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "faces", "tony_stark.png")
-
-        from video_generator import generate_talking_head, generate_speech, VIDEO_DIR
-
-        for idx, scene in enumerate(scenes):
-            update_log(f"Rendering segment {idx+1}/{len(scenes)}: {scene.get('title', 'Scene')}...")
-            dialogue = scene.get("dialogue", "").strip()
-            
-            if not dialogue:
-                dialogue = "This is a placeholder narration beat."
-
-            # 1. Render dialogue voiceover
-            update_log(f"Synthesizing speech voiceover for beat {idx+1} using {selected_voice}...")
-            audio_filename = f"speech_temp_{str(uuid.uuid4())[:8]}.mp3"
-            audio_path = os.path.join(VIDEO_DIR, audio_filename)
-            generate_speech(dialogue, audio_path, voice=selected_voice)
-            garbage_files.append(audio_path)
-
-            # 2. Render lip-synced video clip using SadTalker and the static portrait
-            update_log(f"Generating lip sync talking-head sequence for beat {idx+1}...")
-            segment_filename = f"segment_temp_{str(uuid.uuid4())[:8]}.mp4"
-            segment_path = os.path.join(VIDEO_DIR, segment_filename)
-            
-            generate_talking_head(
-                image_path=face_path,
-                audio_path=audio_path,
-                output_path=segment_path,
-                generation_id=f"{generation_id}_part_{idx}"
-            )
-            
-            temp_paths.append(segment_path)
-            garbage_files.append(segment_path)
-
-        update_log("Compiling final cut: stitching all audio-video segments together...")
-        final_filename = f"avatar_final_{str(uuid.uuid4())[:8]}.mp4"
-        final_filepath = os.path.join(VIDEO_DIR, final_filename)
-
-        from video_generator import concatenate_videos
-        concatenate_videos(temp_paths, final_filepath)
-
-        # Cleanup all temporary segment and audio files
-        for path in garbage_files:
-            if os.path.exists(path):
-                try:
-                    os.remove(path)
-                except Exception:
-                    pass
-
-        update_log("Success! Final 30-second avatar clip with audio/narration is ready.")
-
-        return jsonify({
-            "url": f"/static/videos/{final_filename}",
-            "filename": final_filename,
-            "duration_sec": 30.0
-        })
-    except Exception as e:
-        # Cleanup all temporary files on failure
-        for path in garbage_files:
-            if os.path.exists(path):
-                try:
-                    os.remove(path)
-                except Exception:
-                    pass
-        update_log(f"ERROR: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
-
-# ── RUN ──
 
 if __name__ == "__main__":
     init_db()
-
-    # Create static/videos directory
-    os.makedirs(os.path.join(os.path.dirname(__file__), "static", "videos"), exist_ok=True)
-
-    print("\n[GenOTT] Running at http://localhost:5000\n")
+    os.makedirs(Config.VIDEO_DIR, exist_ok=True)
     app.run(debug=True, port=5000)

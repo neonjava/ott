@@ -39,3 +39,8 @@
    - Downloaded and configured the full `SadTalker` repository with its pre-trained checkpoints (total ~2.4GB including main models, alignments, and the GFPGAN face enhancer).
    - Generated static, photorealistic starting character portraits of Tony Stark, Thor, and Hulk using the Stable Diffusion `epiCRealism` pipeline.
    - Re-architected the `POST /api/generate-avatar-video` endpoint to execute SadTalker's talking head generator. It now maps dialogue speech to high-fidelity lipsync movement and micro head poses, resulting in perfect visual consistency.
+
+9. [BUGFIX & UPDATE] Thor Face Detection and Video Output:
+   - Resolved a SadTalker process crash caused by a failure in RetinaFace detecting the face landmarks on the previous dark/stylized `thor.png` (0% detection rate).
+   - Generated a well-lit, photorealistic headshot portrait of Thor using the system image generator, achieving 99.98% face detection confidence.
+   - Successfully compiled the final talking-head lipsync video for Thor and copied the output directly to `PROJECT_ROOT/Documents/al/thor_final.mp4` for the user.
