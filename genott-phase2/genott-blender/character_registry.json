@@ -83,7 +83,7 @@
         "id": "robot",
         "name": "Robot",
         "model": "humanoid.glb",
-        "voice": "en-US-DavisNeural",
+        "voice": "en-US-SteffanNeural",
         "description": "A combat android with a synthetic monotone voice.",
         "action_map": {
             "idle": "CharacterArmature|Idle",
