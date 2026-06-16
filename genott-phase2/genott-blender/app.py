@@ -237,6 +237,27 @@ def generate_avatar_script():
     })
 
 
+@app.route("/api/characters", methods=["GET"])
+def api_get_characters():
+    """Returns the metadata of selectable characters."""
+    import json
+    registry_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "character_registry.json")
+    if os.path.exists(registry_path):
+        try:
+            with open(registry_path, "r") as f:
+                registry = json.load(f)
+            chars = []
+            for key, val in registry.items():
+                chars.append({
+                    "id": key,
+                    "name": val.get("name", key.title())
+                })
+            return jsonify(chars)
+        except Exception as e:
+            return jsonify({"error": f"Failed to load character registry: {e}"}), 500
+    return jsonify([])
+
+
 @app.route("/api/generate-movie", methods=["POST"])
 def api_generate_movie():
     """Automated movie generation pipeline (Rule-Based, No LLM)."""
@@ -247,6 +268,26 @@ def api_generate_movie():
     if not script:
         return jsonify({"error": "No script provided"}), 400
         
+    # Character selection validation & asset existence verification
+    character_lower = character.lower().strip()
+    import json
+    registry_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "character_registry.json")
+    if os.path.exists(registry_path):
+        try:
+            with open(registry_path, "r") as f:
+                registry = json.load(f)
+            if character_lower not in registry:
+                return jsonify({"error": f"Character '{character}' is not registered."}), 400
+                
+            # Verify model asset existence
+            char_info = registry[character_lower]
+            model_name = char_info.get("model")
+            model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "characters", model_name)
+            if not os.path.exists(model_path) or os.path.getsize(model_path) < 100:
+                return jsonify({"error": f"Model asset '{model_name}' for character '{character}' not found or is a placeholder."}), 400
+        except Exception as e:
+            return jsonify({"error": f"Character validation failed: {str(e)}"}), 500
+
     generation_id = f"movie_{uuid.uuid4().hex[:8]}"
     update_execution_log(generation_id, "Starting automated movie generation...")
     
