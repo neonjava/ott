@@ -68,6 +68,47 @@ class CharacterLibrary:
         hulk.animations = ["landing", "fight", "standing", "walk", "raise_weapon"]
         self._characters["hulk"] = hulk
 
+        # Load dynamic characters from character_registry.json
+        import json
+        project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        registry_path = os.path.join(project_dir, "character_registry.json")
+        if os.path.exists(registry_path):
+            try:
+                with open(registry_path, "r") as f:
+                    registry = json.load(f)
+                for key, val in registry.items():
+                    # Handle face image reference
+                    face_filename = f"{key}.png"
+                    face_path = os.path.join(self.faces_dir, face_filename)
+                    if not os.path.exists(face_path):
+                        default_face = os.path.join(self.faces_dir, "tony_stark.png")
+                        if os.path.exists(default_face):
+                            import shutil
+                            try:
+                                shutil.copy(default_face, face_path)
+                                print(f"[CharacterLibrary] Copied default face reference to {face_path}")
+                            except Exception as e:
+                                print(f"[CharacterLibrary] Failed to copy face for {key}: {e}")
+                        else:
+                            # Write empty file if default doesn't exist
+                            try:
+                                with open(face_path, "wb") as dummy:
+                                    dummy.write(b"")
+                            except Exception:
+                                pass
+                    
+                    profile = CharacterProfile(
+                        name=val.get("name", key.title()),
+                        description=val.get("description", ""),
+                        face_reference_img=face_path,
+                        voice_profile=val.get("voice", "en-US-ChristopherNeural"),
+                        animations=list(val.get("action_map", {}).keys())
+                    )
+                    self._characters[key] = profile
+            except Exception as e:
+                print(f"[CharacterLibrary] Error loading character registry: {e}")
+
     def get_character(self, name: str) -> Optional[CharacterProfile]:
         key = name.lower().replace(" ", "_")
         return self._characters.get(key)
+
