@@ -1,0 +1,137 @@
+{
+    "anime_girl": {
+        "id": "anime_girl",
+        "name": "Anime Girl",
+        "model": "humanoid.glb",
+        "voice": "en-US-JennyNeural",
+        "description": "A spirited anime heroine with a cheerful voice.",
+        "action_map": {
+            "idle": "CharacterArmature|Idle",
+            "walk": "CharacterArmature|Run",
+            "run": "CharacterArmature|Run",
+            "attack": "CharacterArmature|Punch",
+            "jump": "CharacterArmature|Jump",
+            "wave": "CharacterArmature|Wave",
+            "duck": "CharacterArmature|Duck",
+            "landing": "CharacterArmature|Jump_Land",
+            "standing": "CharacterArmature|Idle",
+            "talk": "CharacterArmature|Idle",
+            "death": "CharacterArmature|Death"
+        }
+    },
+    "anime_boy": {
+        "id": "anime_boy",
+        "name": "Anime Boy",
+        "model": "humanoid.glb",
+        "voice": "en-US-GuyNeural",
+        "description": "A determined anime hero with a bold voice.",
+        "action_map": {
+            "idle": "CharacterArmature|Idle",
+            "walk": "CharacterArmature|Run",
+            "run": "CharacterArmature|Run",
+            "attack": "CharacterArmature|Punch",
+            "jump": "CharacterArmature|Jump",
+            "wave": "CharacterArmature|Wave",
+            "duck": "CharacterArmature|Duck",
+            "landing": "CharacterArmature|Jump_Land",
+            "standing": "CharacterArmature|Idle",
+            "talk": "CharacterArmature|Idle",
+            "death": "CharacterArmature|Death"
+        }
+    },
+    "knight": {
+        "id": "knight",
+        "name": "Knight",
+        "model": "humanoid.glb",
+        "voice": "en-US-ChristopherNeural",
+        "description": "A noble armored knight with a commanding presence.",
+        "action_map": {
+            "idle": "CharacterArmature|Idle",
+            "walk": "CharacterArmature|Run",
+            "run": "CharacterArmature|Run",
+            "attack": "CharacterArmature|Sword_Slash",
+            "jump": "CharacterArmature|Jump",
+            "wave": "CharacterArmature|Wave",
+            "duck": "CharacterArmature|Duck",
+            "landing": "CharacterArmature|Jump_Land",
+            "standing": "CharacterArmature|Idle",
+            "talk": "CharacterArmature|Idle",
+            "death": "CharacterArmature|Death"
+        }
+    },
+    "mage": {
+        "id": "mage",
+        "name": "Mage",
+        "model": "humanoid.glb",
+        "voice": "en-US-EricNeural",
+        "description": "A mysterious sorcerer wielding arcane power.",
+        "action_map": {
+            "idle": "CharacterArmature|Idle",
+            "walk": "CharacterArmature|Run",
+            "run": "CharacterArmature|Run",
+            "attack": "CharacterArmature|Punch",
+            "jump": "CharacterArmature|Jump",
+            "wave": "CharacterArmature|Wave",
+            "duck": "CharacterArmature|Duck",
+            "landing": "CharacterArmature|Jump_Land",
+            "standing": "CharacterArmature|Idle",
+            "talk": "CharacterArmature|Idle",
+            "death": "CharacterArmature|Death"
+        }
+    },
+    "robot": {
+        "id": "robot",
+        "name": "Robot",
+        "model": "humanoid.glb",
+        "voice": "en-US-DavisNeural",
+        "description": "A combat android with a synthetic monotone voice.",
+        "action_map": {
+            "idle": "CharacterArmature|Idle",
+            "walk": "CharacterArmature|Run",
+            "run": "CharacterArmature|Run",
+            "attack": "CharacterArmature|Punch",
+            "jump": "CharacterArmature|Jump",
+            "wave": "CharacterArmature|Wave",
+            "duck": "CharacterArmature|Duck",
+            "landing": "CharacterArmature|Jump_Land",
+            "standing": "CharacterArmature|Idle",
+            "talk": "CharacterArmature|Idle",
+            "death": "CharacterArmature|Death"
+        }
+    },
+    "humanoid": {
+        "id": "humanoid",
+        "name": "Humanoid",
+        "model": "humanoid.glb",
+        "voice": "en-US-ChristopherNeural",
+        "description": "A generic humanoid character.",
+        "action_map": {
+            "idle": "CharacterArmature|Idle",
+            "walk": "CharacterArmature|Run",
+            "run": "CharacterArmature|Run",
+            "attack": "CharacterArmature|Punch",
+            "jump": "CharacterArmature|Jump",
+            "wave": "CharacterArmature|Wave",
+            "duck": "CharacterArmature|Duck",
+            "landing": "CharacterArmature|Jump_Land",
+            "standing": "CharacterArmature|Idle",
+            "talk": "CharacterArmature|Idle",
+            "death": "CharacterArmature|Death"
+        }
+    },
+    "fox": {
+        "id": "fox",
+        "name": "Fox",
+        "model": "fox.glb",
+        "voice": "en-US-JennyNeural",
+        "description": "A nimble fox creature.",
+        "action_map": {
+            "walk": "Walk",
+            "run": "Run",
+            "survey": "Survey",
+            "idle": "Survey",
+            "standing": "Survey",
+            "talk": "Survey"
+        }
+    }
+}
