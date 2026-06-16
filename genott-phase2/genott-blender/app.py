@@ -271,8 +271,12 @@ def api_generate_movie():
             # 4. Voice Generation (Dialogue or Narration)
             voice_file = None
             if plan.dialogue:
-                update_execution_log(generation_id, f"Synthesizing voice for: {plan.character_name}...")
+                update_execution_log(generation_id, f"Synthesizing dialogue for: {plan.dialogue.speaker}...")
                 audio_res = voice_system.synthesize_dialogue(plan.dialogue.text, plan.dialogue.voice_profile)
+                voice_file = audio_res["audio_path"]
+            elif plan.narration:
+                update_execution_log(generation_id, f"Synthesizing narration: {plan.narration[:40]}...")
+                audio_res = voice_system.synthesize_narration(plan.narration)
                 voice_file = audio_res["audio_path"]
             else:
                 update_execution_log(generation_id, f"Synthesizing narration for scene...")
