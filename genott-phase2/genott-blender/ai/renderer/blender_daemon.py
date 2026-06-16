@@ -141,6 +141,18 @@ class RenderHandler(BaseHTTPRequestHandler):
                                 cam_rotation = tuple(s_data["camera"].get("rotation", (0, 0, 0)))
                         except: pass
                 
+                # --- Environment Composition ---
+                location_str = payload.get("location", "environment")
+                project_dir = "PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender"
+                if project_dir not in sys.path:
+                    sys.path.append(project_dir)
+                try:
+                    from environment_director import get_environment_for_location, build_environment_in_blender
+                    env_config = get_environment_for_location(location_str)
+                    build_environment_in_blender(env_config, start_location)
+                except Exception as env_err:
+                    print(f"[BlenderDaemon] Failed to build environment: {env_err}")
+
                 if armature:
                     armature.location = start_location
                     armature.rotation_euler = start_rotation
