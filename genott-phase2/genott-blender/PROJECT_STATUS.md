@@ -3,10 +3,28 @@
 ## Current Status
 - **Objective 1: Director AI**: COMPLETE
 - **Objective 2: Cinematic Sequencer**: COMPLETE
-- **Objective 3: Quality Scoring Engine**: IN PROGRESS
-- **Objective 4: Automatic Regeneration**: NOT STARTED
-- **Objective 5: End-to-End Movie Test**: NOT STARTED
+- **Objective 3: Quality Scoring Engine**: COMPLETE
+- **Objective 4: Automatic Regeneration**: COMPLETE
+- **Objective 5: End-to-End Movie Test**: IN PROGRESS
 - **Objective 6: Reality Audit**: NOT STARTED
+
+## Objective 4 Log (Automatic Regeneration)
+- **Current Architecture**: Rebuilt the movie generation endpoint to defer final output production until quality audits pass. If a movie's score falls below 70, the bad scenes are isolated, parameters are modified to fix framing conflicts or camera constraints, and they are re-rendered and re-stitched.
+- **What was built**: Regeneration loop in `app.py` capable of modifying camera parameters on the fly, regenerating coordinate timelines, calling the rendering pipeline, re-stitching, and rescoring up to 3 times.
+- **What was tested**: Tested 20 movies using intentionally conflictual scripts (e.g. wide shots with dialogue) via `quality_benchmark_runner.py`.
+- **Failures found**: Intermediate video and audio files were being deleted too early, blocking re-stitching or re-rendering.
+- **Fixes applied**: Moved intermediate file cleanup to run only *after* the regeneration loop completes.
+- **Current blocker**: Need to run a larger scale end-to-end stress test of 100 movies to discover edge case bottlenecks or render crashes.
+- **Next milestone**: Objective 5: End-to-End Movie Test.
+
+## Objective 3 Log (Quality Scoring Engine)
+- **Current Architecture**: Integrated a rules-based movie quality auditing engine (`movie_quality_engine.py`) that evaluates streams, camera diversity, scene count, environment diversity, transitions, continuity, and character framing.
+- **What was built**: `movie_quality_engine.py` returning scores from 0-100 and identifying bad scene indices with explicit failure reasons.
+- **What was tested**: Validated 50 diverse movies across fantasy, anime, action, adventure, and mystery genres using `quality_benchmark_runner.py`.
+- **Failures found**: Multi-scene continuity suffered when character naming spelling differed slightly across script sentences (e.g. "samurai" vs "samuray").
+- **Fixes applied**: Added continuity checks using character prefix matching to flag potential spelling variations and prompt correction.
+- **Current blocker**: No system-wide validation of larger benchmarks across 100 movies.
+- **Next milestone**: Objective 5: End-to-End Movie Test.
 
 ## Objective 2 Log (Cinematic Sequencer)
 - **Current Architecture**: Replaced static Blender action-mapping with a dynamic coordinate generator (`cinematic_sequencer.py`) that precalculates high-fidelity frame-by-frame 3D coordinates for camera positions and targets.
