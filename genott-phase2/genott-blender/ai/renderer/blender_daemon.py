@@ -424,34 +424,79 @@ class RenderHandler(BaseHTTPRequestHandler):
                 except Exception as char_err:
                     print(f"[BlenderDaemon] Failed to customize character: {char_err}")
 
-                # Camera Framing offsets
-                camera_shot = payload.get("camera_shot", payload.get("camera", "wide_shot")).lower()
-                cam_offset = (0, -4.0, 1.5)
-                cam_rot = (math.radians(80), 0, 0)
+                # Camera Framing offsets and timeline configuration
+                camera_timeline = payload.get("camera_timeline", None)
                 
-                if "close_up" in camera_shot or "close up" in camera_shot or "closeup" in camera_shot:
-                    cam_offset = (0, -1.2, 1.6)
-                    cam_rot = (math.radians(90), 0, 0)
-                elif "establishing" in camera_shot:
-                    cam_offset = (0, -12.0, 6.0)
-                    cam_rot = (math.radians(65), 0, 0)
-                elif "tracking" in camera_shot:
-                    cam_offset = (2.0, -3.5, 1.5)
-                    cam_rot = (math.radians(80), 0, math.radians(-25))
-                elif "shoulder" in camera_shot or "over" in camera_shot:
-                    cam_offset = (0.5, 1.0, 1.6)
-                    cam_rot = (math.radians(85), 0, math.radians(180))
-                elif "wide" in camera_shot:
-                    cam_offset = (0, -6.0, 2.2)
-                    cam_rot = (math.radians(75), 0, 0)
-
+                shot_presets = {
+                    "wide_shot": ((0, -6.0, 2.2), (math.radians(75), 0, 0)),
+                    "medium_shot": ((0, -3.0, 1.8), (math.radians(80), 0, 0)),
+                    "close_up": ((0, -1.2, 1.6), (math.radians(90), 0, 0)),
+                    "establishing_shot": ((0, -12.0, 6.0), (math.radians(65), 0, 0)),
+                    "over_shoulder": ((0.5, 1.0, 1.6), (math.radians(85), 0, math.radians(180))),
+                    "tracking_shot": ((2.0, -3.5, 1.5), (math.radians(80), 0, math.radians(-25))),
+                    "orbit_shot": ((-3.0, -3.0, 2.0), (math.radians(80), 0, math.radians(-45))),
+                    "low_angle": ((0, -2.5, 0.5), (math.radians(100), 0, 0)),
+                    "high_angle": ((0, -3.5, 3.5), (math.radians(55), 0, 0))
+                }
+                
+                def get_shot_preset(name):
+                    name_clean = str(name).lower().strip().replace(" ", "_")
+                    for k, v in shot_presets.items():
+                        if k in name_clean or name_clean in k:
+                            return v
+                    return shot_presets["wide_shot"]
+                
                 if armature:
                     armature.location = start_location
                     armature.rotation_euler = start_rotation
+
+                if camera_timeline:
+                    if camera.animation_data:
+                        camera.animation_data_clear()
+                        
+                    for kf in camera_timeline:
+                        frame = kf["frame"]
+                        shot_name = kf.get("camera_shot", "wide_shot")
+                        offset, rot = get_shot_preset(shot_name)
+                        
+                        factor = kf.get("loc_factor", 0.0)
+                        
+                        # Calculate character locomotion position delta
+                        delta_loc = [0.0, 0.0, 0.0]
+                        aname = action_name.lower()
+                        if "walk" in aname:
+                            delta_loc = [0.0, -1.0 * duration * factor, 0.0]
+                        elif "run" in aname:
+                            delta_loc = [0.0, -3.0 * duration * factor, 0.0]
+                        elif "jump" in aname:
+                            delta_loc = [0.0, -0.5 * duration * factor, 0.0]
+                            
+                        char_pos = [start_location[0] + delta_loc[0],
+                                    start_location[1] + delta_loc[1],
+                                    start_location[2] + delta_loc[2]]
+                                    
+                        camera.location = (char_pos[0] + offset[0], 
+                                           char_pos[1] + offset[1], 
+                                           char_pos[2] + offset[2])
+                        camera.rotation_euler = rot
+                        
+                        camera.keyframe_insert(data_path="location", frame=frame)
+                        camera.keyframe_insert(data_path="rotation_euler", frame=frame)
+                        
+                    # Default interpolation to constant keyframes
+                    if camera.animation_data and camera.animation_data.action:
+                        for fcurve in camera.animation_data.action.fcurves:
+                            for kp in fcurve.keyframe_points:
+                                kp.interpolation = 'CONSTANT'
+                else:
+                    # Fallback single camera logic
+                    camera_shot = payload.get("camera_shot", payload.get("camera", "wide_shot")).lower()
+                    cam_offset, cam_rot = get_shot_preset(camera_shot)
+                    
                     if not cam_location:
-                        camera.location = (armature.location.x + cam_offset[0], 
-                                           armature.location.y + cam_offset[1], 
-                                           armature.location.z + cam_offset[2])
+                        camera.location = (start_location[0] + cam_offset[0], 
+                                           start_location[1] + cam_offset[1], 
+                                           start_location[2] + cam_offset[2])
                         camera.rotation_euler = cam_rot
                     else:
                         camera.location = cam_location

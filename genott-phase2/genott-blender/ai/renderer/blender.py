@@ -186,7 +186,10 @@ class BlenderVideoRenderer(VideoRenderer):
             "held_item": visual_state.get("held_item"),
             "weather": visual_state.get("weather"),
             "outfits": visual_state.get("outfits"),
-            "environment_props": visual_state.get("environment_props")
+            "environment_props": visual_state.get("environment_props"),
+            
+            # Cinematic Sequencer keyframe timeline
+            "camera_timeline": getattr(plan, "camera_timeline", None)
         }
 
         # Write payload JSON for logging
