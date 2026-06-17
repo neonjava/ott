@@ -56,6 +56,7 @@ def init_blender_env():
 def customize_character(character_name: str, held_item: str = None, outfits: List[str] = None):
     if not bpy: return
     name_clean = character_name.lower().replace(" ", "_")
+    char_suffix = f"_{name_clean}"
     print(f"[BlenderDaemon] Customizing character meshes and materials for: {name_clean} (Outfits: {outfits})")
     
     # Define color mappings for each character type
@@ -122,18 +123,14 @@ def customize_character(character_name: str, held_item: str = None, outfits: Lis
     # 2. Hide/Unhide Shoulder Pads
     pads = ["ShoulderPad.L", "ShoulderPad.R"]
     for pad_name in pads:
-        pad_obj = bpy.context.scene.objects.get(pad_name)
+        pad_obj = bpy.context.scene.objects.get(f"{pad_name}{char_suffix}")
         if pad_obj:
             val = not style["ShoulderPads"]
             pad_obj.hide_viewport = val
             pad_obj.hide_render = val
 
     # 3. Apply scale to armature
-    armature = None
-    for obj in bpy.context.scene.objects:
-        if obj.type == 'ARMATURE':
-            armature = obj
-            break
+    armature = bpy.context.scene.objects.get(f"Armature{char_suffix}")
     if armature:
         armature.scale = style["scale"]
         
@@ -141,7 +138,7 @@ def customize_character(character_name: str, held_item: str = None, outfits: Lis
     weapons = ["Revolver", "Sniper", "Revolver_Small", "Pistol", "SMG", "GrenadeLauncher", 
                "ShortCannon", "Shotgun", "Sniper_2", "RocketLauncher", "AK", "Shovel", "Knife_2", "Knife_1"]
     for w_name in weapons:
-        w_obj = bpy.context.scene.objects.get(w_name)
+        w_obj = bpy.context.scene.objects.get(f"{w_name}{char_suffix}")
         if w_obj:
             w_obj.hide_viewport = True
             w_obj.hide_render = True
@@ -150,22 +147,22 @@ def customize_character(character_name: str, held_item: str = None, outfits: Lis
     if held_item:
         held_item_clean = held_item.lower()
         if "shovel" in held_item_clean:
-            w_obj = bpy.context.scene.objects.get("Shovel")
+            w_obj = bpy.context.scene.objects.get(f"Shovel{char_suffix}")
             if w_obj:
                 w_obj.hide_viewport = False
                 w_obj.hide_render = False
         elif "knife" in held_item_clean:
-            w_obj = bpy.context.scene.objects.get("Knife_1")
+            w_obj = bpy.context.scene.objects.get(f"Knife_1{char_suffix}")
             if w_obj:
                 w_obj.hide_viewport = False
                 w_obj.hide_render = False
         elif "gun" in held_item_clean or "pistol" in held_item_clean:
-            w_obj = bpy.context.scene.objects.get("Pistol")
+            w_obj = bpy.context.scene.objects.get(f"Pistol{char_suffix}")
             if w_obj:
                 w_obj.hide_viewport = False
                 w_obj.hide_render = False
         elif "rifle" in held_item_clean or "ak" in held_item_clean:
-            w_obj = bpy.context.scene.objects.get("AK")
+            w_obj = bpy.context.scene.objects.get(f"AK{char_suffix}")
             if w_obj:
                 w_obj.hide_viewport = False
                 w_obj.hide_render = False
@@ -182,7 +179,7 @@ def customize_character(character_name: str, held_item: str = None, outfits: Lis
                     head_mat.diffuse_color = (0.85, 0.72, 0.2, 1.0) # gold helmet
             elif outfit_clean == "armor":
                 for pad_name in ["ShoulderPad.L", "ShoulderPad.R"]:
-                    pad_obj = bpy.context.scene.objects.get(pad_name)
+                    pad_obj = bpy.context.scene.objects.get(f"{pad_name}{char_suffix}")
                     if pad_obj:
                         pad_obj.hide_viewport = False
                         pad_obj.hide_render = False
@@ -365,14 +362,14 @@ def apply_shape_key_animations(mesh_obj, mood: str, viseme_timeline: list, f_sta
                 kb = shape_keys.key_blocks.get(shape_name)
                 if kb:
                     kb.keyframe_insert(data_path="value", frame=frame)
-
+ 
 class RenderHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/ping':
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b'{"status": "ok"}')
-
+ 
     def do_POST(self):
         if self.path == '/render':
             try:
@@ -385,99 +382,36 @@ class RenderHandler(BaseHTTPRequestHandler):
                 duration = payload.get("duration", 2.0)
                 state_file_path = payload.get("state_file_path", "")
                 
-                print(f"\\n[BlenderDaemon] Received job: {action_name} for {duration}s -> {output_path}")
+                print(f"\n[BlenderDaemon] Received job: {action_name} for {duration}s -> {output_path}")
                 
                 t_start = time.time()
-                
-                # Find armature
-                armature = None
-                for obj in bpy.context.scene.objects:
-                    if obj.type == 'ARMATURE':
-                        armature = obj
-                        break
-                        
-                if armature and not armature.animation_data:
-                    armature.animation_data_create()
-                    
-                # Reset all pose bones to default state to avoid posture leak/accumulation
-                if armature:
-                    for pb in armature.pose.bones:
-                        pb.rotation_euler = (0.0, 0.0, 0.0)
-                        pb.location = (0.0, 0.0, 0.0)
-                        pb.scale = (1.0, 1.0, 1.0)
-                        
-                # Assign action
-                mapped_action = f"CharacterArmature|{action_name.capitalize()}"
-                if "run" in action_name: mapped_action = "CharacterArmature|Run"
-                elif "walk" in action_name: mapped_action = "CharacterArmature|Walk"
-                elif "jump" in action_name: mapped_action = "CharacterArmature|Jump_Idle"
-                elif "attack" in action_name: mapped_action = "CharacterArmature|Sword_Slash"
-                elif "wave" in action_name: mapped_action = "CharacterArmature|Wave"
-                
-                selected_action = bpy.data.actions.get(mapped_action)
-                if not selected_action:
-                    selected_action = bpy.data.actions.get("CharacterArmature|Idle")
-                    
-                # Frame range
                 fps = 12
-                if selected_action:
-                    f_start = int(selected_action.frame_range[0])
-                    f_end = int(selected_action.frame_range[1])
-                else:
-                    f_start = 1
-                    f_end = int(duration * fps)
+                
+                # --- Parse Multi-Character Payload ---
+                characters = payload.get("characters")
+                if not characters:
+                    characters = [
+                        {
+                            "name": payload.get("character_name", "humanoid"),
+                            "file": payload.get("character_file", CHARACTER_FILE),
+                            "action": payload.get("action", "idle"),
+                            "action_file": payload.get("action_file", ""),
+                            "position": payload.get("start_location", [0.0, 0.0, 0.0]),
+                            "rotation": payload.get("start_rotation", [0.0, 0.0, 0.0]),
+                            "viseme_timeline": payload.get("viseme_timeline"),
+                            "mood": payload.get("mood", "neutral")
+                        }
+                    ]
                     
-                bpy.context.scene.frame_start = f_start
-                bpy.context.scene.frame_end = f_end
+                # Delete ALL existing armatures in the scene to prepare for fresh imports
+                armatures_to_delete = [obj for obj in bpy.context.scene.objects if obj.type == 'ARMATURE']
+                for arm in armatures_to_delete:
+                    bpy.data.objects.remove(arm, do_unlink=True)
                 
-                # Clear active action and existing NLA tracks
-                if armature:
-                    armature.animation_data.action = None
-                    while armature.animation_data.nla_tracks:
-                        armature.animation_data.nla_tracks.remove(armature.animation_data.nla_tracks[0])
-                        
-                # Setup Base NLA Track
-                if armature and selected_action:
-                    track_base = armature.animation_data.nla_tracks.new()
-                    track_base.name = "Base_Track"
-                    strip_base = track_base.strips.new("BaseAnimation", f_start, selected_action)
-                    strip_base.frame_end = f_end
-                    
-                # Apply custom emotional posture
-                mood_str = payload.get("mood", "neutral")
-                if armature:
-                    try:
-                        apply_emotion_posture(armature, mood_str, f_start, f_end)
-                    except Exception as mood_err:
-                        print(f"[BlenderDaemon] Failed to apply posture: {mood_err}")
-                        
-                # Apply shape key animations (emotions & visemes)
-                viseme_timeline = payload.get("viseme_timeline", None)
-                mesh_obj = None
-                for obj in bpy.context.scene.objects:
-                    if obj.type == 'MESH' and obj.name.lower() in ['head', 'fox']:
-                        mesh_obj = obj
-                        break
-                if mesh_obj:
-                    try:
-                        apply_shape_key_animations(mesh_obj, mood_str, viseme_timeline, f_start, f_end, fps)
-                    except Exception as sk_err:
-                        print(f"[BlenderDaemon] Failed to apply shape key animations: {sk_err}")
-                
-                # Camera framing
-                camera = None
-                for obj in bpy.context.scene.objects:
-                    if obj.type == 'CAMERA':
-                        camera = obj
-                        break
-                if not camera:
-                    cam_data = bpy.data.cameras.new("Camera")
-                    camera = bpy.data.objects.new("Camera", cam_data)
-                    bpy.context.collection.objects.link(camera)
-                
-                bpy.context.scene.camera = camera
-                camera.location = (0, -4, 1.5)
-                camera.rotation_euler = (math.radians(80), 0, 0)
+                # Clear unused armature data blocks to avoid memory leak
+                for arm_data in list(bpy.data.armatures):
+                    if arm_data.users == 0:
+                        bpy.data.armatures.remove(arm_data)
                 
                 # --- Continuity: Load State ---
                 start_location = (0, 0, 0)
@@ -505,18 +439,174 @@ class RenderHandler(BaseHTTPRequestHandler):
                     weather_str = payload.get("weather", "clear")
                     props_list = payload.get("environment_props", [])
                     assets_list = payload.get("assets", [])
-                    build_environment_in_blender(env_config, start_location, weather_str, props_list, assets_list)
+                    
+                    # Use the primary character's parsed placement as reference position
+                    ref_pos = characters[0].get("position", [0.0, 0.0, 0.0])
+                    build_environment_in_blender(env_config, ref_pos, weather_str, props_list, assets_list)
                 except Exception as env_err:
                     print(f"[BlenderDaemon] Failed to build environment: {env_err}")
 
-                # --- Character Customization ---
-                char_name = payload.get("character_name", payload.get("character", "humanoid"))
-                held_item = payload.get("held_item", None)
-                outfits_list = payload.get("outfits", [])
-                try:
-                    customize_character(char_name, held_item, outfits_list)
-                except Exception as char_err:
-                    print(f"[BlenderDaemon] Failed to customize character: {char_err}")
+                # --- Helper to find/lookup actions ---
+                def find_action(action_name):
+                    mapped_action = f"CharacterArmature|{action_name.capitalize()}"
+                    if "run" in action_name.lower(): mapped_action = "CharacterArmature|Run"
+                    elif "walk" in action_name.lower(): mapped_action = "CharacterArmature|Walk"
+                    elif "jump" in action_name.lower(): mapped_action = "CharacterArmature|Jump_Idle"
+                    elif "attack" in action_name.lower(): mapped_action = "CharacterArmature|Sword_Slash"
+                    elif "wave" in action_name.lower(): mapped_action = "CharacterArmature|Wave"
+                    
+                    act = bpy.data.actions.get(mapped_action)
+                    if not act:
+                        for a in bpy.data.actions:
+                            if a.name.startswith(mapped_action):
+                                act = a
+                                break
+                    if not act:
+                        act = bpy.data.actions.get("CharacterArmature|Idle")
+                        if not act:
+                            for a in bpy.data.actions:
+                                if "idle" in a.name.lower():
+                                    act = a
+                                    break
+                    return act
+
+                # --- Import and Animate Characters ---
+                primary_armature = None
+                
+                # Compute displacement offset for continuity (shift all characters if primary is shifted)
+                primary_original_pos = characters[0].get("position", [0.0, 0.0, 0.0])
+                if start_location != (0, 0, 0):
+                    delta_x = start_location[0] - primary_original_pos[0]
+                    delta_y = start_location[1] - primary_original_pos[1]
+                else:
+                    delta_x = 0.0
+                    delta_y = 0.0
+
+                for idx, char_data in enumerate(characters):
+                    char_name = char_data["name"]
+                    glb_file = char_data["file"]
+                    if not glb_file or not os.path.exists(glb_file):
+                        glb_file = CHARACTER_FILE
+                        
+                    # Import
+                    pre_objs = set(bpy.data.objects)
+                    try:
+                        bpy.ops.import_scene.gltf(filepath=glb_file)
+                    except Exception as imp_err:
+                        print(f"[BlenderDaemon] Failed to import GLB for {char_name}: {imp_err}")
+                        continue
+                        
+                    new_objs = set(bpy.data.objects) - pre_objs
+                    
+                    char_armature = None
+                    char_meshes = []
+                    for obj in new_objs:
+                        if obj.type == 'ARMATURE':
+                            char_armature = obj
+                        elif obj.type == 'MESH':
+                            char_meshes.append(obj)
+                            
+                    if not char_armature:
+                        print(f"[BlenderDaemon] No armature found for character {char_name}")
+                        continue
+                        
+                    # Rename to keep names unique
+                    char_suffix = f"_{char_name}"
+                    char_armature.name = f"Armature{char_suffix}"
+                    for mesh_obj in char_meshes:
+                        mesh_obj.name = f"{mesh_obj.name}{char_suffix}"
+                        
+                    # Calculate position with continuity delta shift
+                    orig_pos = char_data.get("position", [0.0, 0.0, 0.0])
+                    pos_x = orig_pos[0] + delta_x
+                    pos_y = orig_pos[1] + delta_y
+                    pos_z = orig_pos[2]
+                    
+                    char_armature.location = (pos_x, pos_y, pos_z)
+                    char_armature.rotation_euler = tuple(char_data.get("rotation", [0.0, 0.0, 0.0]))
+                    
+                    # Track primary armature
+                    if idx == 0:
+                        primary_armature = char_armature
+                        
+                    # Setup Animation Data
+                    if not char_armature.animation_data:
+                        char_armature.animation_data_create()
+                    else:
+                        char_armature.animation_data.action = None
+                        while char_armature.animation_data.nla_tracks:
+                            char_armature.animation_data.nla_tracks.remove(char_armature.animation_data.nla_tracks[0])
+                            
+                    # Reset pose bones
+                    for pb in char_armature.pose.bones:
+                        pb.rotation_euler = (0.0, 0.0, 0.0)
+                        pb.location = (0.0, 0.0, 0.0)
+                        pb.scale = (1.0, 1.0, 1.0)
+                        
+                    # Assign Action
+                    selected_action = find_action(char_data["action"])
+                    if selected_action:
+                        track_base = char_armature.animation_data.nla_tracks.new()
+                        track_base.name = "Base_Track"
+                        f_start = int(selected_action.frame_range[0])
+                        f_end = int(selected_action.frame_range[1])
+                        strip_base = track_base.strips.new("BaseAnimation", f_start, selected_action)
+                        strip_base.frame_end = f_start + int(duration * fps)
+                        
+                    # Apply custom emotional posture
+                    mood_str = char_data.get("mood", "neutral")
+                    try:
+                        apply_emotion_posture(char_armature, mood_str, 1, int(duration * fps))
+                    except Exception as mood_err:
+                        print(f"[BlenderDaemon] Failed to apply posture to {char_name}: {mood_err}")
+                        
+                    # Apply shape key animations (emotions & visemes)
+                    viseme_timeline = char_data.get("viseme_timeline", None)
+                    head_mesh = None
+                    for mesh_obj in char_meshes:
+                        if "head" in mesh_obj.name.lower() or "fox" in mesh_obj.name.lower():
+                            head_mesh = mesh_obj
+                            break
+                            
+                    if head_mesh:
+                        try:
+                            apply_shape_key_animations(head_mesh, mood_str, viseme_timeline, 1, int(duration * fps), fps)
+                        except Exception as sk_err:
+                            print(f"[BlenderDaemon] Failed to apply shape key animations to {char_name}: {sk_err}")
+                            
+                    # Customize character materials & weapons
+                    outfits_list = payload.get("outfits", [])
+                    held_item = payload.get("held_item", None)
+                    try:
+                        customize_character(char_name, held_item, outfits_list)
+                    except Exception as char_err:
+                        print(f"[BlenderDaemon] Failed to customize character {char_name}: {char_err}")
+
+                # Configure global frame bounds
+                bpy.context.scene.frame_start = 1
+                bpy.context.scene.frame_end = int(duration * fps)
+                f_start = 1
+                f_end = int(duration * fps)
+
+                # Camera framing setup
+                camera = None
+                for obj in bpy.context.scene.objects:
+                    if obj.type == 'CAMERA':
+                        camera = obj
+                        break
+                if not camera:
+                    cam_data = bpy.data.cameras.new("Camera")
+                    camera = bpy.data.objects.new("Camera", cam_data)
+                    bpy.context.collection.objects.link(camera)
+                
+                bpy.context.scene.camera = camera
+                camera.location = (0, -4, 1.5)
+                camera.rotation_euler = (math.radians(80), 0, 0)
+
+                # Update camera target position based on primary character
+                if primary_armature:
+                    start_location = primary_armature.location
+                    start_rotation = primary_armature.rotation_euler
 
                 # Camera Framing offsets and timeline configuration
                 camera_timeline = payload.get("camera_timeline", None)
@@ -539,10 +629,6 @@ class RenderHandler(BaseHTTPRequestHandler):
                         if k in name_clean or name_clean in k:
                             return v
                     return shot_presets["wide_shot"]
-                
-                if armature:
-                    armature.location = start_location
-                    armature.rotation_euler = start_rotation
 
                 if camera_timeline:
                     if camera.animation_data:
@@ -550,38 +636,49 @@ class RenderHandler(BaseHTTPRequestHandler):
                         
                     for kf in camera_timeline:
                         frame = kf["frame"]
-                        shot_name = kf.get("camera_shot", "wide_shot")
-                        offset, rot = get_shot_preset(shot_name)
-                        
-                        factor = kf.get("loc_factor", 0.0)
-                        
-                        # Calculate character locomotion position delta
-                        delta_loc = [0.0, 0.0, 0.0]
-                        aname = action_name.lower()
-                        if "walk" in aname:
-                            delta_loc = [0.0, -1.0 * duration * factor, 0.0]
-                        elif "run" in aname:
-                            delta_loc = [0.0, -3.0 * duration * factor, 0.0]
-                        elif "jump" in aname:
-                            delta_loc = [0.0, -0.5 * duration * factor, 0.0]
+                        if "location" in kf and "rotation" in kf:
+                            camera.location = tuple(kf["location"])
+                            camera.rotation_euler = tuple(kf["rotation"])
+                        else:
+                            shot_name = kf.get("camera_shot", "wide_shot")
+                            offset, rot = get_shot_preset(shot_name)
                             
-                        char_pos = [start_location[0] + delta_loc[0],
-                                    start_location[1] + delta_loc[1],
-                                    start_location[2] + delta_loc[2]]
-                                    
-                        camera.location = (char_pos[0] + offset[0], 
-                                           char_pos[1] + offset[1], 
-                                           char_pos[2] + offset[2])
-                        camera.rotation_euler = rot
+                            factor = kf.get("loc_factor", 0.0)
+                            
+                            # Calculate character locomotion position delta
+                            delta_loc = [0.0, 0.0, 0.0]
+                            aname = action_name.lower()
+                            if "walk" in aname:
+                                delta_loc = [0.0, -1.0 * duration * factor, 0.0]
+                            elif "run" in aname:
+                                delta_loc = [0.0, -3.0 * duration * factor, 0.0]
+                            elif "jump" in aname:
+                                delta_loc = [0.0, -0.5 * duration * factor, 0.0]
+                                
+                            char_pos = [start_location[0] + delta_loc[0],
+                                        start_location[1] + delta_loc[1],
+                                        start_location[2] + delta_loc[2]]
+                                        
+                            camera.location = (char_pos[0] + offset[0], 
+                                               char_pos[1] + offset[1], 
+                                               char_pos[2] + offset[2])
+                            camera.rotation_euler = rot
                         
                         camera.keyframe_insert(data_path="location", frame=frame)
                         camera.keyframe_insert(data_path="rotation_euler", frame=frame)
                         
-                    # Default interpolation to constant keyframes
                     if camera.animation_data and camera.animation_data.action:
-                        for fcurve in camera.animation_data.action.fcurves:
-                            for kp in fcurve.keyframe_points:
-                                kp.interpolation = 'CONSTANT'
+                        try:
+                            if hasattr(camera.animation_data.action, "fcurves"):
+                                for fcurve in camera.animation_data.action.fcurves:
+                                    for kp in fcurve.keyframe_points:
+                                        kp.interpolation = "CONSTANT"
+                            elif hasattr(camera.animation_data.action, "curves"):
+                                for curve in camera.animation_data.action.curves:
+                                    for kp in curve.keyframe_points:
+                                        kp.interpolation = "CONSTANT"
+                        except Exception as interp_err:
+                            print(f"[BlenderDaemon] Failed to set camera keyframe interpolation: {interp_err}")
                 else:
                     # Fallback single camera logic
                     camera_shot = payload.get("camera_shot", payload.get("camera", "wide_shot")).lower()
@@ -635,13 +732,12 @@ class RenderHandler(BaseHTTPRequestHandler):
                 shutil.rmtree(render_dir, ignore_errors=True)
                 
                 # --- Continuity: Save State ---
-                if state_file_path and armature:
-                    # evaluate at last frame
+                if state_file_path and primary_armature:
                     bpy.context.scene.frame_set(f_end)
                     bpy.context.view_layer.update()
                     
                     delta_loc = [0.0, 0.0, 0.0]
-                    aname = action_name.lower()
+                    aname = characters[0]["action"].lower()
                     if "walk" in aname:
                         delta_loc = [0.0, -1.0 * duration, 0.0]
                     elif "run" in aname:
@@ -649,8 +745,8 @@ class RenderHandler(BaseHTTPRequestHandler):
                     elif "jump" in aname:
                         delta_loc = [0.0, -0.5 * duration, 0.0]
                         
-                    final_loc = [armature.location.x + delta_loc[0], armature.location.y + delta_loc[1], armature.location.z]
-                    final_rot = [armature.rotation_euler.x, armature.rotation_euler.y, armature.rotation_euler.z]
+                    final_loc = [primary_armature.location.x + delta_loc[0], primary_armature.location.y + delta_loc[1], primary_armature.location.z]
+                    final_rot = [primary_armature.rotation_euler.x, primary_armature.rotation_euler.y, primary_armature.rotation_euler.z]
                     cam_loc = [camera.location.x + delta_loc[0], camera.location.y + delta_loc[1], camera.location.z]
                     cam_rot = [camera.rotation_euler.x, camera.rotation_euler.y, camera.rotation_euler.z]
                     
@@ -661,7 +757,7 @@ class RenderHandler(BaseHTTPRequestHandler):
                             "location": cam_loc,
                             "rotation": cam_rot
                         },
-                        "previous_action": action_name
+                        "previous_action": characters[0]["action"]
                     }
                     with open(state_file_path, "w") as sf:
                         json.dump(state_data, sf)

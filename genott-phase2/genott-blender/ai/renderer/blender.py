@@ -58,7 +58,9 @@ def ensure_blender_daemon():
     print("[BlenderRenderer] Starting BlenderDaemon in background...")
     daemon_script = os.path.join(os.path.dirname(__file__), "blender_daemon.py")
     cmd = ["flatpak", "run", "org.blender.Blender", "-b", "--python", daemon_script]
-    subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    log_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "blender_daemon.log")
+    log_fd = open(log_file, "a")
+    subprocess.Popen(cmd, stdout=log_fd, stderr=log_fd)
     
     # Wait for daemon to become ready (up to 120s since Blender initialization takes ~45-65s)
     for _ in range(60):
@@ -159,24 +161,62 @@ class BlenderVideoRenderer(VideoRenderer):
 
     def render_scene(self, plan: ScenePlan, seed: int, output_path: str, generation_id: str = None, viseme_timeline: list = None) -> str:
         """Render a scene using BlenderDaemon."""
-        # Resolve character and action
-        char_path, action_map = self._resolve_character(plan.character_name or "humanoid")
-        blender_action, fbx_path = self._resolve_action(plan.action or "idle", action_map)
+        # ── Resolve Characters & Placements ──
+        plan_characters = getattr(plan, "characters", None)
+        if not plan_characters:
+            plan_characters = [plan.character_name or "humanoid"]
+            
+        plan_placements = getattr(plan, "character_placements", None)
+        if not plan_placements:
+            from spatial_placement_engine import SpatialPlacementEngine
+            spatial_engine = SpatialPlacementEngine()
+            plan_placements = spatial_engine.calculate_positions(plan_characters)
 
-        # Verify character file is real (not a placeholder)
-        if not os.path.exists(char_path) or os.path.getsize(char_path) < 100:
-            raise FileNotFoundError(
-                f"Character GLB not found or is a placeholder: {char_path}. "
-                f"Please add a real GLB model to assets/characters/"
-            )
+        characters_payload = []
+        for char in plan_characters:
+            char_path, action_map = self._resolve_character(char)
+            # Verify file exists, fallback to humanoid
+            if not os.path.exists(char_path) or os.path.getsize(char_path) < 100:
+                char_path, action_map = self._resolve_character("humanoid")
+                if not os.path.exists(char_path) or os.path.getsize(char_path) < 100:
+                    raise FileNotFoundError(
+                        f"Character GLB not found or is a placeholder: {char_path}. "
+                        f"Please add a real GLB model to assets/characters/"
+                    )
+
+            # Assign action
+            if char.lower().replace(" ", "_") == (plan.character_name or "humanoid").lower().replace(" ", "_"):
+                char_action = plan.action or "idle"
+            else:
+                char_action = "idle"
+
+            blender_action, fbx_path = self._resolve_action(char_action, action_map)
+            
+            char_placement = plan_placements.get(char, {
+                "position": [0.0, 0.0, 0.0],
+                "rotation": [0.0, 0.0, 0.0]
+            })
+
+            characters_payload.append({
+                "name": char.lower().replace(" ", "_"),
+                "file": os.path.abspath(char_path),
+                "action": blender_action,
+                "action_file": fbx_path or "",
+                "position": char_placement.get("position", [0.0, 0.0, 0.0]),
+                "rotation": char_placement.get("rotation", [0.0, 0.0, 0.0]),
+                "viseme_timeline": viseme_timeline if char.lower().replace(" ", "_") == (plan.character_name or "humanoid").lower().replace(" ", "_") else None,
+                "mood": getattr(plan, "mood", "neutral") if char.lower().replace(" ", "_") == (plan.character_name or "humanoid").lower().replace(" ", "_") else "neutral"
+            })
 
         # ── Scene Continuity & Character Persistence ──
         state_path = os.path.abspath(os.path.join(self.project_dir, "scene_state.json"))
-        start_location = [0.0, 0.0, 0.0]
+        # Extract start location of the primary character
+        start_location = characters_payload[0]["position"]
         if os.path.exists(state_path):
             with open(state_path, "r") as f:
                 state_data = json.load(f)
-                start_location = state_data.get("end_location", [0.0, 0.0, 0.0])
+                # Keep compatibility with single location tracking if state existed
+                start_location = state_data.get("end_location", characters_payload[0]["position"])
 
         # Update/Get Visual Continuity state
         from continuity_engine_v2 import ContinuityEngineV2
@@ -197,12 +237,19 @@ class BlenderVideoRenderer(VideoRenderer):
         asset_director = AssetDirector()
         scene_assets = asset_director.get_scene_assets(description_str)
 
+        camera_timeline = getattr(plan, 'camera_timeline', None)
+        if camera_timeline is None:
+            from cinematic_sequencer import sequence_scene
+            camera_timeline = sequence_scene(plan, start_location, characters_payload[0]['action'])
+            plan.camera_timeline = camera_timeline
+
         # Build render payload
         payload = {
+            "characters": characters_payload,
             "character_name": (plan.character_name or "humanoid").lower().replace(" ", "_"),
-            "action": blender_action,
-            "action_file": fbx_path or "",
-            "character_file": os.path.abspath(char_path),
+            "action": characters_payload[0]["action"],
+            "action_file": characters_payload[0]["action_file"],
+            "character_file": characters_payload[0]["file"],
             "location": plan.location or "environment",
             "camera_shot": plan.camera_shot or "cinematic wide",
             "duration": plan.duration or 4.0,
@@ -211,6 +258,7 @@ class BlenderVideoRenderer(VideoRenderer):
             "state_file_path": state_path,
             "mood": getattr(plan, "mood", "neutral"),
             "assets": scene_assets,
+
             
             # Advanced Visual Continuity state keys
             "held_item": visual_state.get("held_item"),
@@ -219,7 +267,7 @@ class BlenderVideoRenderer(VideoRenderer):
             "environment_props": visual_state.get("environment_props"),
             
             # Cinematic Sequencer keyframe timeline
-            "camera_timeline": getattr(plan, "camera_timeline", None),
+            "camera_timeline": camera_timeline,
             
             # Dialogue viseme timeline
             "viseme_timeline": viseme_timeline

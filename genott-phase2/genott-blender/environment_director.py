@@ -319,7 +319,7 @@ def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0
             trunk = bpy.context.active_object
             if trunk_mat: trunk.data.materials.append(trunk_mat)
             # Foliage
-            bpy.ops.mesh.primitive_cone_add(radius=1.0, depth=2.5, location=(x, y, 2.5))
+            bpy.ops.mesh.primitive_cone_add(radius1=1.0, depth=2.5, location=(x, y, 2.5))
             foliage = bpy.context.active_object
             if leaf_mat: foliage.data.materials.append(leaf_mat)
             
@@ -342,7 +342,7 @@ def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0
             body = bpy.context.active_object
             if stone_mat: body.data.materials.append(stone_mat)
             # Roof
-            bpy.ops.mesh.primitive_cone_add(radius=1.5, depth=1.5, location=(x, y, 2.75))
+            bpy.ops.mesh.primitive_cone_add(radius1=1.5, depth=1.5, location=(x, y, 2.75))
             roof = bpy.context.active_object
             if roof_mat: roof.data.materials.append(roof_mat)
             
@@ -353,7 +353,7 @@ def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0
             # Keep path clear
             if abs(x) < 1.0: x = 2.0 if x > 0 else -2.0
             y = character_pos[1] - (i * 3.0) + 2
-            bpy.ops.mesh.primitive_cone_add(radius=0.4, depth=random.uniform(1.5, 3.5), location=(x, y, 1.0))
+            bpy.ops.mesh.primitive_cone_add(radius1=0.4, depth=random.uniform(1.5, 3.5), location=(x, y, 1.0))
             stalag = bpy.context.active_object
             if stone_mat: stalag.data.materials.append(stone_mat)
             
@@ -373,7 +373,7 @@ def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0
         for i in range(3):
             x = -15 if i == 0 else 15
             y = character_pos[1] - 15
-            bpy.ops.mesh.primitive_cone_add(radius=10.0, depth=15.0, location=(x, y, 4.0))
+            bpy.ops.mesh.primitive_cone_add(radius1=10.0, depth=15.0, location=(x, y, 4.0))
             mtn = bpy.context.active_object
             if stone_mat: mtn.data.materials.append(stone_mat)
             
@@ -486,7 +486,7 @@ def spawn_resolved_assets(assets: List[Dict[str, Any]], character_pos=(0, 0, 0))
             if fallback == "cylinder":
                 bpy.ops.mesh.primitive_cylinder_add(radius=scale[0]/2.0, depth=scale[2], location=loc)
             elif fallback == "cone":
-                bpy.ops.mesh.primitive_cone_add(radius=scale[0]/2.0, depth=scale[2], location=loc)
+                bpy.ops.mesh.primitive_cone_add(radius1=scale[0]/2.0, depth=scale[2], location=loc)
             elif fallback == "sphere":
                 bpy.ops.mesh.primitive_uv_sphere_add(radius=scale[0]/2.0, location=loc)
             else:
@@ -607,7 +607,7 @@ def spawn_environment_props(props: List[str], character_pos=(0, 0, 0)):
             
         elif prop_clean == "tent":
             loc = (character_pos[0] - 2.8, character_pos[1] - 3.5, 1.0)
-            bpy.ops.mesh.primitive_cone_add(radius=1.8, depth=2.0, location=loc)
+            bpy.ops.mesh.primitive_cone_add(radius1=1.8, depth=2.0, location=loc)
             tent = bpy.context.active_object
             tent.name = f"Tent_{idx}"
             if roof_mat: tent.data.materials.append(roof_mat)

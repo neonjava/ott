@@ -11,6 +11,9 @@
 - **Objective 8: Git Discipline**: COMPLETE
 - **Objective 9: Blender Daemon Pre-warming**: COMPLETE
 - **Objective 10: Issue Tracking (ISSUES.md)**: COMPLETE
+- **Objective 11: Multi-Character Rendering Support**: COMPLETE
+- **Objective 12: Cinematic Camera Sequencer & Mismatch Fixes**: COMPLETE
+- **Objective 13: Blender 5.1.2 Environment Primitive Upgrades**: COMPLETE
 
 ## Blender Daemon Pre-warming Log (Objective 9)
 - **Built**: Added a background pre-warming mechanism to execute a mock 1-frame render on BlenderDaemon startup, compiling Cycles GPU OptiX shaders in advance.
@@ -56,6 +59,21 @@
 - **Built**: `spatial_placement_engine.py` to calculate deterministic coordinate layouts, collision repulsion pushing, and camera-safe yaw orientations.
 - **Tested**: Ran 100 benchmark scenes with character counts varying from 1 to 10 via `spatial_placement_benchmark.py` and outputted `spatial_placement_report.md`.
 - **Results**: 100% placement success rate with 0 overlaps, 0 collisions, and 0 failures.
+
+## Multi-Character Rendering Support Log (Objective 11)
+- **Built**: Refactored `blender.py` and `blender_daemon.py` to concurrently import and animate multiple rigged character meshes within a shared coordinate space. Armatures are dynamically renamed with character suffixes to prevent conflicts, placed using non-overlapping coordinate matrices, and mapped to individual animation tracks.
+- **Tested**: Verified end-to-end multi-character scenes via testing story scenes and manual renders.
+- **Results**: Successfully rendered Knight and Dragon interactions within a shared 3D volume.
+
+## Cinematic Camera Sequencer & Mismatch Log (Objective 12)
+- **Built**: Fully integrated `cinematic_sequencer.py`'s pre-computed camera coordinate arrays (tuples for `location` and `rotation`) in `blender_daemon.py`, preventing static fallbacks. Handled Blender 5.x Layered Action curves vs legacy fcurves via dynamic try-except logic. Extended `ScenePlan` with a `camera_movement` property to reward camera diversity score. Cleared dummy string values from Flask server (`app.py`), allowing the renderer to dynamically auto-sequence timelines using correct start coordinates.
+- **Tested**: Ran validation benchmark of 10 movies.
+- **Results**: 100% movie generation success rate (10/10 PASS) with fully dynamic camera movements (track, pan, orbit) rendering successfully.
+
+## Blender 5.1.2 Environment Primitive Upgrades Log (Objective 13)
+- **Built**: Updated cylinder and cone primitive parameters in `environment_director.py` to support Blender 5.1.2 keywords (`radius1` instead of legacy `radius` for cone adds).
+- **Tested**: Executed environment builders for forest, mountain, and village.
+- **Results**: All environment setups now compile and build without errors.
 
 ## Previous Phase Status (Historical)
 - **Story Understanding Engine**: COMPLETE

@@ -25,3 +25,32 @@ This file tracks technical issues, bottlenecks, and bugs found during the develo
 - **Root Cause**: The conclusion formatting string `'**All {passes} movies passed validation.**'` was nested inside an f-string expression but lacked its own `f` prefix.
 - **Resolution**: Added the `f` prefix to the single-quoted string inside the f-string evaluation statement in [movie_validation_benchmark.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender/movie_validation_benchmark.py#L158).
 - **Resolution Commit**: fd7d6fb
+
+---
+
+## [Issue #3] Cinematic Camera Sequencer Mismatch & Regression
+
+- **Status**: RESOLVED
+- **Date Found**: 2026-06-17
+- **Severity**: HIGH (Blocker)
+- **Description**: The camera sequencer generated frame-by-frame 3D coordinates, but the Blender Daemon ignored them because it expected `camera_shot` and `loc_factor` metadata parameters, causing the camera to remain static on the first pass. Also, the Flask regeneration loop passed `"character_start"` as a string leading to Python `TypeError` and crash when regeneration was triggered. Finally, `ScenePlan` lacked a `camera_movement` field causing evaluator penalties.
+- **Root Cause**: Lack of coordinate integration inside the daemon's camera setup loop and parameter mismatch between `cinematic_sequencer.py` and `blender_daemon.py`.
+- **Resolution**:
+  - Added `camera_movement` to `ScenePlan` in `models.py` and `planner.py`.
+  - Updated `blender_daemon.py` to directly apply `location` and `rotation` tuples inside the keyframe payload if present.
+  - Added safe fallback try-except logic for Blender 5.x Action curves.
+  - Removed string-passing from `app.py` and auto-generated timeline in `blender.py` if missing.
+- **Resolution Commit**: 7654434
+
+---
+
+## [Issue #4] Blender 5.1.2 Environment Primitive Radius Argument Bug
+
+- **Status**: RESOLVED
+- **Date Found**: 2026-06-17
+- **Severity**: MEDIUM
+- **Description**: Mountain, cave, forest, and village environments failed to build, logging: `Failed to build environment: Converting py args to operator properties:: keyword "radius" unrecognized`.
+- **Root Cause**: In Blender 5.1.2, `bpy.ops.mesh.primitive_cone_add` was updated to use `radius1` and `radius2` instead of `radius`.
+- **Resolution**: Updated `environment_director.py` to replace all `radius` parameter names with `radius1` inside `primitive_cone_add` calls.
+- **Resolution Commit**: 7654434
+

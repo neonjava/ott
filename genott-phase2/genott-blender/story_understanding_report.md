@@ -6,8 +6,8 @@
 - **Passed**: 100
 - **Failed**: 0
 - **Success Rate**: 100.0%
-- **Total Execution Time**: 9.886 seconds
-- **Average Time per Story**: 0.09886 seconds
+- **Total Execution Time**: 9.979 seconds
+- **Average Time per Story**: 0.09979 seconds
 
 ## Extraction Metrics
 - **Total Characters Extracted**: 114 (Avg: 1.1/story)
@@ -65,11 +65,11 @@
 | 44 | The evil wizard cast a shadow over the peaceful village. | PASS | shadow, wizard | village | neutral | 1 |
 | 45 | A surprised traveler spots an oasis in the dry desert. | PASS | traveler | desert | surprise | 1 |
 | 46 | The tired robot rests on the rusty bridge, losing power. | PASS | robot | bridge | neutral | 2 |
-| 47 | A terrified captain flees from the sea monster, escaping in fear. | PASS | monster, captain | sea | fear | 2 |
+| 47 | A terrified captain flees from the sea monster, escaping in fear. | PASS | captain, monster | sea | fear | 2 |
 | 48 | The cheerful princess greets the travelers at the palace entry. | PASS | princess | environment | happy | 1 |
 | 49 | A lonely dwarf searches for gold in the deep mine. | PASS | dwarf | environment | sad | 1 |
 | 50 | The aggressive robot attacks the base, destroying the defense. | PASS | robot | environment | neutral | 2 |
-| 51 | A sad warrior grieves his fallen captain on the glacier. | PASS | warrior, captain | glacier | sad | 1 |
+| 51 | A sad warrior grieves his fallen captain on the glacier. | PASS | captain, warrior | glacier | sad | 1 |
 | 52 | The brave knight discovers the holy chalice inside the ruins. | PASS | knight | ruins | surprise, determination | 1 |
 | 53 | A tense mage crouches in the bushes, waiting for the guard. | PASS | mage, guard | environment | fear | 2 |
 | 54 | The proud prince waves from the horse, entering the city. | PASS | prince | city | happy | 2 |
@@ -102,7 +102,7 @@
 | 81 | A tense guard walks around the wall, checking the shadows. | PASS | guard | environment | fear | 2 |
 | 82 | The surprised wizard notices the crystal glowing, feeling hope. | PASS | wizard | environment | surprise, hope | 2 |
 | 83 | A sad traveler weeps by the ruins, losing faith. | PASS | traveler | ruins | sad, hope | 2 |
-| 84 | The brave knight rescues the prince from the tower. | PASS | knight, prince | tower | determination | 1 |
+| 84 | The brave knight rescues the prince from the tower. | PASS | prince, knight | tower | determination | 1 |
 | 85 | A terrified villager runs from the fire, escaping to the hill. | PASS | humanoid | hill | fear | 2 |
 | 86 | The angry beast roars inside the cave, preparing to attack. | PASS | beast | cave | angry | 2 |
 | 87 | A happy princess waves to the soldiers, celebrating the peace. | PASS | princess | environment | happy | 2 |

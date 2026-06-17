@@ -264,16 +264,48 @@ class ScenePlanner:
             elif sb_scene["action"] == "attack":
                 duration = 4.0
                 
+            # Detect characters in scene sentence
+            sentence = sb_scene.get("sentence", "") or sb_scene.get("description", "") or ""
+            from character_interaction_engine import CharacterInteractionEngine
+            interaction_engine = CharacterInteractionEngine()
+            chars_in_scene = interaction_engine.detect_characters_in_text(sentence)
+            
+            # Ensure the primary character is always included first
+            primary_char = sb_scene.get("character", character or "humanoid")
+            if not primary_char:
+                primary_char = "humanoid"
+            if primary_char not in chars_in_scene:
+                chars_in_scene.insert(0, primary_char)
+            else:
+                # Move primary character to the first position
+                chars_in_scene.remove(primary_char)
+                chars_in_scene.insert(0, primary_char)
+                
+            from spatial_placement_engine import SpatialPlacementEngine
+            spatial_engine = SpatialPlacementEngine()
+            placements = spatial_engine.calculate_positions(chars_in_scene)
+
+            action_lower = sb_scene["action"].lower()
+            if 'walk' in action_lower or 'run' in action_lower:
+                camera_movement = 'tracking'
+            elif 'attack' in action_lower:
+                camera_movement = 'orbit'
+            else:
+                camera_movement = 'static'
+
             plan = ScenePlan(
                 scene_number=i + 1,
-                character_name=sb_scene["character"],
+                character_name=primary_char,
                 location=sb_scene["location"],
                 action=sb_scene["action"],
                 camera_shot=camera_shot,
                 duration=duration,
                 dialogue=scene_diag,
                 narration=scene_narration,
-                mood=sb_scene.get("mood") or "neutral"
+                mood=sb_scene.get("mood") or "neutral",
+                characters=chars_in_scene,
+                character_placements=placements,
+                camera_movement=camera_movement
             )
             plans.append(plan)
             
@@ -307,16 +339,47 @@ class ScenePlanner:
                 voice = char_profile.voice_profile if char_profile else "en-US-ChristopherNeural"
                 dialogue = DialogueLine(speaker=char_name, text=diag_text, voice_profile=voice)
 
+            # Detect characters in description/narration/action
+            desc_text = item.get("description", "") or item.get("narration", "") or item.get("action", "") or ""
+            from character_interaction_engine import CharacterInteractionEngine
+            interaction_engine = CharacterInteractionEngine()
+            chars_in_scene = interaction_engine.detect_characters_in_text(desc_text)
+            
+            primary_char = char_name or "humanoid"
+            if primary_char not in chars_in_scene:
+                chars_in_scene.insert(0, primary_char)
+            else:
+                chars_in_scene.remove(primary_char)
+                chars_in_scene.insert(0, primary_char)
+                
+            from spatial_placement_engine import SpatialPlacementEngine
+            spatial_engine = SpatialPlacementEngine()
+            placements = spatial_engine.calculate_positions(chars_in_scene)
+
+            action = item.get("action", "standing")
+            camera_movement = item.get("camera_movement") or item.get("camera_move")
+            if not camera_movement:
+                action_lower = action.lower()
+                if 'walk' in action_lower or 'run' in action_lower:
+                    camera_movement = 'tracking'
+                elif 'attack' in action_lower:
+                    camera_movement = 'orbit'
+                else:
+                    camera_movement = 'static'
+
             plan = ScenePlan(
                 scene_number=int(item.get("scene_number", 1)),
                 character_name=char_name,
                 location=item.get("location", "unknown area"),
-                action=item.get("action", "standing"),
+                action=action,
                 camera_shot=item.get("camera_shot", "cinematic wide"),
                 duration=float(item.get("duration", 5.0)),
                 dialogue=dialogue,
                 narration=item.get("narration"),
-                mood=item.get("mood") or "neutral"
+                mood=item.get("mood") or "neutral",
+                characters=chars_in_scene,
+                character_placements=placements,
+                camera_movement=camera_movement
             )
             plans.append(plan)
         return plans

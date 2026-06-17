@@ -466,8 +466,7 @@ def api_generate_movie():
                     update_execution_log(generation_id, f"Fix: randomized camera shot in Scene {idx+1} to {plan.camera_shot} for diversity")
                     
                 # Re-sequence camera timeline for this scene
-                from cinematic_sequencer import sequence_scene
-                plan.camera_timeline = sequence_scene(plan, "character_start", plan.action)
+                plan.camera_timeline = None
                 
                 # Re-render scene
                 scene_mp4 = os.path.join(Config.VIDEO_DIR, f"scene_{generation_id}_{idx}.mp4")
