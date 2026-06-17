@@ -14,6 +14,7 @@
 - **Objective 11: Multi-Character Rendering Support**: COMPLETE
 - **Objective 12: Cinematic Camera Sequencer & Mismatch Fixes**: COMPLETE
 - **Objective 13: Blender 5.1.2 Environment Primitive Upgrades**: COMPLETE
+- **Objective 14: Multi-Character Dialogue, Speaker Tracking & Viseme Alignment**: COMPLETE
 
 ## Blender Daemon Pre-warming Log (Objective 9)
 - **Built**: Added a background pre-warming mechanism to execute a mock 1-frame render on BlenderDaemon startup, compiling Cycles GPU OptiX shaders in advance.
@@ -74,6 +75,11 @@
 - **Built**: Updated cylinder and cone primitive parameters in `environment_director.py` to support Blender 5.1.2 keywords (`radius1` instead of legacy `radius` for cone adds).
 - **Tested**: Executed environment builders for forest, mountain, and village.
 - **Results**: All environment setups now compile and build without errors.
+
+## Multi-Character Dialogue, Speaker Tracking & Viseme Alignment Log (Objective 14)
+- **Built**: Refactored `planner.py` to collect all scene-specific dialogue lines. Refactored `app.py` to sequentially synthesize audio clips, calculate timeline offsets for each speaker, apply pinning "rest" keyframes to prevent mouth drifting when characters are silent, and mix multi-audio segments using FFmpeg delay/amix filters. Updated `blender.py` to route character-specific viseme timelines.
+- **Tested**: Ran dialogue validation benchmark of 20 movies and E2E multi-character dialogues.
+- **Results**: 100% dialogue validation success rate (20/20 PASS) and successful multi-character sequential tracking.
 
 ## Previous Phase Status (Historical)
 - **Story Understanding Engine**: COMPLETE
