@@ -135,17 +135,25 @@ def main():
     print(f"Final Repository Size: {format_size(final_repo_size)}")
     print(f"Total Recovered Space: {format_size(total_recovered)}")
     
-    # Generate STORAGE_REPORT.md
+    # Generate combined storage_cleanup_report.md
     largest_files = []
     for root, dirs, files in os.walk(REPO_DIR):
         if ".git" in root or "venv" in root:
             continue
         for f in files:
             fp = os.path.join(root, f)
-            largest_files.append((fp, os.path.getsize(fp)))
+            try:
+                largest_files.append((fp, os.path.getsize(fp)))
+            except: pass
     largest_files.sort(key=lambda x: x[1], reverse=True)
-    
-    storage_report = f"""# Storage Report
+
+    combined_report = f"""# Storage and Cleanup Report
+
+## Summary
+- **Cache Directories Cleaned**: `__pycache__`, `.pytest_cache`, `.cache`
+- **Temporary Files Deleted**: {len(deleted_files)} files
+- **Storage Space Recovered**: {format_size(total_recovered)}
+- **Quarantined Files (>100MB)**: {len(quarantined_files)} files
 
 ## Repository and Archive Size
 | Storage Target | Size |
@@ -158,67 +166,48 @@ def main():
 """
     for fp, sz in largest_files[:10]:
         rel = os.path.relpath(fp, REPO_DIR)
-        storage_report += f"- `{rel}`: {format_size(sz)}\n"
-        
-    storage_report += """
+        combined_report += f"- `{rel}`: {format_size(sz)}\n"
+
+    combined_report += """
 ## Moved/Archived Files
 | Original File | Archive Location | Size |
 |---------------|------------------|------|
 """
     for orig, dest, sz in moved_files[:15]:
-        storage_report += f"| `{os.path.basename(orig)}` | `{os.path.basename(dest)}` | {format_size(sz)} |\n"
+        combined_report += f"| `{os.path.basename(orig)}` | `{os.path.basename(dest)}` | {format_size(sz)} |\n"
     if len(moved_files) > 15:
-        storage_report += f"| ... and {len(moved_files) - 15} more files ... | | |\n"
-        
-    with open("STORAGE_REPORT.md", "w") as f:
-        f.write(storage_report)
-    print("Saved STORAGE_REPORT.md")
-    
-    # Generate CLEANUP_REPORT.md
-    cleanup_report = f"""# Cleanup Report
+        combined_report += f"| ... and {len(moved_files) - 15} more files ... | | |\n"
 
-## Summary
-- **Cache Directories Cleaned**: `__pycache__`, `.pytest_cache`, `.cache`
-- **Temporary Files Deleted**: {len(deleted_files)} files
-- **Storage Space Recovered**: {format_size(total_recovered)}
-- **Quarantined Files (>100MB)**: {len(quarantined_files)} files
-
+    combined_report += """
 ## Deleted Files Detail
 | File/Directory Path | Size |
 |---------------------|------|
 """
     for fp, sz in deleted_files[:15]:
         rel = os.path.relpath(fp, REPO_DIR) if fp.startswith(REPO_DIR) else fp
-        cleanup_report += f"| `{rel}` | {format_size(sz)} |\n"
+        combined_report += f"| `{rel}` | {format_size(sz)} |\n"
     if len(deleted_files) > 15:
-        cleanup_report += f"| ... and {len(deleted_files) - 15} more files ... | |\n"
-        
-    cleanup_report += """
+        combined_report += f"| ... and {len(deleted_files) - 15} more files ... | |\n"
+
+    combined_report += """
 ## Quarantined Files (>100MB)
 | File Path | Quarantine Target | Size |
 |-----------|-------------------|------|
 """
     for orig, dest, sz in quarantined_files:
-        cleanup_report += f"| `{os.path.basename(orig)}` | `{os.path.basename(dest)}` | {format_size(sz)} |\n"
-        
-    with open("CLEANUP_REPORT.md", "w") as f:
-        f.write(cleanup_report)
-    print("Saved CLEANUP_REPORT.md")
-    
-    # Sync reports to Documents/md
-    md_dir = "PROJECT_ROOT/Documents/md"
-    os.makedirs(md_dir, exist_ok=True)
-    with open(os.path.join(md_dir, "STORAGE_REPORT.md"), "w") as f:
-        f.write(storage_report)
-    with open(os.path.join(md_dir, "CLEANUP_REPORT.md"), "w") as f:
-        f.write(cleanup_report)
-        
+        combined_report += f"| `{os.path.basename(orig)}` | `{os.path.basename(dest)}` | {format_size(sz)} |\n"
+
+    # Write report locally
+    with open("storage_cleanup_report.md", "w") as f:
+        f.write(combined_report)
+    print("Saved storage_cleanup_report.md")
+
     # Sync to brain artifact directory
     artifact_dir = "PROJECT_ROOT/.gemini/antigravity-cli/brain/3496fc80-3ea9-4817-8bc4-b4e0e2ff7b60"
-    with open(os.path.join(artifact_dir, "STORAGE_REPORT.md"), "w") as f:
-        f.write(storage_report)
-    with open(os.path.join(artifact_dir, "CLEANUP_REPORT.md"), "w") as f:
-        f.write(cleanup_report)
+    if os.path.exists(artifact_dir):
+        with open(os.path.join(artifact_dir, "storage_cleanup_report.md"), "w") as f:
+            f.write(combined_report)
+        print("Synchronized storage_cleanup_report.md to brain artifact directory.")
         
     print("Storage and cleanup reports successfully generated and synchronized.")
 
