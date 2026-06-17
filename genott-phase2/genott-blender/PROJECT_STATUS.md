@@ -2,18 +2,23 @@
 
 ## Current Status
 - **Objective 1: Story Understanding Engine**: COMPLETE
-- **Objective 2: Scene Planner**: IN PROGRESS
-- **Objective 3: Emotion Engine**: TODO
+- **Objective 2: Scene Planner**: COMPLETE
+- **Objective 3: Emotion Engine**: IN PROGRESS
 - **Objective 4: Character Interaction Engine**: TODO
 - **Objective 5: Full Integration**: TODO
 - **Objective 6: Reality Audit**: TODO
 - **Objective 7: Git Discipline**: IN PROGRESS
 
+## Scene Planner Log (Objective 2)
+- **Built**: `scene_planner_v2.py` mapping structured story events into sequential, detailed movie scenes. Supports camera selection heuristics, speed-informed durations, quote dialogue extraction, and visual descriptions.
+- **Tested**: Ran 100 stories end-to-end (from story understanding to planned scenes) via `scene_planner_benchmark.py` and outputted `scene_planner_report.md`.
+- **Success Rate**: 100.0% validity rate.
+
 ## Story Understanding Engine Log (Objective 1)
 - **Built**: `story_understanding_engine.py` with robust SVO (Subject-Verb-Object) heuristics, lexicon-based mapping of characters, locations, emotions, objects, and actions.
 - **Tested**: Ran 100 diverse story tests via `story_understanding_benchmark.py` and outputted `story_understanding_report.md`.
 - **Success Rate**: 100.0% accuracy on schema and entity extraction.
-- **Next Step**: Implement Objective 2 (Scene Planner).
+- **Next Step**: Implement Objective 3 (Emotion Engine).
 
 ## Previous Phase Status (Historical)
 - **Director AI**: COMPLETE
