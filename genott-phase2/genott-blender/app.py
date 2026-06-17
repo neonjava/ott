@@ -424,17 +424,95 @@ def api_generate_movie():
             raise RuntimeError(f"Movie Assembly Failed: {result_path_or_err}")
             
         final_filepath = result_path_or_err
-        # Cleanup
+        
+        # Objective 3 & 4: Quality Scoring and Automatic Regeneration
+        from movie_quality_engine import score_movie
+        quality_metrics = score_movie(final_filepath, scenes, transitions, threshold=70)
+        update_execution_log(generation_id, f"Initial Movie Quality Score: {quality_metrics['score']}/100")
+        
+        attempts = 0
+        max_attempts = 3
+        while quality_metrics["status"] == "rejected" and attempts < max_attempts:
+            attempts += 1
+            bad_scenes = quality_metrics.get("bad_scenes", [])
+            update_execution_log(generation_id, f"Quality score {quality_metrics['score']} is below threshold 70. Bad scenes: {bad_scenes}. Initiating automatic regeneration attempt {attempts}...")
+            
+            if not bad_scenes:
+                bad_scenes = [0]
+                
+            for idx in bad_scenes:
+                if idx >= len(scenes):
+                    continue
+                plan = scenes[idx]
+                update_execution_log(generation_id, f"Regenerating Scene {idx+1} (Action: {plan.action}, Shot: {plan.camera_shot})...")
+                
+                # Apply rules to fix camera shots/framing
+                has_dialogue = plan.dialogue is not None
+                if has_dialogue and plan.camera_shot in ("establishing shot", "wide shot"):
+                    plan.camera_shot = random.choice(["close up", "medium shot"])
+                    update_execution_log(generation_id, f"Fix: changed dialogue shot in Scene {idx+1} to {plan.camera_shot}")
+                elif plan.action in ("run", "walk", "jump") and plan.camera_shot in ("close up", "over shoulder"):
+                    plan.camera_shot = random.choice(["tracking shot", "wide shot"])
+                    update_execution_log(generation_id, f"Fix: changed movement shot in Scene {idx+1} to {plan.camera_shot}")
+                else:
+                    presets = ["medium shot", "close up", "wide shot", "tracking shot", "orbit shot", "low angle", "high angle"]
+                    plan.camera_shot = random.choice([p for p in presets if p != plan.camera_shot])
+                    update_execution_log(generation_id, f"Fix: randomized camera shot in Scene {idx+1} to {plan.camera_shot} for diversity")
+                    
+                # Re-sequence camera timeline for this scene
+                from cinematic_sequencer import sequence_scene
+                plan.camera_timeline = sequence_scene(plan, "character_start", plan.action)
+                
+                # Re-render scene
+                scene_mp4 = os.path.join(Config.VIDEO_DIR, f"scene_{generation_id}_{idx}.mp4")
+                if os.path.exists(scene_mp4):
+                    try: os.remove(scene_mp4)
+                    except: pass
+                video_renderer.render_scene(plan, shared_seed, scene_mp4, generation_id=generation_id)
+                temp_video_files[idx] = scene_mp4
+                
+                # Re-apply audio merge
+                voice_file = temp_audio_files[idx] if idx < len(temp_audio_files) else None
+                if voice_file:
+                    char_profile = char_library.get_character(plan.character_name)
+                    if plan.dialogue and getattr(Config, "ENABLE_LIPSYNC", False) and lipsync_provider and char_profile:
+                        lip_synced_mp4 = os.path.join(Config.VIDEO_DIR, f"lipsync_{generation_id}_{idx}.mp4")
+                        lipsync_provider.run_lipsync(
+                            image_path=char_profile.face_reference_img,
+                            audio_path=voice_file,
+                            output_path=lip_synced_mp4,
+                            generation_id=generation_id
+                        )
+                        temp_video_files[idx] = lip_synced_mp4
+                    else:
+                        merged_mp4 = os.path.join(Config.VIDEO_DIR, f"final_scene_{generation_id}_{idx}.mp4")
+                        add_audio_to_video(scene_mp4, voice_file, merged_mp4)
+                        temp_video_files[idx] = merged_mp4
+                        
+            # Re-stitch movie
+            update_execution_log(generation_id, "Re-stitching regenerated scenes...")
+            success, result_path_or_err, final_dur = assemble_movie(
+                generation_id, Config.VIDEO_DIR, "final_movie.mp4",
+                scene_files=temp_video_files,
+                transitions=transitions
+            )
+            if success:
+                final_filepath = result_path_or_err
+                quality_metrics = score_movie(final_filepath, scenes, transitions, threshold=70)
+                update_execution_log(generation_id, f"Regenerated Movie Quality Score: {quality_metrics['score']}/100")
+            else:
+                update_execution_log(generation_id, f"Re-stitching failed: {result_path_or_err}")
+                break
+
+        # Cleanup intermediate files
         for f in temp_video_files + temp_audio_files:
-            if os.path.exists(f):
-                os.remove(f)
+            if os.path.exists(f) and f != final_filepath:
+                try: os.remove(f)
+                except: pass
                 
         # 8. Produce final movie
         update_execution_log(generation_id, "Movie compilation finished.")
-        # Score final quality
-        expected_dur = sum(s.duration for s in scenes)
-        quality_metrics = score_movie_quality(final_filepath, expected_dur)
-        update_execution_log(generation_id, f"Movie Quality Score: {quality_metrics.get('score')}/100")
+        update_execution_log(generation_id, f"Final Movie Quality Score: {quality_metrics['score']}/100")
 
         return jsonify({
             "status": "success",
