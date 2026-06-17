@@ -1,0 +1,13 @@
+{
+  "scene_index": 2,
+  "location": "arena",
+  "weather": "clear",
+  "characters": {},
+  "environment_props": [],
+  "held_items": {
+    "hero": null
+  },
+  "outfit_state": {
+    "hero": []
+  }
+}

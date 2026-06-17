@@ -155,7 +155,7 @@ for r in results:
 if errors:
     report += f"\n## Most Common Failure\n`{Counter(errors).most_common(1)[0][0]}` ({Counter(errors).most_common(1)[0][1]}x)\n"
 
-report += f"\n## Conclusion\n{'**All {passes} movies passed validation.**' if failures == 0 else f'**{failures} movies failed validation. See details above.**'}\n"
+report += f"\n## Conclusion\n{f'**All {passes} movies passed validation.**' if failures == 0 else f'**{failures} movies failed validation. See details above.**'}\n"
 
 with open("movie_validation_report.md", "w") as f:
     f.write(report)

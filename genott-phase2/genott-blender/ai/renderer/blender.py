@@ -18,6 +18,34 @@ from ai.config import Config
 
 DAEMON_URL = "http://127.0.0.1:5005"
 
+def prewarm_blender_daemon():
+    """Run a single-frame dummy render to compile OptiX GPU kernels and initialize Blender cache."""
+    print("[BlenderRenderer] Pre-warming BlenderDaemon container and GPU OptiX kernels...")
+    payload = {
+        "character_name": "humanoid",
+        "action": "idle",
+        "location": "arena",
+        "camera_shot": "wide_shot",
+        "duration": 0.1,
+        "output_path": "/tmp/blender_daemon_prewarm.mp4",
+        "mood": "neutral"
+    }
+    try:
+        resp = requests.post(f"{DAEMON_URL}/render", json=payload, timeout=180)
+        if resp.status_code == 200 and resp.json().get("status") == "success":
+            print("[BlenderRenderer] BlenderDaemon pre-warmed successfully!")
+            if os.path.exists("/tmp/blender_daemon_prewarm.mp4"):
+                try: os.remove("/tmp/blender_daemon_prewarm.mp4")
+                except: pass
+            thumb_path = "/tmp/blender_daemon_prewarm_thumb.png"
+            if os.path.exists(thumb_path):
+                try: os.remove(thumb_path)
+                except: pass
+        else:
+            print(f"[BlenderRenderer] BlenderDaemon pre-warm returned status: {resp.status_code}, data: {resp.text}")
+    except Exception as e:
+        print(f"[BlenderRenderer] BlenderDaemon pre-warm failed/timed out: {e}")
+
 def ensure_blender_daemon():
     """Ensure the Blender HTTP daemon is running."""
     try:
@@ -39,11 +67,13 @@ def ensure_blender_daemon():
             resp = requests.get(f"{DAEMON_URL}/ping", timeout=2)
             if resp.status_code == 200:
                 print("[BlenderRenderer] BlenderDaemon is ready!")
+                prewarm_blender_daemon()
                 return
         except requests.RequestException:
             pass
             
     raise RuntimeError("Timed out waiting for BlenderDaemon to start.")
+
 
 # Load character registry from JSON file
 def _load_character_registry():
