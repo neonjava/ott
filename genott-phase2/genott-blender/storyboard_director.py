@@ -256,7 +256,8 @@ def parse_script_to_storyboard(script: str, default_character: str = "humanoid")
             "action": detected_action,
             "camera": detected_camera,
             "mood": detected_mood,
-            "speed": speed_modifier
+            "speed": speed_modifier,
+            "sentence": sentence
         })
         
     # Ensure transitions has exactly len(scenes) - 1 elements

@@ -6,7 +6,8 @@
             "action": "walk",
             "camera": "wide_shot",
             "mood": "neutral",
-            "speed": "normal"
+            "speed": "normal",
+            "sentence": "Hero walks into the arena."
         },
         {
             "location": "arena",
@@ -14,7 +15,8 @@
             "action": "talk",
             "camera": "close_up",
             "mood": "neutral",
-            "speed": "normal"
+            "speed": "normal",
+            "sentence": "Hero says: \"Ready.\""
         }
     ],
     "transitions": [

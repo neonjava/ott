@@ -17,6 +17,7 @@ class ScenePlan:
     camera_shot: str
     duration: float
     dialogue: Optional[DialogueLine] = None
+    dialogues: Optional[list] = None
     narration: Optional[str] = None
     visual_description: str = ""
     mood: Optional[str] = "neutral"

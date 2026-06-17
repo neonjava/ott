@@ -224,18 +224,18 @@ class ScenePlanner:
         plans = []
         for i, sb_scene in enumerate(storyboard["scenes"]):
             # Find matching dialogue/narration from timeline for this scene index
-            scene_diag = None
+            scene_dialogues = []
             scene_narration = None
             
             for entry in timeline:
                 if entry["scene_index"] == i or (i == 0 and entry["scene_index"] == 0):
-                    if entry["type"] == "dialogue" and scene_diag is None:
+                    if entry["type"] == "dialogue":
                         voice = entry.get("voice", "en-US-ChristopherNeural")
-                        scene_diag = DialogueLine(
+                        scene_dialogues.append(DialogueLine(
                             speaker=entry.get("speaker", character),
                             text=entry["text"],
                             voice_profile=voice,
-                        )
+                        ))
                     elif entry["type"] == "narration" and scene_narration is None:
                         scene_narration = entry["text"]
             
@@ -270,6 +270,11 @@ class ScenePlanner:
             interaction_engine = CharacterInteractionEngine()
             chars_in_scene = interaction_engine.detect_characters_in_text(sentence)
             
+            # Ensure speakers in dialogues are included as characters
+            for d in scene_dialogues:
+                if d.speaker not in chars_in_scene:
+                    chars_in_scene.append(d.speaker)
+            
             # Ensure the primary character is always included first
             primary_char = sb_scene.get("character", character or "humanoid")
             if not primary_char:
@@ -300,7 +305,8 @@ class ScenePlanner:
                 action=sb_scene["action"],
                 camera_shot=camera_shot,
                 duration=duration,
-                dialogue=scene_diag,
+                dialogue=scene_dialogues[0] if scene_dialogues else None,
+                dialogues=scene_dialogues,
                 narration=scene_narration,
                 mood=sb_scene.get("mood") or "neutral",
                 characters=chars_in_scene,
@@ -375,6 +381,7 @@ class ScenePlanner:
                 camera_shot=item.get("camera_shot", "cinematic wide"),
                 duration=float(item.get("duration", 5.0)),
                 dialogue=dialogue,
+                dialogues=[dialogue] if dialogue else [],
                 narration=item.get("narration"),
                 mood=item.get("mood") or "neutral",
                 characters=chars_in_scene,

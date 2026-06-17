@@ -56,6 +56,39 @@ def update_execution_log(generation_id, msg):
     print(f"[Architect Log] {generation_id}: {msg}")
 
 
+def merge_audio_files(segments, output_path):
+    if not segments:
+        return None
+    if len(segments) == 1:
+        import shutil
+        shutil.copy(segments[0]["file"], output_path)
+        return output_path
+    
+    import subprocess
+    cmd = ["ffmpeg", "-y"]
+    for seg in segments:
+        cmd.extend(["-i", seg["file"]])
+    
+    filter_complex = ""
+    inputs = []
+    for idx, seg in enumerate(segments):
+        start_ms = int(seg["start"] * 1000)
+        filter_complex += f"[{idx}:a]adelay={start_ms}:all=1[a{idx}]; "
+        inputs.append(f"[a{idx}]")
+    
+    filter_complex += "".join(inputs)
+    filter_complex += f"amix=inputs={len(segments)}:normalize=0[aout]"
+    
+    cmd.extend([
+        "-filter_complex", filter_complex,
+        "-map", "[aout]",
+        output_path
+    ])
+    
+    subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return output_path
+
+
 # ── PAGES ──
 
 @app.route("/api/test-render", methods=["POST"])
@@ -342,18 +375,62 @@ def api_generate_movie():
         for idx, plan in enumerate(scenes):
             update_execution_log(generation_id, f"Processing Scene {idx+1}: {plan.action}...")
             
-            # 4. Voice Generation (Dialogue or Narration)
+            # 4. Multi-Character Voice Generation (Dialogue or Narration)
             voice_file = None
-            viseme_timeline = None
-            if plan.dialogue:
-                update_execution_log(generation_id, f"Synthesizing dialogue for: {plan.dialogue.speaker}...")
-                audio_res = voice_system.synthesize_dialogue(plan.dialogue.text, plan.dialogue.voice_profile)
-                voice_file = audio_res["audio_path"]
-                try:
-                    from lip_sync_engine import extract_visemes_from_words
-                    viseme_timeline = extract_visemes_from_words(audio_res.get("timestamps", []), audio_res.get("duration", plan.duration))
-                except Exception as ve:
-                    print(f"[App] Failed to extract visemes: {ve}")
+            viseme_timeline = {}
+            scene_dialogues = getattr(plan, "dialogues", []) or ([plan.dialogue] if plan.dialogue else [])
+            
+            if scene_dialogues:
+                dialogue_audios = []
+                current_time = 0.0
+                for line_idx, d_line in enumerate(scene_dialogues):
+                    update_execution_log(generation_id, f"Synthesizing dialogue line {line_idx+1} for: {d_line.speaker}...")
+                    audio_res = voice_system.synthesize_dialogue(d_line.text, d_line.voice_profile)
+                    line_voice_file = audio_res["audio_path"]
+                    line_duration = audio_res.get("duration") or max(1.5, len(d_line.text.split()) * 0.35)
+                    
+                    if line_voice_file:
+                        dialogue_audios.append({
+                            "file": line_voice_file,
+                            "start": current_time
+                        })
+                        try:
+                            from lip_sync_engine import extract_visemes_from_words
+                            line_visemes = extract_visemes_from_words(audio_res.get("timestamps", []), line_duration)
+                            
+                            offset_visemes = []
+                            if current_time > 0.05:
+                                offset_visemes.append({"time": 0.0, "viseme": "rest"})
+                                offset_visemes.append({"time": round(current_time - 0.05, 3), "viseme": "rest"})
+                            for vis in line_visemes:
+                                offset_visemes.append({
+                                    "time": round(current_time + vis["time"], 3),
+                                    "viseme": vis["viseme"]
+                                })
+                            end_time = current_time + line_duration
+                            offset_visemes.append({"time": round(end_time, 3), "viseme": "rest"})
+                            offset_visemes.append({"time": round(end_time + 0.05, 3), "viseme": "rest"})
+                            
+                            speaker_key = d_line.speaker.lower().replace(" ", "_")
+                            if speaker_key not in viseme_timeline:
+                                viseme_timeline[speaker_key] = []
+                            viseme_timeline[speaker_key].extend(offset_visemes)
+                        except Exception as ve:
+                            print(f"[App] Failed to extract visemes: {ve}")
+                        
+                        current_time += line_duration + 0.2
+                
+                if current_time > plan.duration:
+                    plan.duration = round(current_time + 0.5, 1)
+                
+                if dialogue_audios:
+                    merged_audio_path = os.path.join(Config.VIDEO_DIR, f"scene_dialogue_{generation_id}_{idx}.wav")
+                    try:
+                        merge_audio_files(dialogue_audios, merged_audio_path)
+                        voice_file = merged_audio_path
+                    except Exception as ae:
+                        print(f"[App] Warning: Failed to merge audio files: {ae}")
+                        voice_file = dialogue_audios[0]["file"]
             elif plan.narration:
                 update_execution_log(generation_id, f"Synthesizing narration: {plan.narration[:40]}...")
                 audio_res = voice_system.synthesize_narration(plan.narration)
@@ -364,6 +441,7 @@ def api_generate_movie():
                 audio_res = voice_system.synthesize_narration(narration_text)
                 voice_file = audio_res["audio_path"]
                 
+            plan.viseme_timeline = viseme_timeline
             if voice_file:
                 temp_audio_files.append(voice_file)
             
@@ -593,6 +671,43 @@ def generate_avatar_video_route():
             char_profile = char_library.get_character(char_name)
             voice = char_profile.voice_profile if char_profile else "en-GB-RyanNeural"
 
+            raw_dialogues = scene.get("dialogues")
+            scene_dialogues = []
+            if raw_dialogues and isinstance(raw_dialogues, list):
+                for d in raw_dialogues:
+                    s_name = d.get("speaker") or char_name
+                    s_text = d.get("text", "")
+                    s_profile = char_library.get_character(s_name)
+                    s_voice = s_profile.voice_profile if s_profile else "en-US-ChristopherNeural"
+                    scene_dialogues.append(DialogueLine(s_name, s_text, s_voice))
+            elif dialogue_text:
+                scene_dialogues.append(DialogueLine(char_name, dialogue_text, voice))
+
+            # Detect characters in scene sentence/action/description/dialogue
+            chars_in_scene = scene.get("characters")
+            if not chars_in_scene:
+                from character_interaction_engine import CharacterInteractionEngine
+                interaction_engine = CharacterInteractionEngine()
+                chars_in_scene = interaction_engine.detect_characters_in_text(f"{action} {location} {dialogue_text} {narration_text}")
+                
+                # Ensure speakers in dialogues are included as characters
+                for d in scene_dialogues:
+                    if d.speaker not in chars_in_scene:
+                        chars_in_scene.append(d.speaker)
+                
+                primary_char = char_name or "humanoid"
+                if primary_char not in chars_in_scene:
+                    chars_in_scene.insert(0, primary_char)
+                else:
+                    chars_in_scene.remove(primary_char)
+                    chars_in_scene.insert(0, primary_char)
+            
+            placements = scene.get("character_placements")
+            if not placements:
+                from spatial_placement_engine import SpatialPlacementEngine
+                spatial_engine = SpatialPlacementEngine()
+                placements = spatial_engine.calculate_positions(chars_in_scene)
+
             plan = ScenePlan(
                 scene_number=idx + 1,
                 character_name=char_name,
@@ -600,28 +715,75 @@ def generate_avatar_video_route():
                 action=action,
                 camera_shot=camera_shot,
                 duration=4.0,
-                dialogue=DialogueLine(char_name, dialogue_text, voice) if dialogue_text else None,
-                narration=narration_text if not dialogue_text else None,
-                mood=scene.get("mood") or "neutral"
+                dialogue=scene_dialogues[0] if scene_dialogues else None,
+                dialogues=scene_dialogues,
+                narration=narration_text if not scene_dialogues else None,
+                mood=scene.get("mood") or "neutral",
+                characters=chars_in_scene,
+                character_placements=placements
             )
 
-            # 1. Voice Synthesis Pipeline
+            # 1. Voice Synthesis Pipeline (Multi-Character or Narration)
             voice_file = None
-            viseme_timeline = None
-            if plan.dialogue:
-                update_execution_log(generation_id, f"Synthesizing dialogue speech voiceover for speaker: {plan.character_name}...")
-                audio_res = voice_system.synthesize_dialogue(plan.dialogue.text, plan.dialogue.voice_profile)
-                voice_file = audio_res["audio_path"]
-                try:
-                    from lip_sync_engine import extract_visemes_from_words
-                    viseme_timeline = extract_visemes_from_words(audio_res.get("timestamps", []), audio_res.get("duration", plan.duration))
-                except Exception as ve:
-                    print(f"[App] Failed to extract visemes in route: {ve}")
+            viseme_timeline = {}
+            
+            if plan.dialogues:
+                dialogue_audios = []
+                current_time = 0.0
+                for line_idx, d_line in enumerate(plan.dialogues):
+                    update_execution_log(generation_id, f"Synthesizing dialogue line {line_idx+1} for: {d_line.speaker}...")
+                    audio_res = voice_system.synthesize_dialogue(d_line.text, d_line.voice_profile)
+                    line_voice_file = audio_res["audio_path"]
+                    line_duration = audio_res.get("duration") or max(1.5, len(d_line.text.split()) * 0.35)
+                    
+                    if line_voice_file:
+                        dialogue_audios.append({
+                            "file": line_voice_file,
+                            "start": current_time
+                        })
+                        try:
+                            from lip_sync_engine import extract_visemes_from_words
+                            line_visemes = extract_visemes_from_words(audio_res.get("timestamps", []), line_duration)
+                            
+                            offset_visemes = []
+                            if current_time > 0.05:
+                                offset_visemes.append({"time": 0.0, "viseme": "rest"})
+                                offset_visemes.append({"time": round(current_time - 0.05, 3), "viseme": "rest"})
+                            for vis in line_visemes:
+                                offset_visemes.append({
+                                    "time": round(current_time + vis["time"], 3),
+                                    "viseme": vis["viseme"]
+                                })
+                            end_time = current_time + line_duration
+                            offset_visemes.append({"time": round(end_time, 3), "viseme": "rest"})
+                            offset_visemes.append({"time": round(end_time + 0.05, 3), "viseme": "rest"})
+                            
+                            speaker_key = d_line.speaker.lower().replace(" ", "_")
+                            if speaker_key not in viseme_timeline:
+                                viseme_timeline[speaker_key] = []
+                            viseme_timeline[speaker_key].extend(offset_visemes)
+                        except Exception as ve:
+                            print(f"[App] Failed to extract visemes: {ve}")
+                        
+                        current_time += line_duration + 0.2
+                
+                if current_time > plan.duration:
+                    plan.duration = round(current_time + 0.5, 1)
+                
+                if dialogue_audios:
+                    merged_audio_path = os.path.join(Config.VIDEO_DIR, f"scene_dialogue_{generation_id}_{idx}.wav")
+                    try:
+                        merge_audio_files(dialogue_audios, merged_audio_path)
+                        voice_file = merged_audio_path
+                    except Exception as ae:
+                        print(f"[App] Warning: Failed to merge audio files: {ae}")
+                        voice_file = dialogue_audios[0]["file"]
             elif plan.narration:
                 update_execution_log(generation_id, "Synthesizing scene narrator track...")
                 audio_res = voice_system.synthesize_narration(plan.narration)
                 voice_file = audio_res["audio_path"]
 
+            plan.viseme_timeline = viseme_timeline
             if voice_file:
                 temp_audio_files.append(voice_file)
 

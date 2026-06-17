@@ -197,15 +197,24 @@ class BlenderVideoRenderer(VideoRenderer):
                 "rotation": [0.0, 0.0, 0.0]
             })
 
+            char_key = char.lower().replace(" ", "_")
+            char_visemes = None
+            actual_visemes = viseme_timeline if viseme_timeline is not None else getattr(plan, "viseme_timeline", None)
+            
+            if isinstance(actual_visemes, dict):
+                char_visemes = actual_visemes.get(char_key)
+            elif char_key == (plan.character_name or "humanoid").lower().replace(" ", "_"):
+                char_visemes = actual_visemes
+
             characters_payload.append({
-                "name": char.lower().replace(" ", "_"),
+                "name": char_key,
                 "file": os.path.abspath(char_path),
                 "action": blender_action,
                 "action_file": fbx_path or "",
                 "position": char_placement.get("position", [0.0, 0.0, 0.0]),
                 "rotation": char_placement.get("rotation", [0.0, 0.0, 0.0]),
-                "viseme_timeline": viseme_timeline if char.lower().replace(" ", "_") == (plan.character_name or "humanoid").lower().replace(" ", "_") else None,
-                "mood": getattr(plan, "mood", "neutral") if char.lower().replace(" ", "_") == (plan.character_name or "humanoid").lower().replace(" ", "_") else "neutral"
+                "viseme_timeline": char_visemes,
+                "mood": getattr(plan, "mood", "neutral") if char_key == (plan.character_name or "humanoid").lower().replace(" ", "_") else "neutral"
             })
 
         # ── Scene Continuity & Character Persistence ──
@@ -335,7 +344,7 @@ class BlenderVideoRenderer(VideoRenderer):
                     raise RuntimeError(last_error)
 
         # Cleanup payload
-        if os.path.exists(payload_path):
+        if not getattr(Config, "DEBUG_KEEP_INTERMEDIATE", False) and os.path.exists(payload_path):
             os.remove(payload_path)
 
         print(f"[BlenderRenderer] Scene {plan.scene_number} rendered: {output_path} ({os.path.getsize(output_path)} bytes)")
