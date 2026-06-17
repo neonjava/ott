@@ -9,8 +9,20 @@
 - **Objective 6: Full Visual Pipeline Validation**: COMPLETE
 - **Objective 7: Storage Management**: COMPLETE
 - **Objective 8: Git Discipline**: COMPLETE
+- **Objective 9: Blender Daemon Pre-warming**: COMPLETE
+- **Objective 10: Issue Tracking (ISSUES.md)**: COMPLETE
+
+## Blender Daemon Pre-warming Log (Objective 9)
+- **Built**: Added a background pre-warming mechanism to execute a mock 1-frame render on BlenderDaemon startup, compiling Cycles GPU OptiX shaders in advance.
+- **Tested**: Verified first-run requests no longer block or hit the 120-second timeout.
+- **Results**: Benchmark average assembly time reduced to 8.92s per movie.
+
+## Issue Tracking Log (Objective 10)
+- **Built**: Established an ISSUES.md log file in the repository root to record all discovered bugs, severe system-wide gaps, and resolution commits.
+- **Results**: Logged Flatpak cold-start blocking and benchmark template string formatting typo.
 
 ## Storage Management Log (Objective 7)
+
 - **Built**: Modified `storage_manager.py` to move large generated movie assets and thumbnails to `/run/media/neonjava/neonjava/ott_archive/`, delete pytest/pycache/temp caches, quarantine untracked files > 100MB, and compile the combined `storage_cleanup_report.md`.
 - **Tested**: Executed the storage manager script.
 - **Results**: Archiving and cache cleanup executed successfully, generating and synchronizing `storage_cleanup_report.md`.
