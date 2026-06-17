@@ -285,6 +285,87 @@ def apply_emotion_posture(armature, mood: str, f_start: int, f_end: int):
     strip.blend_type = 'ADD'
     strip.extrapolation = 'HOLD'
 
+def apply_shape_key_animations(mesh_obj, mood: str, viseme_timeline: list, f_start: int, f_end: int, fps: int):
+    if not mesh_obj or not mesh_obj.data.shape_keys:
+        return
+        
+    shape_keys = mesh_obj.data.shape_keys
+    
+    # 1. Clear existing animation data on shape keys
+    if shape_keys.animation_data:
+        shape_keys.animation_data_clear()
+        
+    # 2. Reset all shape keys to 0.0 at the first frame
+    for kb in shape_keys.key_blocks:
+        if kb.name != "Basis":
+            kb.value = 0.0
+            kb.keyframe_insert(data_path="value", frame=f_start)
+            
+    # 3. Apply static emotional pose (emotions)
+    EMOTION_TO_BLENDSHAPES = {
+        "happy": {"mouthSmileLeft": 0.8, "mouthSmileRight": 0.8, "browInnerUp": 0.3},
+        "sad": {"mouthFrownLeft": 0.9, "mouthFrownRight": 0.9, "browOuterUpLeft": 0.5, "browOuterUpRight": 0.5},
+        "angry": {"browDownLeft": 1.0, "browDownRight": 1.0, "mouthPressLeft": 0.6, "mouthPressRight": 0.6},
+        "fear": {"jawOpen": 0.3, "mouthStretchLeft": 0.7, "mouthStretchRight": 0.7, "browInnerUp": 0.8, "eyeWideLeft": 0.6, "eyeWideRight": 0.6},
+        "surprise": {"jawOpen": 0.6, "eyeWideLeft": 0.9, "eyeWideRight": 0.9, "browInnerUp": 0.9},
+        "hope": {"mouthSmileLeft": 0.4, "mouthSmileRight": 0.4, "browInnerUp": 0.2},
+        "determination": {"browDownLeft": 0.4, "browDownRight": 0.4, "mouthClose": 0.4}
+    }
+    
+    mood_clean = mood.lower().strip()
+    emotion_weights = EMOTION_TO_BLENDSHAPES.get(mood_clean, {})
+    for shape_name, weight in emotion_weights.items():
+        kb = shape_keys.key_blocks.get(shape_name)
+        if kb:
+            kb.value = weight
+            kb.keyframe_insert(data_path="value", frame=f_start)
+            # Maintain this emotion at the end of the scene too
+            kb.keyframe_insert(data_path="value", frame=f_end)
+            
+    # 4. Apply viseme lip sync over time
+    if viseme_timeline:
+        VISEME_TO_BLENDSHAPES = {
+            "A": {"jawOpen": 0.8, "mouthFunnel": 0.2},
+            "E": {"mouthStretchLeft": 0.6, "mouthStretchRight": 0.6, "jawOpen": 0.2},
+            "F": {"mouthShrugLower": 0.5, "mouthClose": 0.3},
+            "L": {"jawOpen": 0.4, "mouthPressLeft": 0.2},
+            "M": {"mouthClose": 1.0},
+            "O": {"mouthFunnel": 0.8, "jawOpen": 0.4},
+            "rest": {"mouthClose": 0.5}
+        }
+        
+        # All shape keys used in visemes
+        viseme_shapes = set()
+        for shapes in VISEME_TO_BLENDSHAPES.values():
+            viseme_shapes.update(shapes.keys())
+            
+        for entry in viseme_timeline:
+            time_sec = entry.get("time", 0.0)
+            vis = entry.get("viseme", "rest")
+            
+            frame = int(f_start + (time_sec * fps))
+            if frame > f_end:
+                frame = f_end
+                
+            # First set all viseme shape keys to 0.0 at this frame to avoid accumulation
+            for shape_name in viseme_shapes:
+                kb = shape_keys.key_blocks.get(shape_name)
+                if kb:
+                    kb.value = 0.0
+                    
+            # Apply active viseme weights
+            active_shapes = VISEME_TO_BLENDSHAPES.get(vis, VISEME_TO_BLENDSHAPES["rest"])
+            for shape_name, weight in active_shapes.items():
+                kb = shape_keys.key_blocks.get(shape_name)
+                if kb:
+                    kb.value = weight
+                    
+            # Insert keyframes for all viseme shape keys at this frame
+            for shape_name in viseme_shapes:
+                kb = shape_keys.key_blocks.get(shape_name)
+                if kb:
+                    kb.keyframe_insert(data_path="value", frame=frame)
+
 class RenderHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/ping':
@@ -369,6 +450,19 @@ class RenderHandler(BaseHTTPRequestHandler):
                         apply_emotion_posture(armature, mood_str, f_start, f_end)
                     except Exception as mood_err:
                         print(f"[BlenderDaemon] Failed to apply posture: {mood_err}")
+                        
+                # Apply shape key animations (emotions & visemes)
+                viseme_timeline = payload.get("viseme_timeline", None)
+                mesh_obj = None
+                for obj in bpy.context.scene.objects:
+                    if obj.type == 'MESH' and obj.name.lower() in ['head', 'fox']:
+                        mesh_obj = obj
+                        break
+                if mesh_obj:
+                    try:
+                        apply_shape_key_animations(mesh_obj, mood_str, viseme_timeline, f_start, f_end, fps)
+                    except Exception as sk_err:
+                        print(f"[BlenderDaemon] Failed to apply shape key animations: {sk_err}")
                 
                 # Camera framing
                 camera = None

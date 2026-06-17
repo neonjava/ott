@@ -363,7 +363,7 @@ def get_pipeline_info():
         "device": get_device(),
         "cuda_available": torch.cuda.is_available(),
         "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
-        "vram_total_mb": round(torch.cuda.get_device_properties(0).total_mem / 1024**2) if torch.cuda.is_available() else 0,
+        "vram_total_mb": round(torch.cuda.get_device_properties(0).total_memory / 1024**2) if torch.cuda.is_available() else 0,
     }
 
 

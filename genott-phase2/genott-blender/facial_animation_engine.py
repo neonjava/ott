@@ -114,6 +114,13 @@ class FacialAnimationEngine:
                 target_names = []
                 meshes = gltf_json.get("meshes", [])
                 for mesh in meshes:
+                    # Try mesh-level extras first (common in newer Blender exports)
+                    mesh_extras = mesh.get("extras", {})
+                    mesh_names = mesh_extras.get("targetNames", [])
+                    for name in mesh_names:
+                        if name not in target_names:
+                            target_names.append(name)
+
                     primitives = mesh.get("primitives", [])
                     for prim in primitives:
                         extras = prim.get("extras", {})

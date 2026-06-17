@@ -6,8 +6,8 @@
 - **Passed**: 100
 - **Failed**: 0
 - **Success Rate**: 100.0%
-- **Total Execution Time**: 9.855 seconds
-- **Average Time per Story**: 0.09855 seconds
+- **Total Execution Time**: 9.886 seconds
+- **Average Time per Story**: 0.09886 seconds
 
 ## Extraction Metrics
 - **Total Characters Extracted**: 114 (Avg: 1.1/story)
@@ -102,7 +102,7 @@
 | 81 | A tense guard walks around the wall, checking the shadows. | PASS | guard | environment | fear | 2 |
 | 82 | The surprised wizard notices the crystal glowing, feeling hope. | PASS | wizard | environment | surprise, hope | 2 |
 | 83 | A sad traveler weeps by the ruins, losing faith. | PASS | traveler | ruins | sad, hope | 2 |
-| 84 | The brave knight rescues the prince from the tower. | PASS | prince, knight | tower | determination | 1 |
+| 84 | The brave knight rescues the prince from the tower. | PASS | knight, prince | tower | determination | 1 |
 | 85 | A terrified villager runs from the fire, escaping to the hill. | PASS | humanoid | hill | fear | 2 |
 | 86 | The angry beast roars inside the cave, preparing to attack. | PASS | beast | cave | angry | 2 |
 | 87 | A happy princess waves to the soldiers, celebrating the peace. | PASS | princess | environment | happy | 2 |

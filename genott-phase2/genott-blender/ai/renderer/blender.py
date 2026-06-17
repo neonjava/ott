@@ -127,7 +127,7 @@ class BlenderVideoRenderer(VideoRenderer):
         # Default to idle
         return action_map.get("idle", action_map.get("standing", list(action_map.values())[0])), None
 
-    def render_scene(self, plan: ScenePlan, seed: int, output_path: str, generation_id: str = None) -> str:
+    def render_scene(self, plan: ScenePlan, seed: int, output_path: str, generation_id: str = None, viseme_timeline: list = None) -> str:
         """Render a scene using BlenderDaemon."""
         # Resolve character and action
         char_path, action_map = self._resolve_character(plan.character_name or "humanoid")
@@ -189,7 +189,10 @@ class BlenderVideoRenderer(VideoRenderer):
             "environment_props": visual_state.get("environment_props"),
             
             # Cinematic Sequencer keyframe timeline
-            "camera_timeline": getattr(plan, "camera_timeline", None)
+            "camera_timeline": getattr(plan, "camera_timeline", None),
+            
+            # Dialogue viseme timeline
+            "viseme_timeline": viseme_timeline
         }
 
         # Write payload JSON for logging

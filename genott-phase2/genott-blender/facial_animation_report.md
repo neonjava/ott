@@ -6,9 +6,9 @@ This report analyzes the face mesh shape keys (morph targets) of the 3D characte
 ## Asset Audit Results
 | Model Asset | Detected Shape Keys | ARKit Blendshapes Found | Compatibility Score | Status |
 |---|---|---|---|---|
-| humanoid.glb | 0 | 0/52 | 0.0% | INCOMPATIBLE (No face rig) |
-| fox.glb | 0 | 0/52 | 0.0% | INCOMPATIBLE (No face rig) |
-| test_human.glb | 0 | 0/52 | 0.0% | INCOMPATIBLE (No face rig) |
+| humanoid.glb | 104 | 52/52 | 100.0% | COMPATIBLE |
+| fox.glb | 52 | 52/52 | 100.0% | COMPATIBLE |
+| test_human.glb | 104 | 52/52 | 100.0% | COMPATIBLE |
 
 ## Missing ARKit Blendshapes (Critical for Face Animation)
 To achieve high-quality face mapping and speech animation, character models must be re-exported or re-rigged with the following 52 shape keys:

@@ -344,10 +344,16 @@ def api_generate_movie():
             
             # 4. Voice Generation (Dialogue or Narration)
             voice_file = None
+            viseme_timeline = None
             if plan.dialogue:
                 update_execution_log(generation_id, f"Synthesizing dialogue for: {plan.dialogue.speaker}...")
                 audio_res = voice_system.synthesize_dialogue(plan.dialogue.text, plan.dialogue.voice_profile)
                 voice_file = audio_res["audio_path"]
+                try:
+                    from lip_sync_engine import extract_visemes_from_words
+                    viseme_timeline = extract_visemes_from_words(audio_res.get("timestamps", []), audio_res.get("duration", plan.duration))
+                except Exception as ve:
+                    print(f"[App] Failed to extract visemes: {ve}")
             elif plan.narration:
                 update_execution_log(generation_id, f"Synthesizing narration: {plan.narration[:40]}...")
                 audio_res = voice_system.synthesize_narration(plan.narration)
@@ -363,7 +369,7 @@ def api_generate_movie():
             
             # 6. Render every scene using Blender
             scene_mp4 = os.path.join(Config.VIDEO_DIR, f"scene_{generation_id}_{idx}.mp4")
-            video_renderer.render_scene(plan, shared_seed, scene_mp4, generation_id=generation_id)
+            video_renderer.render_scene(plan, shared_seed, scene_mp4, generation_id=generation_id, viseme_timeline=viseme_timeline)
             temp_video_files.append(scene_mp4)
             
             # Collect storyboard thumbnail
@@ -468,7 +474,14 @@ def api_generate_movie():
                 if os.path.exists(scene_mp4):
                     try: os.remove(scene_mp4)
                     except: pass
-                video_renderer.render_scene(plan, shared_seed, scene_mp4, generation_id=generation_id)
+                viseme_timeline = None
+                if plan.dialogue:
+                    try:
+                        from lip_sync_engine import extract_visemes_from_text
+                        viseme_timeline = extract_visemes_from_text(plan.dialogue.text, plan.duration)
+                    except Exception as ve:
+                        print(f"[App] Failed to extract visemes in fix loop: {ve}")
+                video_renderer.render_scene(plan, shared_seed, scene_mp4, generation_id=generation_id, viseme_timeline=viseme_timeline)
                 temp_video_files[idx] = scene_mp4
                 
                 # Re-apply audio merge
@@ -595,10 +608,16 @@ def generate_avatar_video_route():
 
             # 1. Voice Synthesis Pipeline
             voice_file = None
+            viseme_timeline = None
             if plan.dialogue:
                 update_execution_log(generation_id, f"Synthesizing dialogue speech voiceover for speaker: {plan.character_name}...")
                 audio_res = voice_system.synthesize_dialogue(plan.dialogue.text, plan.dialogue.voice_profile)
                 voice_file = audio_res["audio_path"]
+                try:
+                    from lip_sync_engine import extract_visemes_from_words
+                    viseme_timeline = extract_visemes_from_words(audio_res.get("timestamps", []), audio_res.get("duration", plan.duration))
+                except Exception as ve:
+                    print(f"[App] Failed to extract visemes in route: {ve}")
             elif plan.narration:
                 update_execution_log(generation_id, "Synthesizing scene narrator track...")
                 audio_res = voice_system.synthesize_narration(plan.narration)
@@ -610,7 +629,7 @@ def generate_avatar_video_route():
             # 2. Render Scene Visuals
             scene_raw_mp4 = os.path.join(Config.VIDEO_DIR, f"raw_scene_{generation_id}_{idx}.mp4")
             update_execution_log(generation_id, "Rendering scene visual elements...")
-            video_renderer.render_scene(plan, shared_seed, scene_raw_mp4, generation_id=generation_id)
+            video_renderer.render_scene(plan, shared_seed, scene_raw_mp4, generation_id=generation_id, viseme_timeline=viseme_timeline)
             temp_video_files.append(scene_raw_mp4)
 
             # 3. Apply Lip Sync if dialogue voice is active AND enabled in config

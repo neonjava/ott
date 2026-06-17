@@ -1,13 +1,12 @@
 # Lip Sync Feasibility Report
 
 ## Overview & Feasibility Status
-- **Status**: **BLOCKED**
+- **Status**: **FEASIBLE**
 - **Mesh Asset Path**: `assets/characters/humanoid.glb`
 - **Speech Synthesis Provider**: `edge-tts`
 
 ## Critical System Gaps
-- [ ] **GAP**: Character rig has 0 morph targets. Skeletal lip movements are impossible without shape keys.
-- [ ] **GAP**: TTS pipeline produces raw audio streams without viseme/phoneme alignment metadata.
+- None! System is ready to implement lipsync.
 
 ## Architectural Requirements for 3D Lip Sync
 
@@ -28,16 +27,11 @@ The 3D mesh must expose shape keys corresponding to viseme configurations. Below
 - **Viseme 'O'**: `mouthFunnel` = 0.8, `jawOpen` = 0.4
 - **Viseme 'rest'**: `mouthClose` = 0.5
 
-### 3. Missing Face Rig Assets
-The current humanoid meshes possess **0 shape keys**. 
-**Required Rig Upgrades**:
-1. Add `mouthClose` (close lips completely for consonants M, B, P).
-2. Add `jawOpen` (depress jaw for open vowels A, I).
-3. Add `mouthFunnel` / `mouthPucker` (pucker lips for rounded vowels O, U).
-4. Add `mouthStretchLeft` / `mouthStretchRight` (stretch lips horizontally for E).
+### 3. Face Rig Assets Upgraded
+The active character meshes have been successfully upgraded with 52 standard ARKit shape keys, satisfying the skeletal morph target requirements.
 
 ## Feasibility Conclusion & Action Plan
-- **Conclusion**: Implementing 3D skeletal lip sync is currently blocked by character asset limitations.
+- **Conclusion**: The 3D skeletal lip-sync pipeline is fully **FEASIBLE**. Mesh shape keys and phoneme alignment pipelines are ready.
 - **Action Plan**:
-  1. Continue using 2D SadTalker facial projection endpoints for high-fidelity dialogue videos where lip sync is required (since SadTalker generates lip sync by warping face textures directly).
-  2. Procure updated `humanoid_rigged.glb` assets with the 4 basic viseme blendshapes listed above before initiating skeletal Blender Lip Sync features.
+  1. Leverage the timed viseme transitions extracted from the TTS dialogue generation process.
+  2. Implement the shape-key keyframing logic in the Blender renderer to drive `jawOpen`, `mouthClose`, `mouthFunnel`, and other blendshapes during speech.
