@@ -93,12 +93,33 @@ def parse_script_to_storyboard(script: str, default_character: str = "humanoid")
         sentences = [script.strip()]
 
     scenes = []
+    transitions = []
+    pending_transition = None
+    
+    TRANSITION_RE = re.compile(
+        r'^\s*(fade\s+to\s+black|fade\s+out|fades\s+to\s+black|fades\s+out|fade\s+to\s+white|fades\s+to\s+white|white\s+flash|flash|cut\s+to|cuts\s+to|cut)\s*[\.\!\?]?\s*$',
+        re.IGNORECASE
+    )
+
     current_character = default_character
     current_location = "environment"
     
     for idx, sentence in enumerate(sentences):
         sentence_lower = sentence.lower()
         
+        # Check if this sentence is a transition cue
+        match = TRANSITION_RE.match(sentence_lower)
+        if match:
+            trans_text = match.group(1).lower()
+            if "black" in trans_text or "out" in trans_text:
+                t_type = "fade"
+            elif "white" in trans_text or "flash" in trans_text:
+                t_type = "white"
+            else:
+                t_type = "cut"
+            pending_transition = t_type
+            continue
+            
         # 1. Detect characters
         detected_char = None
         for char in KNOWN_CHARACTERS:
@@ -225,6 +246,10 @@ def parse_script_to_storyboard(script: str, default_character: str = "humanoid")
         # Standardize naming to match character registration IDs
         char_id = current_character.lower().replace(" ", "_")
         
+        if len(scenes) > 0:
+            transitions.append(pending_transition if pending_transition else "cut")
+            pending_transition = None
+            
         scenes.append({
             "location": current_location,
             "character": char_id,
@@ -234,4 +259,18 @@ def parse_script_to_storyboard(script: str, default_character: str = "humanoid")
             "speed": speed_modifier
         })
         
-    return {"scenes": scenes}
+    # Ensure transitions has exactly len(scenes) - 1 elements
+    while len(transitions) < len(scenes) - 1:
+        transitions.append("cut")
+        
+    # Apply pacing cues (location/mood changes) to default cut transitions
+    for i in range(len(scenes) - 1):
+        if transitions[i] == "cut":
+            loc_i = scenes[i]["location"].lower().strip()
+            loc_ip1 = scenes[i+1]["location"].lower().strip()
+            if loc_i != loc_ip1:
+                transitions[i] = "fade"
+            elif scenes[i]["mood"] in ("mysterious", "epic", "tense") or scenes[i+1]["mood"] in ("mysterious", "epic", "tense"):
+                transitions[i] = "fade"
+        
+    return {"scenes": scenes, "transitions": transitions}

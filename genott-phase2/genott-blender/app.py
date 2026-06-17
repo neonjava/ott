@@ -398,10 +398,27 @@ def api_generate_movie():
         final_filename = "final_movie.mp4" # As requested by user
         final_filepath = os.path.join(Config.VIDEO_DIR, final_filename)
         
+        # Determine transitions from storyboard or pacing cues
+        transitions = storyboard.get("transitions", [])
+        if len(transitions) != len(temp_video_files) - 1:
+            transitions = []
+            for i in range(len(temp_video_files) - 1):
+                loc_i = scenes[i].location.lower().strip()
+                loc_ip1 = scenes[i+1].location.lower().strip()
+                if loc_i != loc_ip1:
+                    transitions.append("fade")
+                elif scenes[i].mood in ("mysterious", "epic", "tense") or scenes[i+1].mood in ("mysterious", "epic", "tense"):
+                    transitions.append("fade")
+                else:
+                    transitions.append("cut")
+                    
+        update_execution_log(generation_id, f"Applying scene transitions: {transitions}")
+        
         from movie_assembler import assemble_movie
         success, result_path_or_err, final_dur = assemble_movie(
             generation_id, Config.VIDEO_DIR, "final_movie.mp4",
-            scene_files=temp_video_files
+            scene_files=temp_video_files,
+            transitions=transitions
         )
         if not success:
             raise RuntimeError(f"Movie Assembly Failed: {result_path_or_err}")
