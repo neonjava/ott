@@ -419,6 +419,7 @@ class RenderHandler(BaseHTTPRequestHandler):
                 cam_location = None
                 cam_rotation = None
                 characters_state = {}
+                env_seed = None
                 if state_file_path and os.path.exists(state_file_path):
                     with open(state_file_path, "r") as sf:
                         try:
@@ -429,7 +430,9 @@ class RenderHandler(BaseHTTPRequestHandler):
                                 cam_location = tuple(s_data["camera"].get("location", (0, 0, 0)))
                                 cam_rotation = tuple(s_data["camera"].get("rotation", (0, 0, 0)))
                             characters_state = s_data.get("characters", {})
+                            env_seed = s_data.get("env_seed", None)
                         except: pass
+
 
                 
                 # --- Environment Composition ---
@@ -445,9 +448,10 @@ class RenderHandler(BaseHTTPRequestHandler):
                     
                     # Use the primary character's parsed placement as reference position
                     ref_pos = characters[0].get("position", [0.0, 0.0, 0.0])
-                    build_environment_in_blender(env_config, ref_pos, weather_str, props_list, assets_list)
+                    build_environment_in_blender(env_config, ref_pos, weather_str, props_list, assets_list, env_seed=env_seed)
                 except Exception as env_err:
                     print(f"[BlenderDaemon] Failed to build environment: {env_err}")
+
 
                 # --- Helper to find/lookup actions ---
                 def find_action(action_name):

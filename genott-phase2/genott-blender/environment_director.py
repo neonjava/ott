@@ -137,7 +137,7 @@ def create_colored_material(name: str, color_key: str):
     mat.diffuse_color = rgba
     return mat
 
-def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0, 0), weather: str = "clear", environment_props: List[str] = None, resolved_assets: List[Dict[str, Any]] = None):
+def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0, 0), weather: str = "clear", environment_props: List[str] = None, resolved_assets: List[Dict[str, Any]] = None, env_seed: int = None) -> int:
     """
     Blender Scene Builder integration.
     Configures terrain, sky, lighting, atmosphere, and places primitive asset structures.
@@ -301,7 +301,10 @@ def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0
 
     # 5. LOAD MATCHING ASSETS / BUILD PROCEDURAL PRIMITIVES
     # Place assets around character_pos to populate scene environment
-    random.seed(42) # deterministic seed for asset placement
+    if env_seed is None:
+        env_seed = random.randint(1, 999999)
+    random.seed(env_seed)
+
     
     leaf_mat = create_colored_material("LeafMat", "leaf_green")
     trunk_mat = create_colored_material("TrunkMat", "trunk_brown")
@@ -421,6 +424,8 @@ def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0
     # Force viewport/dependency graph updates to ensure visual changes register
     bpy.context.view_layer.update()
     print("[EnvironmentDirector] Environment successfully built.")
+    return env_seed
+
 
 def spawn_resolved_assets(assets: List[Dict[str, Any]], character_pos=(0, 0, 0)):
     if not bpy: return
