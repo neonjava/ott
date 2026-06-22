@@ -418,6 +418,7 @@ class RenderHandler(BaseHTTPRequestHandler):
                 start_rotation = (0, 0, 0)
                 cam_location = None
                 cam_rotation = None
+                characters_state = {}
                 if state_file_path and os.path.exists(state_file_path):
                     with open(state_file_path, "r") as sf:
                         try:
@@ -427,7 +428,9 @@ class RenderHandler(BaseHTTPRequestHandler):
                             if "camera" in s_data:
                                 cam_location = tuple(s_data["camera"].get("location", (0, 0, 0)))
                                 cam_rotation = tuple(s_data["camera"].get("rotation", (0, 0, 0)))
+                            characters_state = s_data.get("characters", {})
                         except: pass
+
                 
                 # --- Environment Composition ---
                 location_str = payload.get("location", "environment")
@@ -518,12 +521,19 @@ class RenderHandler(BaseHTTPRequestHandler):
                         
                     # Calculate position with continuity delta shift
                     orig_pos = char_data.get("position", [0.0, 0.0, 0.0])
-                    pos_x = orig_pos[0] + delta_x
-                    pos_y = orig_pos[1] + delta_y
-                    pos_z = orig_pos[2]
+                    orig_rot = char_data.get("rotation", [0.0, 0.0, 0.0])
+                    if char_name in characters_state:
+                        pos_x, pos_y, pos_z = tuple(characters_state[char_name].get("location", orig_pos))
+                        rot_x, rot_y, rot_z = tuple(characters_state[char_name].get("rotation", orig_rot))
+                    else:
+                        pos_x = orig_pos[0] + delta_x
+                        pos_y = orig_pos[1] + delta_y
+                        pos_z = orig_pos[2]
+                        rot_x, rot_y, rot_z = tuple(orig_rot)
                     
                     char_armature.location = (pos_x, pos_y, pos_z)
-                    char_armature.rotation_euler = tuple(char_data.get("rotation", [0.0, 0.0, 0.0]))
+                    char_armature.rotation_euler = (rot_x, rot_y, rot_z)
+
                     
                     # Track primary armature
                     if idx == 0:
@@ -750,6 +760,29 @@ class RenderHandler(BaseHTTPRequestHandler):
                     cam_loc = [camera.location.x + delta_loc[0], camera.location.y + delta_loc[1], camera.location.z]
                     cam_rot = [camera.rotation_euler.x, camera.rotation_euler.y, camera.rotation_euler.z]
                     
+                    # Save states for ALL active characters
+                    chars_dict = {}
+                    for char_data in characters:
+                        cname = char_data["name"]
+                        char_suffix = f"_{cname}"
+                        char_obj = bpy.context.scene.objects.get(f"Armature{char_suffix}")
+                        if char_obj:
+                            c_delta = [0.0, 0.0, 0.0]
+                            c_aname = char_data["action"].lower()
+                            if "walk" in c_aname:
+                                c_delta = [0.0, -1.0 * duration, 0.0]
+                            elif "run" in c_aname:
+                                c_delta = [0.0, -3.0 * duration, 0.0]
+                            elif "jump" in c_aname:
+                                c_delta = [0.0, -0.5 * duration, 0.0]
+                            
+                            c_final_loc = [char_obj.location.x + c_delta[0], char_obj.location.y + c_delta[1], char_obj.location.z]
+                            c_final_rot = [char_obj.rotation_euler.x, char_obj.rotation_euler.y, char_obj.rotation_euler.z]
+                            chars_dict[cname] = {
+                                "location": c_final_loc,
+                                "rotation": c_final_rot
+                            }
+                    
                     state_data = {
                         "location": final_loc,
                         "rotation": final_rot,
@@ -757,10 +790,12 @@ class RenderHandler(BaseHTTPRequestHandler):
                             "location": cam_loc,
                             "rotation": cam_rot
                         },
+                        "characters": chars_dict,
                         "previous_action": characters[0]["action"]
                     }
                     with open(state_file_path, "w") as sf:
                         json.dump(state_data, sf)
+
                         
                 response = {
                     "status": "success",
