@@ -54,7 +54,7 @@
 
 ---
 
-## 4. Lack of High-Level Narrative Pacing & Pacing Control (BACKLOG)
+## 4. Lack of High-Level Narrative Pacing & Pacing Control (RESOLVED)
 - **Blocker Name**: Lack of High-Level Narrative Pacing & Pacing Control
 - **Why it Blocks Production Readiness**:
   - For narrative coherence, scene durations and pacing need to adapt to target overall movie length (30-60 seconds). Currently, scripts split sentences 1-to-1 to scenes with static 4s-5s scene durations, lacking global pacing coordination.
@@ -63,3 +63,5 @@
 - **Files Involved**:
   - [storyboard_director.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/storyboard_director.py)
   - [ai/storyboard/planner.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/ai/storyboard/planner.py)
+- **Resolution**:
+  - Added dynamic duration normalization in `planner.py` to calculate overall raw storyboard duration and scale all scene segment runtimes proportionally to sum to a target 45.0s runtime. This guarantees movies fit cleanly into the target 30-60 second production window.
