@@ -65,3 +65,18 @@
   - [ai/storyboard/planner.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/ai/storyboard/planner.py)
 - **Resolution**:
   - Added dynamic duration normalization in `planner.py` to calculate overall raw storyboard duration and scale all scene segment runtimes proportionally to sum to a target 45.0s runtime. This guarantees movies fit cleanly into the target 30-60 second production window.
+
+---
+
+## 5. Cinematic Sequencer & Render Daemon Framerate Mismatch (RESOLVED)
+- **Blocker Name**: Cinematic Sequencer & Render Daemon Framerate Mismatch
+- **Why it Blocks Production Readiness**:
+  - The cinematic sequencer generated keyframe locations/rotations based on a default `fps = 24`, while the Blender daemon rendered and configured properties targeting a hardcoded `fps = 12`. This caused keyframe truncation and play-back speeds to slow down.
+- **Impact Score**: 9.0/10
+- **Effort Score**: 4.0/10
+- **Files Involved**:
+  - [ai/renderer/blender.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender/ai/renderer/blender.py)
+  - [ai/renderer/blender_daemon.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender/ai/renderer/blender_daemon.py)
+- **Resolution**:
+  - Updated `blender.py` to explicitly pass `fps=12` to `sequence_scene` so that keyframe generation matches the daemon's hardcoded rendering and video compilation framerates.
+
