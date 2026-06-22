@@ -1190,15 +1190,34 @@ Files:
 Result:
 Environment builds remain spatially identical when consecutive scenes share the same location.
 
+## 2026-06-23 00:10:00
+
+Actor:
+Main Agent & Subagents (story_architect, repo_manager)
+
+Category:
+Narrative Coherence & Pacing Control
+
+Summary:
+Resolved the lack of narrative pacing control blocker. Upgraded planner.py to dynamically calculate total planned storyboard segment runtimes and scale scene durations proportionally to sum to a target 45.0s runtime. This guarantees generated movies fall cleanly within the target 30-60 second production window.
+
+Files:
+* ai/storyboard/planner.py
+* NEXT_BLOCKER.md
+
+Result:
+Generated movie segment durations scale dynamically to fit target 45s runtime.
+
 ---
 
 # Periodic Statistics
 
-* **Total Commits**: 10 (a2bf2ed64079111f0ac60e1bed63bfd6519786de, b4ed10c, deaed64, fb55abf, 7654434, 480539d, 80c8637, 3b59439, 5ea995d, ee2c623)
+* **Total Commits**: 13 (a2bf2ed64079111f0ac60e1bed63bfd6519786de, b4ed10c, deaed64, fb55abf, 7654434, 480539d, 80c8637, 3b59439, 5ea995d, ee2c623, a5cb43e, 3cf361e)
 * **Total Benchmarks**: 4 (story understanding benchmark, visual pipeline validation, dialogue validation benchmark, and movie validation benchmark)
-* **Total Fixes**: 9 (exporter adjustments, total_memory attribute fix, ARKit mesh rigging, Blender daemon pre-warming, camera sequencer trajectory mapping, Blender 5.x primitive keywords, Multi-character dialogue lipsync timeline offsets, Multi-character spatial position/rotation persistence, and Environment procedural placement layout continuity)
+* **Total Fixes**: 10 (exporter adjustments, total_memory attribute fix, ARKit mesh rigging, Blender daemon pre-warming, camera sequencer trajectory mapping, Blender 5.x primitive keywords, Multi-character dialogue lipsync timeline offsets, Multi-character spatial position/rotation persistence, Environment procedural placement layout continuity, and Narrative pacing duration normalization)
 * **Total Generated Movies**: 162 (including multi-character E2E movie validation runs)
 * **Total Render Failures**: 0
+
 
 
 
