@@ -21,7 +21,7 @@
 
 ---
 
-## 2. Secondary Character Spatial Discontinuity across Scenes (ACTIVE)
+## 2. Secondary Character Spatial Discontinuity across Scenes (RESOLVED)
 - **Blocker Name**: Secondary Character Spatial Discontinuity across Scenes
 - **Why it Blocks Production Readiness**:
   - `scene_state.json` only tracks the final position and rotation of the primary character (index 0).
@@ -32,6 +32,10 @@
   - [ai/renderer/blender.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender/ai/renderer/blender.py)
   - [ai/renderer/blender_daemon.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender/ai/renderer/blender_daemon.py)
   - [scene_state.json](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender/scene_state.json)
+- **Resolution**:
+  - Modified `blender_daemon.py` to read/write location and rotation data for all active characters inside the scene's `scene_state.json` payload under a unified `characters` dictionary.
+  - Calculated locomotion-based delta offsets for each character based on their scene-specific actions.
+  - Applied loaded coordinates back on character import to ensure spatial continuity across scenes for secondary characters.
 
 ---
 
