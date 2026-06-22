@@ -1208,15 +1208,34 @@ Files:
 Result:
 Generated movie segment durations scale dynamically to fit target 45s runtime.
 
+## 2026-06-23 00:20:00
+
+Actor:
+Main Agent & Subagents (story_architect, repo_manager)
+
+Category:
+Rendering & Sequencer Framerate Mismatch
+
+Summary:
+Resolved the camera sequencer and render daemon framerate mismatch blocker. Aligned sequencer timeline parameters by explicitly passing fps=12 in blender.py sequence_scene invocation. This prevents camera animation truncation and matches Blender daemon's hardcoded rendering outputs.
+
+Files:
+* ai/renderer/blender.py
+* NEXT_BLOCKER.md
+
+Result:
+Cinematic sequencer camera keyframe coordinate outputs match daemon rendering constraints.
+
 ---
 
 # Periodic Statistics
 
-* **Total Commits**: 13 (a2bf2ed64079111f0ac60e1bed63bfd6519786de, b4ed10c, deaed64, fb55abf, 7654434, 480539d, 80c8637, 3b59439, 5ea995d, ee2c623, a5cb43e, 3cf361e)
+* **Total Commits**: 16 (a2bf2ed64079111f0ac60e1bed63bfd6519786de, b4ed10c, deaed64, fb55abf, 7654434, 480539d, 80c8637, 3b59439, 5ea995d, ee2c623, a5cb43e, 3cf361e, d0fd03f, 9484f94)
 * **Total Benchmarks**: 4 (story understanding benchmark, visual pipeline validation, dialogue validation benchmark, and movie validation benchmark)
-* **Total Fixes**: 10 (exporter adjustments, total_memory attribute fix, ARKit mesh rigging, Blender daemon pre-warming, camera sequencer trajectory mapping, Blender 5.x primitive keywords, Multi-character dialogue lipsync timeline offsets, Multi-character spatial position/rotation persistence, Environment procedural placement layout continuity, and Narrative pacing duration normalization)
+* **Total Fixes**: 11 (exporter adjustments, total_memory attribute fix, ARKit mesh rigging, Blender daemon pre-warming, camera sequencer trajectory mapping, Blender 5.x primitive keywords, Multi-character dialogue lipsync timeline offsets, Multi-character spatial position/rotation persistence, Environment procedural placement layout continuity, Narrative pacing duration normalization, and Cinematic sequencer framerate alignment)
 * **Total Generated Movies**: 162 (including multi-character E2E movie validation runs)
 * **Total Render Failures**: 0
+
 
 
 
