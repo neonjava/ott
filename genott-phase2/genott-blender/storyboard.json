@@ -1,25 +1,14 @@
 {
     "scenes": [
         {
-            "location": "arena",
+            "location": "environment",
             "character": "hero",
-            "action": "walk",
+            "action": "jump",
             "camera": "wide_shot",
             "mood": "neutral",
             "speed": "normal",
-            "sentence": "Hero walks into the arena."
-        },
-        {
-            "location": "arena",
-            "character": "hero",
-            "action": "talk",
-            "camera": "close_up",
-            "mood": "neutral",
-            "speed": "normal",
-            "sentence": "Hero says: \"Ready.\""
+            "sentence": "hero jumps and then walks"
         }
     ],
-    "transitions": [
-        "cut"
-    ]
+    "transitions": []
 }

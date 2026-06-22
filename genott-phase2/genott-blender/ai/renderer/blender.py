@@ -249,8 +249,9 @@ class BlenderVideoRenderer(VideoRenderer):
         camera_timeline = getattr(plan, 'camera_timeline', None)
         if camera_timeline is None:
             from cinematic_sequencer import sequence_scene
-            camera_timeline = sequence_scene(plan, start_location, characters_payload[0]['action'])
+            camera_timeline = sequence_scene(plan, start_location, characters_payload[0]['action'], fps=12)
             plan.camera_timeline = camera_timeline
+
 
         # Build render payload
         payload = {

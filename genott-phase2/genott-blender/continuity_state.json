@@ -1,6 +1,6 @@
 {
-  "scene_index": 2,
-  "location": "arena",
+  "scene_index": 1,
+  "location": "environment",
   "weather": "clear",
   "characters": {},
   "environment_props": [],
