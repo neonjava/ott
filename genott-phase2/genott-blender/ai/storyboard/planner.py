@@ -253,7 +253,7 @@ class ScenePlanner:
             }
             camera_shot = camera_map.get(sb_scene["camera"], "cinematic wide")
             
-            # Map action duration
+            # Map action duration based on action type
             duration = 4.0
             if sb_scene["action"] == "walk":
                 duration = 5.0
@@ -263,7 +263,7 @@ class ScenePlanner:
                 duration = 4.0
             elif sb_scene["action"] == "attack":
                 duration = 4.0
-                
+            
             # Detect characters in scene sentence
             sentence = sb_scene.get("sentence", "") or sb_scene.get("description", "") or ""
             from character_interaction_engine import CharacterInteractionEngine
@@ -315,7 +315,16 @@ class ScenePlanner:
             )
             plans.append(plan)
             
+        # Pacing Control: Scale all scene durations to sum to target_total_duration (45.0s)
+        total_raw = sum(p.duration for p in plans)
+        if total_raw > 0:
+            target_total = 45.0
+            scale_factor = target_total / total_raw
+            for p in plans:
+                p.duration = round(p.duration * scale_factor, 1)
+            
         return plans
+
 
     def plan_story(self, user_prompt: str, scene_count: int = 3) -> List[ScenePlan]:
         # First try to detect if this is a known hero and use built-in stories
