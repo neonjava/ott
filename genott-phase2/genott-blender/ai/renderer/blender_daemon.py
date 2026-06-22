@@ -448,9 +448,10 @@ class RenderHandler(BaseHTTPRequestHandler):
                     
                     # Use the primary character's parsed placement as reference position
                     ref_pos = characters[0].get("position", [0.0, 0.0, 0.0])
-                    build_environment_in_blender(env_config, ref_pos, weather_str, props_list, assets_list, env_seed=env_seed)
+                    env_seed = build_environment_in_blender(env_config, ref_pos, weather_str, props_list, assets_list, env_seed=env_seed)
                 except Exception as env_err:
                     print(f"[BlenderDaemon] Failed to build environment: {env_err}")
+
 
 
                 # --- Helper to find/lookup actions ---
@@ -795,10 +796,12 @@ class RenderHandler(BaseHTTPRequestHandler):
                             "rotation": cam_rot
                         },
                         "characters": chars_dict,
+                        "env_seed": env_seed,
                         "previous_action": characters[0]["action"]
                     }
                     with open(state_file_path, "w") as sf:
                         json.dump(state_data, sf)
+
 
                         
                 response = {
