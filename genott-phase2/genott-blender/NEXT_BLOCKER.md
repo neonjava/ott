@@ -39,7 +39,7 @@
 
 ---
 
-## 3. Environment Layout Discontinuity and Random Rebuilds (BACKLOG)
+## 3. Environment Layout Discontinuity and Random Rebuilds (RESOLVED)
 - **Blocker Name**: Environment Layout Discontinuity and Random Rebuilds
 - **Why it Blocks Production Readiness**:
   - When consecutive scenes share the same location name, the procedural environment director rebuilds the geometry layouts (trees, rocks, props) from scratch using random seeds, causing elements to morph and move between cuts.
@@ -48,6 +48,9 @@
 - **Files Involved**:
   - [environment_director.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/environment_director.py)
   - [ai/renderer/blender.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/ai/renderer/blender.py)
+- **Resolution**:
+  - Updated `environment_director.py` to allow passing a custom `env_seed` and to dynamically generate one if missing.
+  - Modified `blender_daemon.py` to read `env_seed` from `scene_state.json` on load, pass it to `build_environment_in_blender`, and write the resulting `env_seed` back to `scene_state.json` at the end of the render. This locks the procedural placements across sequential cuts.
 
 ---
 
