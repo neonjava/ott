@@ -1153,13 +1153,31 @@ Files:
 Result:
 Successful implementation of multi-character dialogue sequential rendering, speaker tracking, and offset viseme lipsync; verified by benchmarks.
 
+## 2026-06-22 23:50:00
+
+Actor:
+Main Agent & Subagents (story_architect, render_director)
+
+Category:
+Continuity Phase & Multi-character Spatial Tracking
+
+Summary:
+Resolved the secondary character spatial discontinuity blocker. Updated the Blender Daemon to store and reload location and rotation data for all active characters in the scene under a characters dictionary inside scene_state.json. This prevents secondary characters from resetting or jumping positions between scene transitions, establishing full multi-character position persistence.
+
+Files:
+* ai/renderer/blender_daemon.py
+* NEXT_BLOCKER.md
+
+Result:
+Passes continuity state persistence checks for multiple active characters.
+
 ---
 
 # Periodic Statistics
 
-* **Total Commits**: 5 (a2bf2ed64079111f0ac60e1bed63bfd6519786de, b4ed10c, deaed64, fb55abf, 7654434)
+* **Total Commits**: 7 (a2bf2ed64079111f0ac60e1bed63bfd6519786de, b4ed10c, deaed64, fb55abf, 7654434, 480539d, 80c8637)
 * **Total Benchmarks**: 4 (story understanding benchmark, visual pipeline validation, dialogue validation benchmark, and movie validation benchmark)
-* **Total Fixes**: 7 (exporter adjustments, total_memory attribute fix, ARKit mesh rigging, Blender daemon pre-warming, camera sequencer trajectory mapping, Blender 5.x primitive keywords, and Multi-character dialogue lipsync timeline offsets)
+* **Total Fixes**: 8 (exporter adjustments, total_memory attribute fix, ARKit mesh rigging, Blender daemon pre-warming, camera sequencer trajectory mapping, Blender 5.x primitive keywords, Multi-character dialogue lipsync timeline offsets, and Multi-character spatial position/rotation persistence)
 * **Total Generated Movies**: 162 (including multi-character E2E movie validation runs)
 * **Total Render Failures**: 0
 
