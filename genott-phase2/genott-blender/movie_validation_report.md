@@ -4,27 +4,24 @@
 | Metric | Value |
 |--------|-------|
 | Total Movies | 10 |
-| Successful | 0 |
-| Failed | 10 |
-| Avg Duration | 0.00s |
-| Avg Assembly Time | 0.00s |
+| Successful | 10 |
+| Failed | 0 |
+| Avg Duration | 3.83s |
+| Avg Assembly Time | 76.57s |
 
 ## Individual Results
 | Movie | Status | Time | Duration | Scenes | File | Video | Audio | Playable |
 |-------|--------|------|----------|--------|------|-------|-------|----------|
-| 1 | EXCEPTION | 0.0s | 0.0s | - | ❌ | ❌ | ❌ | ❌ |
-| 2 | EXCEPTION | 0.0s | 0.0s | - | ❌ | ❌ | ❌ | ❌ |
-| 3 | EXCEPTION | 0.0s | 0.0s | - | ❌ | ❌ | ❌ | ❌ |
-| 4 | EXCEPTION | 0.0s | 0.0s | - | ❌ | ❌ | ❌ | ❌ |
-| 5 | EXCEPTION | 0.0s | 0.0s | - | ❌ | ❌ | ❌ | ❌ |
-| 6 | EXCEPTION | 0.0s | 0.0s | - | ❌ | ❌ | ❌ | ❌ |
-| 7 | EXCEPTION | 0.0s | 0.0s | - | ❌ | ❌ | ❌ | ❌ |
-| 8 | EXCEPTION | 0.0s | 0.0s | - | ❌ | ❌ | ❌ | ❌ |
-| 9 | EXCEPTION | 0.0s | 0.0s | - | ❌ | ❌ | ❌ | ❌ |
-| 10 | EXCEPTION | 0.0s | 0.0s | - | ❌ | ❌ | ❌ | ❌ |
-
-## Most Common Failure
-`HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/generate-movie (Caused by NewConnectionError("HTTPConnection(host='127.0.0.1', port=5001): Failed to establish a new connection: [Errno 111] Connection refused"))` (10x)
+| 1 | PASS | 84.1s | 2.4s | 1 | ✅ | ✅ | ✅ | ✅ |
+| 2 | PASS | 71.8s | 2.8s | 1 | ✅ | ✅ | ✅ | ✅ |
+| 3 | PASS | 75.4s | 2.6s | 1 | ✅ | ✅ | ✅ | ✅ |
+| 4 | PASS | 77.7s | 2.3s | 1 | ✅ | ✅ | ✅ | ✅ |
+| 5 | PASS | 77.1s | 2.7s | 1 | ✅ | ✅ | ✅ | ✅ |
+| 6 | PASS | 78.5s | 10.3s | 1 | ✅ | ✅ | ✅ | ✅ |
+| 7 | PASS | 75.2s | 2.3s | 1 | ✅ | ✅ | ✅ | ✅ |
+| 8 | PASS | 75.6s | 8.3s | 1 | ✅ | ✅ | ✅ | ✅ |
+| 9 | PASS | 75.9s | 2.4s | 1 | ✅ | ✅ | ✅ | ✅ |
+| 10 | PASS | 74.5s | 2.4s | 1 | ✅ | ✅ | ✅ | ✅ |
 
 ## Conclusion
-**10 movies failed validation. See details above.**
+**All 10 movies passed validation.**

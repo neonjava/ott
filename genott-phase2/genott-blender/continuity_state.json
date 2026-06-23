@@ -1,13 +1,13 @@
 {
   "scene_index": 1,
-  "location": "crowd",
+  "location": "forest",
   "weather": "clear",
   "characters": {},
   "environment_props": [],
   "held_items": {
-    "hero": null
+    "knight": null
   },
   "outfit_state": {
-    "hero": []
+    "knight": []
   }
 }

@@ -1,13 +1,13 @@
 {
     "scenes": [
         {
-            "location": "crowd",
+            "location": "environment",
             "character": "hero",
-            "action": "wave",
-            "camera": "medium_shot",
-            "mood": "cheerful",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
             "speed": "normal",
-            "sentence": "hero waves at crowd"
+            "sentence": "hero jumps"
         }
     ],
     "transitions": []
