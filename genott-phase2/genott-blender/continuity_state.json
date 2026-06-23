@@ -1,11 +1,11 @@
 {
-  "scene_index": 1,
-  "location": "forest",
+  "scene_index": 3,
+  "location": "n ancient dragon",
   "weather": "clear",
   "characters": {},
   "environment_props": [],
   "held_items": {
-    "knight": null
+    "knight": "sword"
   },
   "outfit_state": {
     "knight": []
