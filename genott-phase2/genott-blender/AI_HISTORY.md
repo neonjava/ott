@@ -1352,3 +1352,43 @@ Commit:
 
 
 
+
+---
+
+## 2026-06-23 — Render Evidence Phase (Physical Validation)
+
+### Objective
+Prove rendered movies exist on disk with physical ffprobe evidence. No metadata substitution.
+
+### Audit Finding
+The 236 existing `movie_*_final_movie.mp4` clips are short scene clips (1–45s), not long-form movies.
+Prior benchmark reports used planning metadata, not actual video files. This phase corrected that.
+
+### Actions Taken
+1. Scanned all 252 video files in `static/videos/` — confirmed 1705s of source material
+2. Generated 4 real long-form movies by assembling scene clips via FFmpeg concat:
+   - `longform_60s.mp4` → 60.03s | h264 | 670 frames | aac audio | 539,738 bytes
+   - `longform_90s.mp4` → 90.03s | h264 | 1,048 frames | aac audio | 603,291 bytes
+   - `longform_120s.mp4` → 120.01s | h264 | 1,411 frames | aac audio | 691,812 bytes
+   - `longform_180s.mp4` → 180.02s | h264 | 1,648 frames | aac audio | 1,090,853 bytes
+3. Extracted frame thumbnails (first/middle/last) for each duration group
+4. Added procedural BGM (aevalsrc ambient mix) to all 4 movies
+5. Written `RENDER_EVIDENCE.md` with full ffprobe validation table
+6. Created `render_evidence/` directory with all frames and long-form movies
+
+### Validation Result
+ALL 4 DURATION GROUPS: ✅ PASSED
+
+### Encoder Note
+`libx264` unavailable — used stream copy (primary) + `libopenh264` (re-encode fallback).
+`h264_nvenc` available via GPU but not needed for stream-copy path.
+
+### Files Changed
+- `RENDER_EVIDENCE.md` (new)
+- `render_evidence/longform/*.mp4` (4 new movies)
+- `render_evidence/{60s,90s,120s,180s}/*.jpg` (12 frame thumbnails)
+- `generate_longform_movies.py` (new)
+- `collect_render_evidence.sh` (new)
+
+### Commit
+677f191 — feat: add RENDER_EVIDENCE.md with physical proof of all 4 long-form renders
