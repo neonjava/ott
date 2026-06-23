@@ -211,7 +211,7 @@ class ScenePlanner:
         self.ollama_url = ollama_url
         self.model = model
 
-    def plan_rule_based(self, script: str, character: str) -> List[ScenePlan]:
+    def plan_rule_based(self, script: str, character: str, target_duration: float = 45.0) -> List[ScenePlan]:
         from dialogue_engine import generate_dialogue_timeline
         from storyboard_director import parse_script_to_storyboard
         from character_interaction_engine import CharacterInteractionEngine
@@ -323,11 +323,10 @@ class ScenePlanner:
             )
             plans.append(plan)
             
-        # Pacing Control: Scale all scene durations to sum to target_total_duration (45.0s)
+        # Pacing Control: Scale all scene durations to sum to target_duration
         total_raw = sum(p.duration for p in plans)
         if total_raw > 0:
-            target_total = 45.0
-            scale_factor = target_total / total_raw
+            scale_factor = target_duration / total_raw
             for p in plans:
                 p.duration = round(p.duration * scale_factor, 1)
             

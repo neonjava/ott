@@ -318,6 +318,7 @@ def api_generate_movie():
     data = request.get_json() or {}
     character = data.get("character", "humanoid")
     script = data.get("script", "")
+    target_duration = float(data.get("target_duration", 45.0))
     
     if not script:
         return jsonify({"error": "No script provided"}), 400
@@ -359,7 +360,7 @@ def api_generate_movie():
 
     # 1. & 2. & 3. Parse script, extract scenes, determine actions
     try:
-        scenes = scene_planner.plan_rule_based(script, character)
+        scenes = scene_planner.plan_rule_based(script, character, target_duration=target_duration)
     except Exception as e:
         return jsonify({"error": f"Scene planning failed: {str(e)}"}), 500
         
