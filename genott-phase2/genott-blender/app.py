@@ -602,6 +602,60 @@ def api_generate_movie():
                 except: pass
                 
         # 8. Produce final movie
+        update_execution_log(generation_id, "Procedurally synthesizing ambient soundtrack...")
+        
+        # Select background soundtrack synth based on genre or mood using standard aevalsrc
+        genre_bgm_map = {
+            "adventure": "aevalsrc=0.1*sin(2*PI*120*t)+0.05*sin(2*PI*180*t):d={dur}",
+            "fantasy": "aevalsrc=0.08*sin(2*PI*220*t)+0.04*sin(2*PI*330*t):d={dur}",
+            "action": "aevalsrc=0.12*sin(2*PI*80*t)+0.03*sin(2*PI*240*t):d={dur}",
+            "comedy": "aevalsrc=0.07*sin(2*PI*440*t)+0.05*sin(2*PI*550*t):d={dur}",
+            "emotional": "aevalsrc=0.09*sin(2*PI*150*t)+0.03*sin(2*PI*300*t):d={dur}",
+            "dialogue": "aevalsrc=0.07*sin(2*PI*110*t):d={dur}"
+        }
+        
+        # Resolve script/story attributes to determine music genre
+        story_genre = "adventure"
+        script_lower = script.lower()
+        if any(w in script_lower for w in ["spell", "mage", "wizard", "magic", "fantasy"]):
+            story_genre = "fantasy"
+        elif any(w in script_lower for w in ["combat", "fight", "laser", "robot", "attack"]):
+            story_genre = "action"
+        elif any(w in script_lower for w in ["funny", "hilarious", "joke", "comedy", "fox"]):
+            story_genre = "comedy"
+        elif any(w in script_lower for w in ["heartbreak", "sad", "emotional", "cry", "lonely"]):
+            story_genre = "emotional"
+        elif len(script_lower.split()) > 25:
+            story_genre = "dialogue"
+            
+        bgm_filter = genre_bgm_map.get(story_genre, genre_bgm_map["adventure"]).format(dur=final_dur)
+        
+        # Generate mixed audio: mix original audio track with procedurally synthesized synth bgm
+        bgm_filepath = os.path.join(Config.VIDEO_DIR, f"music_{generation_id}.mp4")
+        mix_cmd = [
+            "ffmpeg", "-y", "-i", final_filepath,
+            "-f", "lavfi", "-i", bgm_filter,
+            "-filter_complex", "[0:a][1:a]amix=inputs=2:duration=first:dropout_transition=2:normalize=0[aout]",
+            "-map", "0:v:0", "-map", "[aout]",
+            "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+            bgm_filepath
+        ]
+        
+        try:
+            import subprocess
+            import shutil
+            update_execution_log(generation_id, f"Mixing synthetic {story_genre} bgm soundtrack into final movie...")
+            subprocess.run(mix_cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if os.path.exists(bgm_filepath) and os.path.getsize(bgm_filepath) > 100:
+                os.remove(final_filepath)
+                shutil.move(bgm_filepath, final_filepath)
+                update_execution_log(generation_id, "Showcase soundtrack successfully mixed.")
+        except Exception as bgm_err:
+            update_execution_log(generation_id, f"Warning: Soundtrack synthesis failed fallback to dialogue track: {bgm_err}")
+            if os.path.exists(bgm_filepath):
+                try: os.remove(bgm_filepath)
+                except: pass
+                
         update_execution_log(generation_id, "Movie compilation finished.")
         update_execution_log(generation_id, f"Final Movie Quality Score: {quality_metrics['score']}/100")
 
