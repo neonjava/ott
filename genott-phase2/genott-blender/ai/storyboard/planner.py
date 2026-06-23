@@ -214,6 +214,10 @@ class ScenePlanner:
     def plan_rule_based(self, script: str, character: str) -> List[ScenePlan]:
         from dialogue_engine import generate_dialogue_timeline
         from storyboard_director import parse_script_to_storyboard
+        from character_interaction_engine import CharacterInteractionEngine
+        from environment_generation_engine import EnvironmentGenerationEngine
+        from director_v2 import DirectorV2
+        from spatial_placement_engine import SpatialPlacementEngine
         
         # 1. Generate structured dialogue timeline
         timeline = generate_dialogue_timeline(script, character)
@@ -221,8 +225,40 @@ class ScenePlanner:
         # 2. Parse script into storyboard
         storyboard = parse_script_to_storyboard(script, character)
         
+        # 3. Setup context engines to run Director V2
+        interaction_engine = CharacterInteractionEngine()
+        env_engine = EnvironmentGenerationEngine()
+        director_v2_engine = DirectorV2()
+        spatial_engine = SpatialPlacementEngine()
+        
+        story_data = {
+            "characters": [character],
+            "locations": list(set(s["location"] for s in storyboard["scenes"])),
+            "events": []
+        }
+        for i, s in enumerate(storyboard["scenes"]):
+            story_data["events"].append({
+                "id": f"event_{i+1}",
+                "character": s["character"],
+                "location": s["location"],
+                "action": s["action"],
+                "emotion": s.get("mood", "neutral"),
+                "description": s.get("sentence", script)
+            })
+            
+        interactions = interaction_engine.detect_interactions(story_data)
+        
+        env_configs = {}
+        for s in storyboard["scenes"]:
+            loc = s["location"]
+            if loc not in env_configs:
+                env_configs[loc] = env_engine.generate_environment(loc, s.get("mood", "neutral"), s.get("sentence", script))
+                
+        # Run Director V2
+        directed_sb = director_v2_engine.direct_storyboard(storyboard, interactions, env_configs)
+        
         plans = []
-        for i, sb_scene in enumerate(storyboard["scenes"]):
+        for i, sb_scene in enumerate(directed_sb["scenes"]):
             # Find matching dialogue/narration from timeline for this scene index
             scene_dialogues = []
             scene_narration = None
@@ -243,31 +279,13 @@ class ScenePlanner:
             if scene_narration is None:
                 scene_narration = f"The {sb_scene['character']} prepares to {sb_scene['action']}."
             
-            # Map storyboard camera suggestion to BlenderVideoRenderer shot type
-            camera_map = {
-                "wide_shot": "cinematic wide",
-                "tracking_shot": "close-up tracking shot",
-                "close_up": "close-up helmet shot",
-                "low_angle": "low-angle dramatic wide shot",
-                "medium_shot": "rotating orbit shot around the character"
-            }
-            camera_shot = camera_map.get(sb_scene["camera"], "cinematic wide")
-            
-            # Map action duration based on action type
-            duration = 4.0
-            if sb_scene["action"] == "walk":
-                duration = 5.0
-            elif sb_scene["action"] == "wave":
-                duration = 3.0
-            elif sb_scene["action"] == "jump":
-                duration = 4.0
-            elif sb_scene["action"] == "attack":
-                duration = 4.0
+            # Use the camera shot determined by Director V2
+            camera_shot = sb_scene.get("camera_shot", "wide_shot")
+            camera_movement = sb_scene.get("camera_movement", "static")
+            duration = sb_scene.get("duration", 4.0)
             
             # Detect characters in scene sentence
             sentence = sb_scene.get("sentence", "") or sb_scene.get("description", "") or ""
-            from character_interaction_engine import CharacterInteractionEngine
-            interaction_engine = CharacterInteractionEngine()
             chars_in_scene = interaction_engine.detect_characters_in_text(sentence)
             
             # Ensure speakers in dialogues are included as characters
@@ -286,17 +304,7 @@ class ScenePlanner:
                 chars_in_scene.remove(primary_char)
                 chars_in_scene.insert(0, primary_char)
                 
-            from spatial_placement_engine import SpatialPlacementEngine
-            spatial_engine = SpatialPlacementEngine()
             placements = spatial_engine.calculate_positions(chars_in_scene)
-
-            action_lower = sb_scene["action"].lower()
-            if 'walk' in action_lower or 'run' in action_lower:
-                camera_movement = 'tracking'
-            elif 'attack' in action_lower:
-                camera_movement = 'orbit'
-            else:
-                camera_movement = 'static'
 
             plan = ScenePlan(
                 scene_number=i + 1,

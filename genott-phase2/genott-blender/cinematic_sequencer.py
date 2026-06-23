@@ -136,26 +136,36 @@ def sequence_scene(plan: ScenePlan, start_location: List[float], action_name: st
                 start_location[2] + delta_loc[2] * factor
             ]
             
+            # Smooth ease-in-out curve (smoothstep) for camera velocity (Priority 3: Dynamic Camera Movement)
+            t = (f - start_f) / max(1, end_f - start_f) if end_f > start_f else 1.0
+            progress = t * t * (3.0 - 2.0 * t)
+            
+            # Rule-of-thirds composition offset (Priority 2: Shot Composition)
+            composition_yaw_offset = 0.0
+            shot_name_lower = shot["camera_shot"].lower()
+            if "close_up" in shot_name_lower:
+                composition_yaw_offset = math.radians(6.0) # frame character on the right third
+            elif "over_shoulder" in shot_name_lower:
+                composition_yaw_offset = math.radians(-8.0) # frame character on the left third
+            
             if move == "tracking":
                 cam_loc = [char_pos[0] + offset[0], char_pos[1] + offset[1], char_pos[2] + offset[2]]
-                cam_rot = rot
+                cam_rot = (rot[0], rot[1], rot[2] + composition_yaw_offset)
             elif move == "orbit":
-                # Rotate offset around character over the course of the shot segment
-                progress = (f - start_f) / max(1, end_f - start_f)
+                # Rotate offset around character over the course of the shot segment using smoothed progress
                 angle = progress * math.radians(90) - math.radians(45) # sweep 90 degrees
                 
                 ox = offset[0] * math.cos(angle) - offset[1] * math.sin(angle)
                 oy = offset[0] * math.sin(angle) + offset[1] * math.cos(angle)
                 cam_loc = [char_pos[0] + ox, char_pos[1] + oy, char_pos[2] + offset[2]]
-                cam_rot = (rot[0], rot[1], rot[2] + angle)
+                cam_rot = (rot[0], rot[1], rot[2] + angle + composition_yaw_offset)
             elif move == "pan":
-                progress = (f - start_f) / max(1, end_f - start_f)
                 pan_angle = (progress - 0.5) * math.radians(30) # sweep 30 degrees
                 cam_loc = [char_pos_start[0] + offset[0], char_pos_start[1] + offset[1], char_pos_start[2] + offset[2]]
-                cam_rot = (rot[0], rot[1], rot[2] + pan_angle)
+                cam_rot = (rot[0], rot[1], rot[2] + pan_angle + composition_yaw_offset)
             else: # static
                 cam_loc = [char_pos_start[0] + offset[0], char_pos_start[1] + offset[1], char_pos_start[2] + offset[2]]
-                cam_rot = rot
+                cam_rot = (rot[0], rot[1], rot[2] + composition_yaw_offset)
                 
             timeline.append({
                 "frame": f,

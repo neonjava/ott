@@ -292,76 +292,160 @@ def apply_shape_key_animations(mesh_obj, mood: str, viseme_timeline: list, f_sta
     if shape_keys.animation_data:
         shape_keys.animation_data_clear()
         
-    # 2. Reset all shape keys to 0.0 at the first frame
-    for kb in shape_keys.key_blocks:
-        if kb.name != "Basis":
-            kb.value = 0.0
-            kb.keyframe_insert(data_path="value", frame=f_start)
-            
-    # 3. Apply static emotional pose (emotions)
+    # Standard mapping from emotions to blendshape intensity profiles
     EMOTION_TO_BLENDSHAPES = {
-        "happy": {"mouthSmileLeft": 0.8, "mouthSmileRight": 0.8, "browInnerUp": 0.3},
-        "sad": {"mouthFrownLeft": 0.9, "mouthFrownRight": 0.9, "browOuterUpLeft": 0.5, "browOuterUpRight": 0.5},
-        "angry": {"browDownLeft": 1.0, "browDownRight": 1.0, "mouthPressLeft": 0.6, "mouthPressRight": 0.6},
+        "happy": {"mouthSmileLeft": 0.8, "mouthSmileRight": 0.8, "browInnerUp": 0.3, "cheekSquintLeft": 0.4, "cheekSquintRight": 0.4},
+        "sad": {"mouthFrownLeft": 0.9, "mouthFrownRight": 0.9, "browOuterUpLeft": 0.5, "browOuterUpRight": 0.5, "eyeSquintLeft": 0.3, "eyeSquintRight": 0.3},
+        "angry": {"browDownLeft": 1.0, "browDownRight": 1.0, "mouthPressLeft": 0.6, "mouthPressRight": 0.6, "eyeSquintLeft": 0.5, "eyeSquintRight": 0.5},
         "fear": {"jawOpen": 0.3, "mouthStretchLeft": 0.7, "mouthStretchRight": 0.7, "browInnerUp": 0.8, "eyeWideLeft": 0.6, "eyeWideRight": 0.6},
         "surprise": {"jawOpen": 0.6, "eyeWideLeft": 0.9, "eyeWideRight": 0.9, "browInnerUp": 0.9},
         "hope": {"mouthSmileLeft": 0.4, "mouthSmileRight": 0.4, "browInnerUp": 0.2},
-        "determination": {"browDownLeft": 0.4, "browDownRight": 0.4, "mouthClose": 0.4}
+        "determination": {"browDownLeft": 0.4, "browDownRight": 0.4, "mouthClose": 0.5, "mouthPressLeft": 0.5, "mouthPressRight": 0.5}
     }
     
-    mood_clean = mood.lower().strip()
-    emotion_weights = EMOTION_TO_BLENDSHAPES.get(mood_clean, {})
-    for shape_name, weight in emotion_weights.items():
-        kb = shape_keys.key_blocks.get(shape_name)
-        if kb:
-            kb.value = weight
-            kb.keyframe_insert(data_path="value", frame=f_start)
-            # Maintain this emotion at the end of the scene too
-            kb.keyframe_insert(data_path="value", frame=f_end)
-            
-    # 4. Apply viseme lip sync over time
+    VISEME_TO_BLENDSHAPES = {
+        "A": {"jawOpen": 0.8, "mouthFunnel": 0.2},
+        "E": {"mouthStretchLeft": 0.6, "mouthStretchRight": 0.6, "jawOpen": 0.2},
+        "F": {"mouthShrugLower": 0.5, "mouthClose": 0.3},
+        "L": {"jawOpen": 0.4, "mouthPressLeft": 0.2},
+        "M": {"mouthClose": 1.0},
+        "O": {"mouthFunnel": 0.8, "jawOpen": 0.4},
+        "rest": {"mouthClose": 0.5}
+    }
+    
+    # Sort and prepare viseme timeline for coarticulation interpolation
+    timeline = []
     if viseme_timeline:
-        VISEME_TO_BLENDSHAPES = {
-            "A": {"jawOpen": 0.8, "mouthFunnel": 0.2},
-            "E": {"mouthStretchLeft": 0.6, "mouthStretchRight": 0.6, "jawOpen": 0.2},
-            "F": {"mouthShrugLower": 0.5, "mouthClose": 0.3},
-            "L": {"jawOpen": 0.4, "mouthPressLeft": 0.2},
-            "M": {"mouthClose": 1.0},
-            "O": {"mouthFunnel": 0.8, "jawOpen": 0.4},
-            "rest": {"mouthClose": 0.5}
-        }
+        timeline = sorted(viseme_timeline, key=lambda x: x.get("time", 0.0))
+    
+    scene_dur_sec = (f_end - f_start) / fps
+    if not timeline or timeline[0].get("time", 0.0) > 0.0:
+        timeline.insert(0, {"time": 0.0, "viseme": "rest"})
+    if timeline[-1].get("time", 0.0) < scene_dur_sec:
+        timeline.append({"time": scene_dur_sec, "viseme": "rest"})
         
-        # All shape keys used in visemes
-        viseme_shapes = set()
-        for shapes in VISEME_TO_BLENDSHAPES.values():
-            viseme_shapes.update(shapes.keys())
-            
-        for entry in viseme_timeline:
-            time_sec = entry.get("time", 0.0)
-            vis = entry.get("viseme", "rest")
-            
-            frame = int(f_start + (time_sec * fps))
-            if frame > f_end:
-                frame = f_end
+    mood_clean = mood.lower().strip()
+    emotion_base = EMOTION_TO_BLENDSHAPES.get(mood_clean, {})
+    
+    # Identify all shape keys we intend to manipulate to keep others at 0.0
+    all_manipulated_shapes = {
+        "eyeBlinkLeft", "eyeLookDownLeft", "eyeLookInLeft", "eyeLookOutLeft", "eyeLookUpLeft", "eyeSquintLeft", "eyeWideLeft",
+        "eyeBlinkRight", "eyeLookDownRight", "eyeLookInRight", "eyeLookOutRight", "eyeLookUpRight", "eyeSquintRight", "eyeWideRight",
+        "jawForward", "jawLeft", "jawRight", "jawOpen", "mouthClose", "mouthFunnel", "mouthPucker", "mouthLeft", "mouthRight",
+        "mouthSmileLeft", "mouthSmileRight", "mouthFrownLeft", "mouthFrownRight", "mouthDimpleLeft", "mouthDimpleRight",
+        "mouthStretchLeft", "mouthStretchRight", "mouthRollLower", "mouthRollUpper", "mouthShrugLower", "mouthShrugUpper",
+        "mouthPressLeft", "mouthPressRight", "mouthLowerDownLeft", "mouthLowerDownRight", "mouthUpperUpLeft", "mouthUpperUpRight",
+        "browDownLeft", "browDownRight", "browInnerUp", "browOuterUpLeft", "browOuterUpRight", "cheekPuff", "cheekSquintLeft",
+        "cheekSquintRight", "noseSneerLeft", "noseSneerRight", "tongueOut"
+    }
+    for shapes in EMOTION_TO_BLENDSHAPES.values():
+        all_manipulated_shapes.update(shapes.keys())
+    for shapes in VISEME_TO_BLENDSHAPES.values():
+        all_manipulated_shapes.update(shapes.keys())
+        
+    # Pre-populate lists of shape keys available on this specific model
+    model_keys = {}
+    for name in all_manipulated_shapes:
+        kb = shape_keys.key_blocks.get(name)
+        if kb:
+            model_keys[name] = kb
+
+    # Animate frame-by-frame
+    for f in range(f_start, f_end + 1):
+        t = (f - f_start) / fps
+        frame_values = {name: 0.0 for name in model_keys.keys()}
+        
+        # 1. Base Emotion with micro-expression sine-wave wiggles
+        # Ease in the emotion over the first 6 frames of the scene
+        ease_in = min(1.0, (f - f_start) / 6.0) if f_end > f_start else 1.0
+        micro_variation = 1.0 + 0.08 * math.sin(f * 0.4) # slight 8% pulsing of emotion intensity
+        
+        for name, base_w in emotion_base.items():
+            if name in frame_values:
+                frame_values[name] = base_w * ease_in * micro_variation
                 
-            # First set all viseme shape keys to 0.0 at this frame to avoid accumulation
-            for shape_name in viseme_shapes:
-                kb = shape_keys.key_blocks.get(shape_name)
-                if kb:
-                    kb.value = 0.0
+        # 2. Eye Blinking: blink duration = 3 frames, happens every 4 seconds (48 frames)
+        # Offset start frame by hash of mesh name to desynchronize multiple characters
+        char_offset = hash(mesh_obj.name) % 17
+        blink_cycle = 45 # frames
+        local_f = (f - f_start + char_offset) % blink_cycle
+        blink_weight = 0.0
+        if local_f == 0 or local_f == 2:
+            blink_weight = 0.5
+        elif local_f == 1:
+            blink_weight = 1.0
+            
+        if "eyeBlinkLeft" in frame_values:
+            frame_values["eyeBlinkLeft"] = max(frame_values["eyeBlinkLeft"], blink_weight)
+        if "eyeBlinkRight" in frame_values:
+            frame_values["eyeBlinkRight"] = max(frame_values["eyeBlinkRight"], blink_weight)
+            
+        # 3. Eye Look Saccades: shifts eye lookup/lookin directions slightly every 1.5 seconds (18 frames)
+        saccade_cycle = 18
+        saccade_idx = (f - f_start + char_offset) // saccade_cycle
+        # Deterministic pseudo-random look offset based on character and saccade index
+        look_seed = hash(f"{mesh_obj.name}_{saccade_idx}")
+        look_x = ((look_seed % 7) - 3) / 10.0 # -0.3 to 0.3
+        look_y = (((look_seed // 7) % 7) - 3) / 10.0 # -0.3 to 0.3
+        
+        # Smoothly ease the saccadic shift over 3 frames
+        saccade_local_f = (f - f_start + char_offset) % saccade_cycle
+        saccade_blend = min(1.0, saccade_local_f / 3.0)
+        curr_look_x = look_x * saccade_blend
+        curr_look_y = look_y * saccade_blend
+        
+        if curr_look_x > 0:
+            if "eyeLookOutLeft" in frame_values: frame_values["eyeLookOutLeft"] = curr_look_x
+            if "eyeLookInRight" in frame_values: frame_values["eyeLookInRight"] = curr_look_x
+        elif curr_look_x < 0:
+            if "eyeLookInLeft" in frame_values: frame_values["eyeLookInLeft"] = -curr_look_x
+            if "eyeLookOutRight" in frame_values: frame_values["eyeLookOutRight"] = -curr_look_x
+            
+        if curr_look_y > 0:
+            if "eyeLookUpLeft" in frame_values: frame_values["eyeLookUpLeft"] = curr_look_y
+            if "eyeLookUpRight" in frame_values: frame_values["eyeLookUpRight"] = curr_look_y
+        elif curr_look_y < 0:
+            if "eyeLookDownLeft" in frame_values: frame_values["eyeLookDownLeft"] = -curr_look_y
+            if "eyeLookDownRight" in frame_values: frame_values["eyeLookDownRight"] = -curr_look_y
+
+        # 4. Interpolate Lip Sync Coarticulation
+        vis_weights = {}
+        if len(timeline) == 1:
+            vis_weights = VISEME_TO_BLENDSHAPES.get(timeline[0]["viseme"], {})
+        else:
+            # Find bracket
+            found = False
+            for i in range(len(timeline) - 1):
+                t_curr = timeline[i]["time"]
+                t_next = timeline[i+1]["time"]
+                if t_curr <= t < t_next:
+                    p = (t - t_curr) / (t_next - t_curr) if t_next > t_curr else 0.0
+                    vis_a = timeline[i]["viseme"]
+                    vis_b = timeline[i+1]["viseme"]
+                    shapes_a = VISEME_TO_BLENDSHAPES.get(vis_a, {})
+                    shapes_b = VISEME_TO_BLENDSHAPES.get(vis_b, {})
                     
-            # Apply active viseme weights
-            active_shapes = VISEME_TO_BLENDSHAPES.get(vis, VISEME_TO_BLENDSHAPES["rest"])
-            for shape_name, weight in active_shapes.items():
-                kb = shape_keys.key_blocks.get(shape_name)
-                if kb:
-                    kb.value = weight
-                    
-            # Insert keyframes for all viseme shape keys at this frame
-            for shape_name in viseme_shapes:
-                kb = shape_keys.key_blocks.get(shape_name)
-                if kb:
-                    kb.keyframe_insert(data_path="value", frame=frame)
+                    # Blend the two viseme shape profiles
+                    all_vis_shapes = set(shapes_a.keys()) | set(shapes_b.keys())
+                    for sname in all_vis_shapes:
+                        w_a = shapes_a.get(sname, 0.0)
+                        w_b = shapes_b.get(sname, 0.0)
+                        vis_weights[sname] = w_a + (w_b - w_a) * p
+                    found = True
+                    break
+            if not found:
+                vis_weights = VISEME_TO_BLENDSHAPES.get(timeline[-1]["viseme"], {})
+                
+        # Mix visemes into final frame values (max override to prevent mouth and emotion conflicts)
+        for sname, w in vis_weights.items():
+            if sname in frame_values:
+                frame_values[sname] = max(frame_values[sname], w)
+                
+        # Apply to Blender shape keys and insert keyframe
+        for name, val in frame_values.items():
+            kb = model_keys[name]
+            kb.value = min(1.0, max(0.0, val))
+            kb.keyframe_insert(data_path="value", frame=f)
  
 class RenderHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -617,6 +701,14 @@ class RenderHandler(BaseHTTPRequestHandler):
                 bpy.context.scene.camera = camera
                 camera.location = (0, -4, 1.5)
                 camera.rotation_euler = (math.radians(80), 0, 0)
+
+                # Cinematic Camera depth of field configuration (Priority 2: Shot Composition)
+                camera.data.dof.use_dof = True
+                if primary_armature:
+                    camera.data.dof.focus_object = primary_armature
+                else:
+                    camera.data.dof.focus_distance = 4.0
+                camera.data.dof.aperture_fstop = 2.8 # F/2.8 cinematic background blur
 
                 # Update camera target position based on primary character
                 if primary_armature:
