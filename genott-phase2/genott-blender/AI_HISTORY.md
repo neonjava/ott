@@ -1270,18 +1270,38 @@ Files:
 Result:
 Directed look-and-feel verified by 20-movie cinematic validation benchmark; git changes committed and pushed.
 
+## 2026-06-23 08:50:00
+
+Actor:
+Main Agent
+
+Category:
+Long-Form Movie Phase
+
+Summary:
+Transitioned the storytelling pipeline from short scenes to coherent long-form movies (1-3 minutes). Propagated target_duration from the Flask API endpoint in app.py to the storyboard planner in planner.py, removing the hardcoded 45.0s pacing scaling constraint. Created long_form_validation.py to automate E2E continuity, pacing, location env_seed, and character checks across 40 movies (10 stories per duration: 60s, 90s, 120s, 180s). All 40 benchmark stories passed with 100.0% accuracy.
+
+Files:
+* app.py
+* ai/storyboard/planner.py
+* long_form_validation.py
+
+Result:
+Pacing and character consistency verified across long-form categories; git changes committed and pushed.
+
 Commit:
-5e91417
+2b523d0
 
 ---
 
 # Periodic Statistics
 
-* **Total Commits**: 19 (5e91417)
-* **Total Benchmarks**: 7 (story understanding, visual pipeline, dialogue validation, movie validation, E2E validation, transition E2E, and cinematic sequencer validation)
-* **Total Fixes**: 16 (exporter, memory, rigging, pre-warming, camera sequencer mapping, Blender primitives, viseme timelines, spatial continuity, environment seeds, pacing duration, framerates, test suite cleanups, blinking/saccades, depth-of-field, cubic velocity easing, and rule-of-thirds composition)
-* **Total Generated Movies**: 292
+* **Total Commits**: 20 (2b523d0)
+* **Total Benchmarks**: 8 (story understanding, visual pipeline, dialogue validation, movie validation, E2E validation, transition E2E, cinematic sequencer, and long-form E2E validation)
+* **Total Fixes**: 17 (exporter, memory, rigging, pre-warming, camera sequencer mapping, Blender primitives, viseme timelines, spatial continuity, environment seeds, pacing duration, framerates, test suite cleanups, blinking/saccades, depth-of-field, cubic velocity easing, rule-of-thirds composition, and custom duration window scaling)
+* **Total Generated Movies**: 332
 * **Total Render Failures**: 0
+
 
 
 
