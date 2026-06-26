@@ -23,9 +23,9 @@ def init_blender_env():
     # 2. Setup GPU
     bpy.context.scene.render.engine = 'CYCLES'
     bpy.context.scene.cycles.device = 'GPU'
-    bpy.context.scene.cycles.samples = 1
-    bpy.context.scene.render.resolution_x = 64
-    bpy.context.scene.render.resolution_y = 64
+    bpy.context.scene.cycles.samples = 2
+    bpy.context.scene.render.resolution_x = 256
+    bpy.context.scene.render.resolution_y = 256
     bpy.context.scene.render.fps = 12
     
     # 3. Import Character
@@ -519,6 +519,28 @@ class RenderHandler(BaseHTTPRequestHandler):
 
 
                 
+                # --- Configure Render Profile Settings ---
+                profile_name = payload.get("render_profile", "testing").lower().strip()
+                profiles = {
+                    "development": {"res_x": 64, "res_y": 64, "samples": 1, "use_denoise": False},
+                    "testing": {"res_x": 256, "res_y": 256, "samples": 2, "use_denoise": False},
+                    "preview": {"res_x": 640, "res_y": 360, "samples": 4, "use_denoise": True},
+                    "production": {"res_x": 1280, "res_y": 720, "samples": 8, "use_denoise": True},
+                    "ultra": {"res_x": 1920, "res_y": 1080, "samples": 16, "use_denoise": True}
+                }
+                profile_opts = profiles.get(profile_name, profiles["testing"])
+                
+                print(f"[BlenderDaemon] Applying render profile: {profile_name} -> {profile_opts}")
+                bpy.context.scene.render.resolution_x = profile_opts["res_x"]
+                bpy.context.scene.render.resolution_y = profile_opts["res_y"]
+                bpy.context.scene.cycles.samples = profile_opts["samples"]
+                
+                # Setup Denoising if requested
+                if profile_opts["use_denoise"]:
+                    bpy.context.scene.cycles.use_denoising = True
+                else:
+                    bpy.context.scene.cycles.use_denoising = False
+
                 # --- Environment Composition ---
                 location_str = payload.get("location", "environment")
                 if PROJECT_DIR not in sys.path:

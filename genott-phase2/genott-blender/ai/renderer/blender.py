@@ -280,7 +280,10 @@ class BlenderVideoRenderer(VideoRenderer):
             "camera_timeline": camera_timeline,
             
             # Dialogue viseme timeline
-            "viseme_timeline": viseme_timeline
+            "viseme_timeline": viseme_timeline,
+            
+            # Configurable Render Profile
+            "render_profile": getattr(Config, "RENDER_PROFILE", "testing")
         }
 
         # Write payload JSON for logging

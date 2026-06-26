@@ -14,3 +14,7 @@ class Config:
     VIDEO_RENDERER = "blender"     # Switch to 'blender' or 'unreal'
     ENABLE_LIPSYNC = False
     DEBUG_KEEP_INTERMEDIATE = True
+
+    # Configurable Render Profiles: 'development', 'testing', 'preview', 'production', 'ultra'
+    RENDER_PROFILE = "testing"  # Switch to 'production' for HD showcase
+

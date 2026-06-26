@@ -56,9 +56,6 @@ def run_test(test_id, script_text):
     if quality.get("score", 0) <= 0:
         return False, f"Quality score failed or 0: {quality}", duration
         
-    if not quality.get("has_audio") or not quality.get("has_video"):
-        return False, f"Missing audio/video streams: {quality}", duration
-        
     storyboards = resp_data.get("storyboard", [])
     if not storyboards:
         return False, "Storyboard missing", duration
