@@ -16,6 +16,7 @@ from ai.scene_graph import SceneGraphManager, SceneGraphNode
 from ai.visual_continuity import VisualContinuityEngine
 from ai.procedural_layout import ProceduralLayoutSolver
 from ai.camera_collision import CameraCollisionSolver
+from ai.animation_graph import AnimationGraph
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
