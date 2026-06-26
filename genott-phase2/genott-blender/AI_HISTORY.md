@@ -1392,3 +1392,27 @@ ALL 4 DURATION GROUPS: ✅ PASSED
 
 ### Commit
 677f191 — feat: add RENDER_EVIDENCE.md with physical proof of all 4 long-form renders
+
+---
+
+## 2026-06-27 — Configurable Render Profiles (Milestone 2)
+
+### Objective
+Upgrade the Blender daemon to support runtime-configurable rendering profiles rather than hardcoding resolutions and sample counts.
+
+### Actions Taken
+1. Added `RENDER_PROFILE` field to `Config` in `ai/config.py`.
+2. Passed the active rendering profile within the payload built by `BlenderVideoRenderer` in `ai/renderer/blender.py`.
+3. Extended `RenderHandler` in `ai/renderer/blender_daemon.py` to parse the profile and dynamically map it to resolution parameters (`resolution_x`, `resolution_y`), Cycles sample counts, and denoising switches.
+4. Upgraded prewarm parameters in `init_blender_env` inside `blender_daemon.py` to run at testing resolution parameters (`256x256`, 2 samples).
+5. Fixed `e2e_test.py` stream validation logic to handle newer JSON quality metric payload structures.
+6. Executed E2E pipeline test suite verifying 5/5 consecutive movie generations successfully passed.
+
+### Files Changed
+* `ai/config.py`
+* `ai/renderer/blender.py`
+* `ai/renderer/blender_daemon.py`
+* `e2e_test.py`
+
+### Commit
+f4749b1 — feat: implement configurable rendering profiles in blender daemon and pass e2e verification
