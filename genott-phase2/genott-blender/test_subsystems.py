@@ -14,6 +14,7 @@ from ai.ai_research import AIResearchAgent
 from ai.production_readiness import ProductionReadinessAgent
 from ai.scene_graph import SceneGraphManager, SceneGraphNode
 from ai.visual_continuity import VisualContinuityEngine
+from ai.procedural_layout import ProceduralLayoutSolver
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
