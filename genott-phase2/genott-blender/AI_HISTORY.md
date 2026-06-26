@@ -1544,3 +1544,19 @@ Provide a unified coordinate hierarchy and cross-shot tracking engine to ensure 
 * `ai/visual_continuity.py`
 * `test_subsystems.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Procedural Interior Layout Subsystem
+
+### Objective
+Provide automated prop and furniture coordinate arrangements using stacks and circle configurations for indoor environments.
+
+### Actions Taken
+1. **Procedural Layout Solver:** Created `ai/procedural_layout.py` computing relative coordinates for items stacked or clustered.
+2. **Verification:** Updated `test_subsystems.py` with coordinate layout asserts and verified unit tests pass (13/13 PASS).
+
+### Files Changed
+* `ai/procedural_layout.py`
+* `test_subsystems.py`
+* `AI_HISTORY.md`
