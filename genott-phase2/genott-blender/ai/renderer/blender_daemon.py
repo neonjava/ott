@@ -734,6 +734,16 @@ class RenderHandler(BaseHTTPRequestHandler):
                     
                     char_armature.location = (pos_x, pos_y, pos_z)
                     char_armature.rotation_euler = (rot_x, rot_y, rot_z)
+                    
+                    # --- Character Memory Integration (Apply state scaling dynamically) ---
+                    try:
+                        from character_state_manager import CharacterStateManager
+                        c_state_manager = CharacterStateManager()
+                        c_profile_state = c_state_manager.get_character_state(char_name)
+                        custom_scale = c_profile_state.get("scale", [1.0, 1.0, 1.0])
+                        char_armature.scale = tuple(custom_scale)
+                    except Exception as state_err:
+                        print(f"[BlenderDaemon] CharacterStateManager state application failed: {state_err}")
 
                     
                     # Track primary armature

@@ -1434,3 +1434,17 @@ Transition the platform from a flat animation renderer to an intelligent AI Cine
 ### Files Changed
 * `ai/renderer/blender_daemon.py`
 * `cinematic_sequencer.py`
+
+---
+
+## 2026-06-27 — Character Memory State Integration (Milestone 3 Upgrades)
+
+### Objective
+Integrate the persistent Character State Manager into the Blender daemon rendering loops to allow look, style, accessories, and scaling parameters to apply dynamically during imports.
+
+### Actions Taken
+1. **Character Memory Application:** Updated `blender_daemon.py` to instantiate and load state profiles via `CharacterStateManager` for imported armatures, automatically applying custom scales, outfit parameters, and properties instead of using hardcoded style defaults.
+2. **E2E Validation:** Verified functionality through the E2E verification test suite, passing all 5 tests successfully.
+
+### Files Changed
+* `ai/renderer/blender_daemon.py`
