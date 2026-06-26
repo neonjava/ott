@@ -2,6 +2,7 @@
 import unittest
 import os
 import json
+import time
 from ai.asset_pipeline import AssetPipelineAgent
 from ai.motion_intelligence import MotionIntelligenceAgent
 from ai.physics_simulation import PhysicsSimulationAgent
@@ -18,6 +19,7 @@ from ai.procedural_layout import ProceduralLayoutSolver
 from ai.camera_collision import CameraCollisionSolver
 from ai.animation_graph import AnimationGraph
 from ai.emotion_memory import EmotionMemoryEngine
+from ai.gpu_performance import GPUPerformanceMonitor
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
@@ -38,6 +40,7 @@ class TestEngineSubsystems(unittest.TestCase):
         self.camera_solver = CameraCollisionSolver()
         self.anim_graph = AnimationGraph()
         self.emotion_engine = EmotionMemoryEngine()
+        self.gpu_monitor = GPUPerformanceMonitor()
 
     def test_asset_pipeline(self):
         # Resolve sword
@@ -206,6 +209,18 @@ class TestEngineSubsystems(unittest.TestCase):
         # Simulated time decay tick (anger decays over time)
         decayed = self.emotion_engine.tick_decay("hero", duration_sec=5.0)
         self.assertLess(decayed["anger"], anger_before)
+
+    def test_gpu_performance(self):
+        devices = self.gpu_monitor.detect_cuda_devices()
+        self.assertGreater(len(devices), 0)
+        
+        vram = self.gpu_monitor.check_vram_headroom()
+        self.assertIn("status", vram)
+        self.assertIn("utilization_pct", vram)
+        
+        metrics = self.gpu_monitor.calculate_render_metrics(time.time() - 2.0, frame_count=60)
+        self.assertGreater(metrics["fps"], 0.0)
+        self.assertGreater(metrics["elapsed_seconds"], 0.0)
 
 if __name__ == "__main__":
     unittest.main()

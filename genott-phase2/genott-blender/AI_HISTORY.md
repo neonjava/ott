@@ -1612,3 +1612,21 @@ Maintain persistent emotional states per character across scene transitions and 
 * `ai/emotion_memory.py`
 * `test_subsystems.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — GPU Performance & CUDA Scheduler Subsystem
+
+### Objective
+Expose automatic CUDA device enumeration, VRAM headroom limits, and log frame rate metrics to optimize rendering hardware pipelines.
+
+### Actions Taken
+1. **Design Documentation:** Authored `docs/architecture/gpu_performance_design.md` detailing the subsystem layout.
+2. **GPU Performance Engine:** Created `ai/gpu_performance.py` querying GPU details, VRAM levels, and calculating FPS speeds.
+3. **Verification:** Updated `test_subsystems.py` asserting rendering FPS calculations and VRAM capacities, verifying unit tests pass (17/17 PASS).
+
+### Files Changed
+* `docs/architecture/gpu_performance_design.md`
+* `ai/gpu_performance.py`
+* `test_subsystems.py`
+* `AI_HISTORY.md`
