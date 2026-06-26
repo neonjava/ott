@@ -146,5 +146,17 @@ class TestEngineSubsystems(unittest.TestCase):
         self.assertIn("outfit_continuity_error", types)
         self.assertIn("prop_continuity_error", types)
 
+    def test_procedural_layout(self):
+        layouts = self.layout_solver.arrange_props("table", ["chair", "book"], layout_type="stack")
+        self.assertEqual(len(layouts), 3)
+        # Table at center base
+        self.assertEqual(layouts[0]["noun"], "table")
+        self.assertEqual(layouts[0]["translation"], [0.0, 0.0, 0.0])
+        # Stacked props should have height offsets
+        self.assertEqual(layouts[1]["noun"], "chair")
+        self.assertEqual(layouts[1]["translation"][2], 0.8)
+        self.assertEqual(layouts[2]["noun"], "book")
+        self.assertEqual(layouts[2]["translation"][2], 0.95)
+
 if __name__ == "__main__":
     unittest.main()
