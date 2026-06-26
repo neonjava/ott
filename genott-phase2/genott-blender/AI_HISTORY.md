@@ -1462,3 +1462,17 @@ Update the environment director scene cleanup segment to prevent three-point stu
 
 ### Files Changed
 * `environment_director.py`
+
+---
+
+## 2026-06-27 — Showcase Compilation (Milestone 5 Upgrades)
+
+### Objective
+Resolve clip duration trimming offsets and re-verify the longform movie compilation and evidence reporting suite.
+
+### Actions Taken
+1. **Longform Mixing Fix:** Modified the FFmpeg mixing logic in `generate_longform_movies.py` by removing the `-shortest` flag and specifying explicit stream mappings (`-map 0:v:0 -map 1:a:0`) to ensure clip concatenation durations do not get truncated due to audio stream container boundaries.
+2. **Showcase Verification:** Compiled and verified the longform movies (`longform_60s.mp4`, `longform_90s.mp4`, `longform_120s.mp4`, `longform_180s.mp4`) with all 4 duration targets successfully matching physical ffprobe expectations.
+
+### Files Changed
+* `generate_longform_movies.py`
