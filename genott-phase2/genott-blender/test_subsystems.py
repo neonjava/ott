@@ -175,5 +175,19 @@ class TestEngineSubsystems(unittest.TestCase):
         new_cam = self.camera_solver.solve_position(cam_pos, actor_pos, obstacles)
         self.assertNotEqual(new_cam, cam_pos)
 
+    def test_animation_graph(self):
+        # Idle state
+        state = self.anim_graph.update_state("idle", velocity=0.0)
+        self.assertEqual(state, "idle")
+        
+        # Idle to Walk transition
+        state2 = self.anim_graph.update_state("idle", velocity=1.0)
+        self.assertEqual(state2, "walk")
+        
+        # Blend tree weights check at walk speed 0.25 m/s
+        blend = self.anim_graph.evaluate_blend("walk", speed=0.25)
+        self.assertEqual(blend["walk"], 0.5)
+        self.assertEqual(blend["idle"], 0.5)
+
 if __name__ == "__main__":
     unittest.main()

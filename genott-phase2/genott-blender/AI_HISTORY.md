@@ -1576,3 +1576,21 @@ Resolve cameras clipping through scene geometry and prevent occlusion paths from
 * `ai/camera_collision.py`
 * `test_subsystems.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Animation Graph & Blend Tree Subsystem
+
+### Objective
+Provide dynamic animation track blending and locomotion transition state machines.
+
+### Actions Taken
+1. **Design Documentation:** Authored `docs/architecture/animation_graph_design.md` detailing the subsystem layout.
+2. **Animation Graph Engine:** Created `ai/animation_graph.py` to evaluate walk/run/idle speed coefficients and validate state mappings.
+3. **Verification:** Updated `test_subsystems.py` with blend evaluation assertions, running unit tests successfully (15/15 PASS).
+
+### Files Changed
+* `docs/architecture/animation_graph_design.md`
+* `ai/animation_graph.py`
+* `test_subsystems.py`
+* `AI_HISTORY.md`
