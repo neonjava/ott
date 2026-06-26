@@ -1560,3 +1560,19 @@ Provide automated prop and furniture coordinate arrangements using stacks and ci
 * `ai/procedural_layout.py`
 * `test_subsystems.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Camera Collision & Occlusion Subsystem
+
+### Objective
+Resolve cameras clipping through scene geometry and prevent occlusion paths from blocking actor viewpoints.
+
+### Actions Taken
+1. **Camera Collision Solver:** Created `ai/camera_collision.py` checking ray line-of-sight bounds and shifting camera coordinates upwards and closer to the actor dynamically upon blockages.
+2. **Verification:** Updated `test_subsystems.py` with occlusion checks and solver tests, verifying unit tests pass (14/14 PASS).
+
+### Files Changed
+* `ai/camera_collision.py`
+* `test_subsystems.py`
+* `AI_HISTORY.md`
