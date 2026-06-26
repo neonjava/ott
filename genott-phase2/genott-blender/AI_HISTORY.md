@@ -1526,3 +1526,21 @@ Design and implement ten specialized subsystems to evolve the rendering project 
 * `test_subsystems.py`
 * `app.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Scene Graph & Visual Continuity Subsystems
+
+### Objective
+Provide a unified coordinate hierarchy and cross-shot tracking engine to ensure visual consistency and correct object attachments in complex scene sequences.
+
+### Actions Taken
+1. **Scene Graph Subsystem:** Created `ai/scene_graph.py` managing hierarchical transform parent-child dependencies and attachment socket offsets.
+2. **Visual Continuity Subsystem:** Created `ai/visual_continuity.py` checking snapshots between subsequent cuts to detect outfit changes, missing props, and lighting mismatches.
+3. **Verification:** Updated `test_subsystems.py` with Scene Graph math checks and Continuity delta validations, running all E2E tests (5/5 PASS).
+
+### Files Changed
+* `ai/scene_graph.py`
+* `ai/visual_continuity.py`
+* `test_subsystems.py`
+* `AI_HISTORY.md`

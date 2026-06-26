@@ -12,6 +12,8 @@ from ai.timeline_editing import TimelineEditingAgent
 from ai.render_farm import RenderFarmAgent
 from ai.ai_research import AIResearchAgent
 from ai.production_readiness import ProductionReadinessAgent
+from ai.scene_graph import SceneGraphManager, SceneGraphNode
+from ai.visual_continuity import VisualContinuityEngine
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
@@ -26,6 +28,8 @@ class TestEngineSubsystems(unittest.TestCase):
         self.render_farm = RenderFarmAgent()
         self.research = AIResearchAgent()
         self.readiness = ProductionReadinessAgent()
+        self.scene_graph = SceneGraphManager()
+        self.continuity = VisualContinuityEngine()
 
     def test_asset_pipeline(self):
         # Resolve sword
@@ -89,6 +93,56 @@ class TestEngineSubsystems(unittest.TestCase):
         self.assertEqual(health["status"], "degraded")
         recipe = self.readiness.recover_crashed_daemon("blender")
         self.assertIn("ports_to_free", recipe)
+
+    def test_scene_graph(self):
+        # Create character node
+        char_node = SceneGraphNode("hero", "character")
+        char_node.local_transform["translation"] = [1.0, 2.0, 0.0]
+        self.scene_graph.root.add_child(char_node)
+        
+        # Create prop node parented to character
+        prop_node = SceneGraphNode("sword", "prop")
+        prop_node.local_transform["translation"] = [0.0, 0.0, 1.0]
+        self.scene_graph.root.add_child(prop_node)
+        self.scene_graph.attach_node("hero", "sword", socket="right_hand")
+        
+        # Verify relative parenting and world coordinates
+        world_t = prop_node.get_world_transform()["translation"]
+        self.assertEqual(world_t, [1.0, 2.0, 1.0])
+
+    def test_visual_continuity(self):
+        self.continuity.persistence_file = "test_continuity_state.json"
+        self.continuity.shot_states = []
+        if os.path.exists("test_continuity_state.json"):
+            try:
+                os.remove("test_continuity_state.json")
+            except Exception:
+                pass
+                
+        # Record first shot
+        self.continuity.record_shot_state(0, {
+            "outfits": {"hero": "heavy_armor"},
+            "held_props": {"hero": "sword"},
+            "lighting_color": "warm_gold"
+        })
+        # Record second shot with mismatch
+        self.continuity.record_shot_state(1, {
+            "outfits": {"hero": "tattered_pants"},
+            "held_props": {"hero": "axe"},
+            "lighting_color": "warm_gold"
+        })
+        errors = self.continuity.check_continuity()
+        
+        # Cleanup
+        if os.path.exists("test_continuity_state.json"):
+            try:
+                os.remove("test_continuity_state.json")
+            except Exception:
+                pass
+        self.assertEqual(len(errors), 2)
+        types = [e["type"] for e in errors]
+        self.assertIn("outfit_continuity_error", types)
+        self.assertIn("prop_continuity_error", types)
 
 if __name__ == "__main__":
     unittest.main()
