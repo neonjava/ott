@@ -1594,3 +1594,21 @@ Provide dynamic animation track blending and locomotion transition state machine
 * `ai/animation_graph.py`
 * `test_subsystems.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Emotion Memory Engine Subsystem
+
+### Objective
+Maintain persistent emotional states per character across scene transitions and evaluate reactions to story keywords.
+
+### Actions Taken
+1. **Design Documentation:** Authored `docs/architecture/emotion_memory_design.md` detailing the subsystem layout.
+2. **Emotion Memory Solver:** Created `ai/emotion_memory.py` managing state baseline metrics (happiness, anger, sadness, fear) and decay over duration.
+3. **Verification:** Updated `test_subsystems.py` with process stimulus checks and time decays, verifying unit tests pass (16/16 PASS).
+
+### Files Changed
+* `docs/architecture/emotion_memory_design.md`
+* `ai/emotion_memory.py`
+* `test_subsystems.py`
+* `AI_HISTORY.md`

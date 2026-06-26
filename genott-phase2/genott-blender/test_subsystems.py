@@ -17,6 +17,7 @@ from ai.visual_continuity import VisualContinuityEngine
 from ai.procedural_layout import ProceduralLayoutSolver
 from ai.camera_collision import CameraCollisionSolver
 from ai.animation_graph import AnimationGraph
+from ai.emotion_memory import EmotionMemoryEngine
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
@@ -36,6 +37,7 @@ class TestEngineSubsystems(unittest.TestCase):
         self.layout_solver = ProceduralLayoutSolver()
         self.camera_solver = CameraCollisionSolver()
         self.anim_graph = AnimationGraph()
+        self.emotion_engine = EmotionMemoryEngine()
 
     def test_asset_pipeline(self):
         # Resolve sword
@@ -188,6 +190,22 @@ class TestEngineSubsystems(unittest.TestCase):
         blend = self.anim_graph.evaluate_blend("walk", speed=0.25)
         self.assertEqual(blend["walk"], 0.5)
         self.assertEqual(blend["idle"], 0.5)
+
+    def test_emotion_memory(self):
+        # Default initialization check
+        profile = self.emotion_engine.get_profile("hero")
+        self.assertEqual(profile["happiness"], 0.5)
+        self.assertEqual(profile["anger"], 0.0)
+        
+        # Process stimulus (getting attacked should raise anger/fear)
+        updated = self.emotion_engine.process_stimulus("hero", "The guard decided to attack the hero.")
+        anger_before = updated["anger"]
+        self.assertGreater(anger_before, 0.0)
+        self.assertGreater(updated["fear"], 0.0)
+        
+        # Simulated time decay tick (anger decays over time)
+        decayed = self.emotion_engine.tick_decay("hero", duration_sec=5.0)
+        self.assertLess(decayed["anger"], anger_before)
 
 if __name__ == "__main__":
     unittest.main()
