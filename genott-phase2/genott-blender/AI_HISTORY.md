@@ -1416,3 +1416,21 @@ Upgrade the Blender daemon to support runtime-configurable rendering profiles ra
 
 ### Commit
 f4749b1 — feat: implement configurable rendering profiles in blender daemon and pass e2e verification
+
+---
+
+## 2026-06-27 — AI Cinematic Director (Milestone 4 Upgrades)
+
+### Objective
+Transition the platform from a flat animation renderer to an intelligent AI Cinematic Director that makes creative decisions based on story mood, context, and character interaction.
+
+### Actions Taken
+1. **Dynamic Lighting Intelligence:** Configured three-point lights (Key, Fill, Rim) in `blender_daemon.py` to parse scene emotional parameters and dynamically shift color values (e.g. cold blue tones for fear/suspense, high-exposure orange keys for aggressive/action sequences, and warm golden hour light for happy/cheerful arcs).
+2. **Camera Timeline Extension:** Extended `cinematic_sequencer.py` to calculate and pack focal lengths (e.g. 85mm compression for close-ups, 18mm wide shots for establishing locations), depth of field f-stops (F/1.8 background blur vs F/8.0 deep focus), and enable switches based on shot types.
+3. **Blender Camera Automation:** Updated `blender_daemon.py` to parse focal lengths, lens units, and depth of field f-stops from keyframes in the timeline and programmatically apply keyframes to the Blender camera properties.
+4. **Conversational Eye Contact & Head-Tracking:** Added dynamic head tracking look-at constraints in `blender_daemon.py` posing secondary/listening character head and neck joints to rotate toward the primary speaker armature during conversational rendering blocks.
+5. **E2E Validation:** Ran the e2e test suite, successfully generating all 5 sequential film scripts with correct layout, dynamic camera settings, and material nodes.
+
+### Files Changed
+* `ai/renderer/blender_daemon.py`
+* `cinematic_sequencer.py`

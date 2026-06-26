@@ -167,10 +167,32 @@ def sequence_scene(plan: ScenePlan, start_location: List[float], action_name: st
                 cam_loc = [char_pos_start[0] + offset[0], char_pos_start[1] + offset[1], char_pos_start[2] + offset[2]]
                 cam_rot = (rot[0], rot[1], rot[2] + composition_yaw_offset)
                 
+            # Dynamic Focal Length and Depth of Field matching shot types (AI Cinematic Director specs)
+            focal_length = 35.0
+            aperture_fstop = 2.8
+            use_dof = True
+            
+            if "close_up" in shot_name_lower or "extreme_close_up" in shot_name_lower:
+                focal_length = 85.0   # 85mm portrait telephoto lens for high compression and shallow depth of field
+                aperture_fstop = 1.8  # F/1.8 extremely blurry cinematic background
+            elif "establishing_shot" in shot_name_lower or "extreme_wide_shot" in shot_name_lower:
+                focal_length = 18.0   # 18mm ultra wide-angle lens
+                aperture_fstop = 8.0  # F/8 deep focus keeping elements sharp
+                use_dof = False
+            elif "wide_shot" in shot_name_lower:
+                focal_length = 24.0
+                aperture_fstop = 4.0
+            elif "over_shoulder" in shot_name_lower:
+                focal_length = 50.0   # standard cinematic 50mm
+                aperture_fstop = 2.0
+                
             timeline.append({
                 "frame": f,
                 "location": cam_loc,
-                "rotation": cam_rot
+                "rotation": cam_rot,
+                "focal_length": focal_length,
+                "aperture_fstop": aperture_fstop,
+                "use_dof": use_dof
             })
             
         current_frame = end_f + 1

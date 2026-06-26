@@ -32,12 +32,31 @@ def init_blender_env():
     if os.path.exists(CHARACTER_FILE):
         bpy.ops.import_scene.gltf(filepath=CHARACTER_FILE)
     
-    # 4. Setup Lighting
-    light_data = bpy.data.lights.new(name="SunLight", type='SUN')
-    light_data.energy = 3.0
-    light_obj = bpy.data.objects.new(name="SunLight", object_data=light_data)
-    bpy.context.collection.objects.link(light_obj)
-    light_obj.location = (5, -5, 10)
+    # 4. Setup Cinematic Three-Point Studio Lighting Setup (M4 Visual Quality Upgrades)
+    # Key Light (Strong front-side lighting defining shape)
+    key_data = bpy.data.lights.new(name="KeyLight", type='SUN')
+    key_data.energy = 4.0
+    key_obj = bpy.data.objects.new(name="KeyLight", object_data=key_data)
+    bpy.context.collection.objects.link(key_obj)
+    key_obj.location = (5, -5, 8)
+    # Rotate Key Light toward origin (approximate)
+    key_obj.rotation_euler = (math.radians(45), 0, math.radians(45))
+
+    # Fill Light (Softer lighting filling shadows)
+    fill_data = bpy.data.lights.new(name="FillLight", type='SUN')
+    fill_data.energy = 1.5
+    fill_obj = bpy.data.objects.new(name="FillLight", object_data=fill_data)
+    bpy.context.collection.objects.link(fill_obj)
+    fill_obj.location = (-5, -5, 6)
+    fill_obj.rotation_euler = (math.radians(35), 0, math.radians(-45))
+
+    # Rim Light (Back light highlighting silhouettes and edges)
+    rim_data = bpy.data.lights.new(name="RimLight", type='SUN')
+    rim_data.energy = 3.0
+    rim_obj = bpy.data.objects.new(name="RimLight", object_data=rim_data)
+    bpy.context.collection.objects.link(rim_obj)
+    rim_obj.location = (0, 5, 8)
+    rim_obj.rotation_euler = (math.radians(-45), 0, 0)
     
     # 5. Setup World
     world = bpy.data.worlds.new("World")
@@ -558,6 +577,77 @@ class RenderHandler(BaseHTTPRequestHandler):
                 except Exception as env_err:
                     print(f"[BlenderDaemon] Failed to build environment: {env_err}")
 
+                # --- Story-Based Lighting Intelligence (AI Director Lighting Integration) ---
+                mood_str = payload.get("mood", "neutral").lower().strip()
+                # Default warm studio preset
+                lighting_presets = {
+                    "cheerful": {
+                        "key_color": (1.0, 0.9, 0.7, 1.0), "key_energy": 5.0,
+                        "fill_color": (1.0, 0.95, 0.85, 1.0), "fill_energy": 2.0,
+                        "rim_color": (1.0, 1.0, 0.9, 1.0), "rim_energy": 3.5
+                    },
+                    "happy": {
+                        "key_color": (1.0, 0.9, 0.7, 1.0), "key_energy": 5.0,
+                        "fill_color": (1.0, 0.95, 0.85, 1.0), "fill_energy": 2.0,
+                        "rim_color": (1.0, 1.0, 0.9, 1.0), "rim_energy": 3.5
+                    },
+                    "sad": {
+                        "key_color": (0.6, 0.65, 0.8, 1.0), "key_energy": 2.0,
+                        "fill_color": (0.5, 0.55, 0.7, 1.0), "fill_energy": 0.8,
+                        "rim_color": (0.7, 0.75, 0.9, 1.0), "rim_energy": 1.5
+                    },
+                    "fear": {
+                        "key_color": (0.3, 0.4, 0.6, 1.0), "key_energy": 1.5,
+                        "fill_color": (0.2, 0.25, 0.4, 1.0), "fill_energy": 0.4,
+                        "rim_color": (0.5, 0.6, 0.85, 1.0), "rim_energy": 2.5
+                    },
+                    "tense": {
+                        "key_color": (0.35, 0.4, 0.55, 1.0), "key_energy": 1.8,
+                        "fill_color": (0.2, 0.25, 0.35, 1.0), "fill_energy": 0.5,
+                        "rim_color": (0.5, 0.6, 0.75, 1.0), "rim_energy": 2.0
+                    },
+                    "mysterious": {
+                        "key_color": (0.4, 0.3, 0.6, 1.0), "key_energy": 1.2,  # low-key shadows
+                        "fill_color": (0.15, 0.1, 0.25, 1.0), "fill_energy": 0.3,
+                        "rim_color": (0.7, 0.5, 0.9, 1.0), "rim_energy": 3.0
+                    },
+                    "aggressive": {
+                        "key_color": (1.0, 0.4, 0.3, 1.0), "key_energy": 6.0,  # strong warm orange key
+                        "fill_color": (0.3, 0.1, 0.1, 1.0), "fill_energy": 1.0,
+                        "rim_color": (1.0, 0.8, 0.6, 1.0), "rim_energy": 4.0
+                    },
+                    "triumphant": {
+                        "key_color": (1.0, 0.95, 0.8, 1.0), "key_energy": 7.0,  # highly exposed glorious rim & key
+                        "fill_color": (0.9, 0.85, 0.8, 1.0), "fill_energy": 2.5,
+                        "rim_color": (1.0, 1.0, 1.0, 1.0), "rim_energy": 5.0
+                    },
+                    "neutral": {
+                        "key_color": (1.0, 1.0, 1.0, 1.0), "key_energy": 4.0,
+                        "fill_color": (1.0, 1.0, 1.0, 1.0), "fill_energy": 1.5,
+                        "rim_color": (1.0, 1.0, 1.0, 1.0), "rim_energy": 3.0
+                    }
+                }
+                
+                lp = lighting_presets.get(mood_str, lighting_presets["neutral"])
+                
+                # Apply to KeyLight
+                key_light = bpy.data.lights.get("KeyLight")
+                if key_light:
+                    key_light.energy = lp["key_energy"]
+                    key_light.color = lp["key_color"][:3]
+                
+                # Apply to FillLight
+                fill_light = bpy.data.lights.get("FillLight")
+                if fill_light:
+                    fill_light.energy = lp["fill_energy"]
+                    fill_light.color = lp["fill_color"][:3]
+                    
+                # Apply to RimLight
+                rim_light = bpy.data.lights.get("RimLight")
+                if rim_light:
+                    rim_light.energy = lp["rim_energy"]
+                    rim_light.color = lp["rim_color"][:3]
+
 
 
                 # --- Helper to find/lookup actions ---
@@ -694,6 +784,31 @@ class RenderHandler(BaseHTTPRequestHandler):
                             apply_shape_key_animations(head_mesh, mood_str, viseme_timeline, 1, int(duration * fps), fps)
                         except Exception as sk_err:
                             print(f"[BlenderDaemon] Failed to apply shape key animations to {char_name}: {sk_err}")
+
+                    # --- Conversation Eye Contact Head-Tracking (AI Director specs) ---
+                    # If multiple characters, make listeners look at the primary character armature position
+                    if len(characters) > 1 and idx > 0 and primary_armature:
+                        try:
+                            # Direct bone rotation toward target
+                            neck_bone = char_armature.pose.bones.get("Neck")
+                            head_bone = char_armature.pose.bones.get("Head")
+                            if neck_bone and head_bone:
+                                neck_bone.rotation_mode = 'XYZ'
+                                head_bone.rotation_mode = 'XYZ'
+                                
+                                # Compute simple Euler rotation looking at the primary armature location
+                                dx = primary_armature.location.x - char_armature.location.x
+                                dy = primary_armature.location.y - char_armature.location.y
+                                angle_to_primary = math.atan2(dx, dy)
+                                
+                                # Animate head look rotation over the frame range
+                                for f in range(1, int(duration * fps) + 1):
+                                    # Add small natural head wiggles/nods
+                                    head_nod = 0.05 * math.sin(f * 0.2)
+                                    head_bone.rotation_euler = (head_nod, 0, angle_to_primary * 0.5)
+                                    head_bone.keyframe_insert(data_path="rotation_euler", frame=f)
+                        except Exception as track_err:
+                            print(f"[BlenderDaemon] Head tracking error for {char_name}: {track_err}")
                             
                     # Customize character materials & weapons
                     outfits_list = payload.get("outfits", [])
@@ -793,8 +908,19 @@ class RenderHandler(BaseHTTPRequestHandler):
                                                char_pos[2] + offset[2])
                             camera.rotation_euler = rot
                         
+                        # Dynamic focal length, FOV, and Depth of Field setup from AI Director Timeline
+                        focal_len = kf.get("focal_length", 35.0)  # default cinematic 35mm
+                        lens_unit = kf.get("lens_unit", "MILLIMETERS")
+                        camera.data.lens = focal_len
+                        
+                        dof_aperture = kf.get("aperture_fstop", 2.8)
+                        camera.data.dof.aperture_fstop = dof_aperture
+                        camera.data.dof.use_dof = kf.get("use_dof", True)
+                        
                         camera.keyframe_insert(data_path="location", frame=frame)
                         camera.keyframe_insert(data_path="rotation_euler", frame=frame)
+                        camera.data.keyframe_insert(data_path="lens", frame=frame)
+                        camera.data.dof.keyframe_insert(data_path="aperture_fstop", frame=frame)
                         
                     if camera.animation_data and camera.animation_data.action:
                         try:
