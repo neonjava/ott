@@ -1,0 +1,94 @@
+# test_subsystems.py
+import unittest
+import os
+import json
+from ai.asset_pipeline import AssetPipelineAgent
+from ai.motion_intelligence import MotionIntelligenceAgent
+from ai.physics_simulation import PhysicsSimulationAgent
+from ai.dialogue_performance import DialoguePerformanceAgent
+from ai.cinematic_critic import CinematicCriticAgent
+from ai.scene_streaming import SceneStreamingAgent
+from ai.timeline_editing import TimelineEditingAgent
+from ai.render_farm import RenderFarmAgent
+from ai.ai_research import AIResearchAgent
+from ai.production_readiness import ProductionReadinessAgent
+
+class TestEngineSubsystems(unittest.TestCase):
+    def setUp(self):
+        self.project_dir = os.path.dirname(os.path.abspath(__file__))
+        self.asset_pipeline = AssetPipelineAgent(project_dir=self.project_dir)
+        self.motion_intel = MotionIntelligenceAgent()
+        self.physics_sim = PhysicsSimulationAgent()
+        self.dialogue_perf = DialoguePerformanceAgent()
+        self.critic = CinematicCriticAgent(quality_threshold=0.7)
+        self.streaming = SceneStreamingAgent(max_concurrent_assets=3)
+        self.timeline_edit = TimelineEditingAgent()
+        self.render_farm = RenderFarmAgent()
+        self.research = AIResearchAgent()
+        self.readiness = ProductionReadinessAgent()
+
+    def test_asset_pipeline(self):
+        # Resolve sword
+        details = self.asset_pipeline.get_asset_details("sword")
+        self.assertEqual(details.get("type"), "prop")
+        # Validate missing
+        val = self.asset_pipeline.validate_asset("non_existent_asset")
+        self.assertFalse(val["valid"])
+
+    def test_motion_intelligence(self):
+        params = self.motion_intel.compute_blend_parameters("idle", "walk")
+        self.assertEqual(params["curve"], "ease-in-out")
+        ik = self.motion_intel.get_ik_targets("walk", speed=1.2)
+        self.assertGreater(ik["foot_ik_left_weight"], 0)
+
+    def test_physics_simulation(self):
+        settings = self.physics_sim.get_simulation_settings("stormy mountains", "epic")
+        self.assertTrue(settings["cloth_enabled"])
+        self.assertGreater(settings["secondary_motion_multiplier"], 1.0)
+
+    def test_dialogue_performance(self):
+        pacing = self.dialogue_perf.calculate_pacing("Wait, who goes there?", "fear")
+        self.assertGreater(pacing["wpm"], 140)
+        micro = self.dialogue_perf.generate_micro_expressions(5.0)
+        self.assertIsInstance(micro, list)
+
+    def test_cinematic_critic(self):
+        mock_data = {"camera_type": "close_up", "mood": "tense", "animation_duration": 4.0}
+        eval_res = self.critic.evaluate_render("/dev/null", mock_data)
+        self.assertFalse(eval_res["approved"]) # File does not exist /dev/null is size 0
+
+    def test_scene_streaming(self):
+        timeline = [
+            {"character": "thor", "scene_assets": [{"noun": "sword"}]},
+            {"character": "tony", "scene_assets": [{"noun": "shield"}]},
+            {"character": "hulk", "scene_assets": [{"noun": "spear"}]},
+            {"character": "thor", "scene_assets": [{"noun": "sword"}]}
+        ]
+        schedule = self.streaming.build_stream_schedule(timeline)
+        self.assertEqual(len(schedule), 4)
+
+    def test_timeline_editing(self):
+        clip = self.timeline_edit.create_clip("video", "clip_1", 0.0, 3.5, "scene_1.mp4")
+        self.assertEqual(clip["duration"], 3.5)
+
+    def test_render_farm(self):
+        job = self.render_farm.submit_render_job("job_001", "hero walks", 3.0)
+        self.assertEqual(job["status"], "rendering")
+        completed = self.render_farm.complete_job("job_001", success=True)
+        self.assertEqual(completed["status"], "completed")
+
+    def test_ai_research(self):
+        analysis = self.research.run_competitive_analysis()
+        self.assertIn("pixar_usd", analysis)
+        proposal = self.research.generate_proposal("usd integration")
+        self.assertIn("OpenUSD", proposal)
+
+    def test_production_readiness(self):
+        services = {"flask": True, "blender": False}
+        health = self.readiness.run_health_checks(services)
+        self.assertEqual(health["status"], "degraded")
+        recipe = self.readiness.recover_crashed_daemon("blender")
+        self.assertIn("ports_to_free", recipe)
+
+if __name__ == "__main__":
+    unittest.main()
