@@ -160,5 +160,18 @@ class TestEngineSubsystems(unittest.TestCase):
         self.assertEqual(layouts[2]["noun"], "book")
         self.assertEqual(layouts[2]["translation"][2], 0.95)
 
+    def test_camera_collision(self):
+        cam_pos = [3.0, 3.0, 1.0]
+        actor_pos = [0.0, 0.0, 1.0]
+        # Intersecting obstacle in path
+        obstacles = [{"min_x": 1.0, "max_x": 2.0, "min_y": 1.0, "max_y": 2.0}]
+        
+        is_occluded = self.camera_solver.check_occlusion(cam_pos, actor_pos, obstacles)
+        self.assertTrue(is_occluded)
+        
+        # Solving should shift coordinates to clear the occlusion
+        new_cam = self.camera_solver.solve_position(cam_pos, actor_pos, obstacles)
+        self.assertNotEqual(new_cam, cam_pos)
+
 if __name__ == "__main__":
     unittest.main()
