@@ -1448,3 +1448,17 @@ Integrate the persistent Character State Manager into the Blender daemon renderi
 
 ### Files Changed
 * `ai/renderer/blender_daemon.py`
+
+---
+
+## 2026-06-27 — Environment Lighting Preservation (Milestone 4 Upgrades)
+
+### Objective
+Update the environment director scene cleanup segment to prevent three-point studio lighting configurations from being deleted during environment composition resets.
+
+### Actions Taken
+1. **Lighting Preservation:** Updated the scene clearing loop in `environment_director.py` to check for and preserve KeyLight, FillLight, and RimLight definitions when purging active scene meshes and lights.
+2. **E2E Validation:** Verified functionality through the E2E verification test suite, passing all 5 tests successfully.
+
+### Files Changed
+* `environment_director.py`

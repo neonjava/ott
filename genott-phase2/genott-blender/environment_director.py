@@ -152,7 +152,7 @@ def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0
     # Clear old environment meshes & lights (keep armature and camera)
     objs_to_delete = []
     for obj in bpy.context.scene.objects:
-        if obj.type not in ['ARMATURE', 'CAMERA'] and obj.name not in ["SunLight"]:
+        if obj.type not in ['ARMATURE', 'CAMERA'] and obj.name not in ["SunLight", "KeyLight", "FillLight", "RimLight"]:
             objs_to_delete.append(obj)
             
     for obj in objs_to_delete:
