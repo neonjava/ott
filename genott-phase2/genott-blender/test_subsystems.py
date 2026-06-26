@@ -33,6 +33,7 @@ class TestEngineSubsystems(unittest.TestCase):
         self.scene_graph = SceneGraphManager()
         self.continuity = VisualContinuityEngine()
         self.layout_solver = ProceduralLayoutSolver()
+        self.camera_solver = CameraCollisionSolver()
 
     def test_asset_pipeline(self):
         # Resolve sword
