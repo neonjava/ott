@@ -31,6 +31,7 @@ class TestEngineSubsystems(unittest.TestCase):
         self.readiness = ProductionReadinessAgent()
         self.scene_graph = SceneGraphManager()
         self.continuity = VisualContinuityEngine()
+        self.layout_solver = ProceduralLayoutSolver()
 
     def test_asset_pipeline(self):
         # Resolve sword
