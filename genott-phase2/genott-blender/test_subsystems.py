@@ -23,6 +23,7 @@ from ai.gpu_performance import GPUPerformanceMonitor
 from ai.audio_composer import AudioComposer
 from ai.renderer.blender import BlenderVideoRenderer
 from ai.project_manager import MovieProjectManager
+from ai.usd.usd_exporter import USDExporter
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
@@ -46,6 +47,7 @@ class TestEngineSubsystems(unittest.TestCase):
         self.gpu_monitor = GPUPerformanceMonitor()
         self.audio_composer = AudioComposer()
         self.project_manager = MovieProjectManager(self.project_dir)
+        self.usd_exporter = USDExporter()
 
     def test_asset_pipeline(self):
         # Resolve sword
@@ -260,6 +262,17 @@ class TestEngineSubsystems(unittest.TestCase):
         
         # Validate data integrity
         self.assertIn(shot_id, self.project_manager.project_data["scenes"][s_id]["shots"])
+
+    def test_usd_exporter(self):
+        # USD layout check
+        output_usda = os.path.join(self.project_dir, "static", "videos", "test_scene.usda")
+        cameras = [{"name": "MainCam", "location": [0.0, -4.0, 1.5], "rotation": [80.0, 0.0, 0.0]}]
+        lights = [{"name": "KeyLight", "type": "distant", "intensity": 5.0, "color": [1.0, 0.9, 0.7]}]
+        
+        full_usda = self.usd_exporter.export_scene(output_usda, cameras, lights)
+        self.assertTrue(os.path.exists(output_usda))
+        self.assertIn("def Camera \"MainCam\"", full_usda)
+        self.assertIn("float inputs:intensity = 5.0", full_usda)
 
 if __name__ == "__main__":
     unittest.main()

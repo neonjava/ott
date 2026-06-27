@@ -5,8 +5,7 @@ This document tracks upcoming high-priority engineering tasks sorted by architec
 ## 🚀 Near Term Tasks
 
 ### 1. USD Compliance Schema Exporter
-* **Impact**: High (Interoperability with Pixar standard formats)
-* **Goal**: Render node metadata compatible with Universal Scene Description structures.
+* **Status**: ✅ Completed (Implemented via USDExporter ascii format scene graph compiling)
 
 ### 2. Audio Spatial Placement Engine
 * **Status**: ✅ Completed (Implemented via AudioComposer distance gain solver)

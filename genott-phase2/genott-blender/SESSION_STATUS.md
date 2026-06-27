@@ -1,8 +1,8 @@
-# Session Status — V11 Production Studio Mode
+# Session Status — V13 OpenUSD / Pixar Pipeline
 
 ## 🚀 Active Visual Target
-* **Current Task**: Blender Render Cache Agent implementation.
-* **Objective**: Generate MD5 payload hashes excluding output path, reusing cached render clip targets on matching properties.
+* **Current Task**: USD Compliance Schema Exporter.
+* **Objective**: Compile camera matrix, focus variables, and lighting attributes into conforming Pixar `.usda` format.
 * **Status**: Completed & Verified.
 
 ## 🏛️ Project Release State
@@ -10,4 +10,4 @@
 * **Last Build Verification**: Successful E2E movie rendering pipeline (**5/5 PASS**).
 
 ## 🔮 Next Priority Target
-* **USD Compliance Schema Exporter**: Export scene configurations directly to Universal Scene Description structures for Pixar Omniverse pipelines.
+* **USD Importer / Scene graph reconstruction**: Build parser templates to recreate movie project assets from USD scene definitions.

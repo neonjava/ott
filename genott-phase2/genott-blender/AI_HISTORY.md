@@ -1788,3 +1788,19 @@ Ensure that movies are persistent, editable projects where acts, scenes, and sho
 * `ai/project_manager.py`
 * `test_subsystems.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — OpenUSD Exporter Subsystem (OpenUSD / Pixar Pipeline)
+
+### Objective
+Provide OpenUSD (Pixar standard) metadata scene graph format outputs representing cameras, lights, and layout properties.
+
+### Actions Taken
+1. **USD Exporter Subsystem:** Created `ai/usd/usd_exporter.py` parsing transform vectors to compile portable `.usda` files.
+2. **Verification:** Updated `test_subsystems.py` to write test scene structures and assert correct syntax outputs (**21/21 PASS**).
+
+### Files Changed
+* `ai/usd/usd_exporter.py`
+* `test_subsystems.py`
+* `AI_HISTORY.md`
