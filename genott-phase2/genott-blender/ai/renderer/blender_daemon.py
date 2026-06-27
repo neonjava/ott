@@ -1036,10 +1036,21 @@ class RenderHandler(BaseHTTPRequestHandler):
                                         start_location[1] + delta_loc[1],
                                         start_location[2] + delta_loc[2]]
                                         
-                            camera.location = (char_pos[0] + offset[0], 
-                                               char_pos[1] + offset[1], 
-                                               char_pos[2] + offset[2])
-                            camera.rotation_euler = rot
+                            # Procedural Handheld Camera Operator Shake
+                            shake_x = 0.015 * math.sin(frame * 0.25) + 0.005 * math.cos(frame * 0.55)
+                            shake_y = 0.012 * math.cos(frame * 0.3) + 0.004 * math.sin(frame * 0.6)
+                            shake_z = 0.010 * math.sin(frame * 0.15)
+                            
+                            rot_shake_x = 0.004 * math.sin(frame * 0.2)
+                            rot_shake_y = 0.003 * math.cos(frame * 0.3)
+                            rot_shake_z = 0.004 * math.sin(frame * 0.15)
+                            
+                            camera.location = (char_pos[0] + offset[0] + shake_x, 
+                                               char_pos[1] + offset[1] + shake_y, 
+                                               char_pos[2] + offset[2] + shake_z)
+                            camera.rotation_euler = (rot[0] + rot_shake_x,
+                                                     rot[1] + rot_shake_y,
+                                                     rot[2] + rot_shake_z)
                         
                         # Dynamic focal length, FOV, and Depth of Field setup from AI Director Timeline
                         focal_len = kf.get("focal_length", 35.0)  # default cinematic 35mm

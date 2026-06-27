@@ -1836,3 +1836,18 @@ Provide deterministic cache directories and registration records to bypass re-ba
 * `ai/fluid_cache.py`
 * `test_subsystems.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Handheld Camera Shake Operator Simulation (Visual Quality Cycle)
+
+### Objective
+Enhance rendering realism by simulating physical handheld operator jitter on the virtual camera timeline coordinates.
+
+### Actions Taken
+1. **Handheld Shake:** Modified the keyframing sequence loop in `blender_daemon.py` to add sinusoidal coordinate variations to camera translation and orientation.
+2. **Verification:** Terminated background processes and successfully ran unit tests and E2E generation scripts (**5/5 PASS**).
+
+### Files Changed
+* `ai/renderer/blender_daemon.py`
+* `AI_HISTORY.md`

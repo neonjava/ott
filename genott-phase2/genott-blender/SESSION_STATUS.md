@@ -1,8 +1,8 @@
-# Session Status — V15 Fluid Simulation Cache Manager
+# Session Status — V15 Handheld Camera Shake Operator Simulation
 
 ## 🚀 Active Visual Target
-* **Current Task**: Fluid Simulation Cache Manager.
-* **Objective**: Generate deterministic SHA256 simulation metadata indices to reuse cached Blender physics results.
+* **Current Task**: Handheld Camera Shake.
+* **Objective**: Add sinusoidal coordinate noise offsets to camera locations/rotations to replicate natural camera jitter.
 * **Status**: Completed & Verified.
 
 ## 🏛️ Project Release State
