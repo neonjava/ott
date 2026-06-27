@@ -20,3 +20,9 @@ This document tracks upcoming high-priority engineering tasks sorted by architec
 ### 4. Fluid Simulation Cache Manager
 * **Impact**: Medium (Physics realism)
 * **Goal**: Automatic caching and optimization of Blender fluid/smoke parameters.
+
+### 5. Global GI Ambient Light Setup
+* **Status**: ✅ Completed (Enabled Cycles Fast GI and Ambient Occlusion contact shadows)
+
+### 6. Procedural Torso Breathing Animation
+* **Status**: ✅ Completed (Programmed rhythmic sine-wave skeleton breathing keyframe loop)

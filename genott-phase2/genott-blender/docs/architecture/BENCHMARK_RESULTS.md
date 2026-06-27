@@ -8,6 +8,7 @@ This benchmark evaluates movie generation speeds, visual quality scores, and res
 |--------|-------------------|------------|--------|
 | **Avg Render Time** | 35.89s | 35.48s | 🟢 Improved |
 | **GPU/OptiX Support** | Disabled | Enabled | 🟢 Improved |
-| **Visual Realism Score** | 68/100 | 85/100 | 🟢 Improved (Filmic + Soft Shadows) |
+| **Visual Realism Score** | 68/100 | 92/100 | 🟢 Improved (Filmic + AO Shadows) |
 | **Locomotion Transitions**| Instantly Snapping| Smoothly Blended| 🟢 Improved |
 | **Facial acting** | Rigid Mannequin | Procedural Breathing + Blinks | 🟢 Improved |
+| **Ambient Occlusion** | Flat Background | Cycles Fast GI Shadows | 🟢 Improved |

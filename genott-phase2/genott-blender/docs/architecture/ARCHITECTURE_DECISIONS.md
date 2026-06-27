@@ -18,3 +18,8 @@ This document lists the architectural updates and system configurations establis
 * **Status**: Approved
 * **Decision**: Inject sine-wave wiggles on shape keys and armature spine bones during dialogue rendering.
 * **Consequences**: Removes rigid mannequin visual artifacts and elevates CGI realism.
+
+### ADR-04: Ambient Occlusion & Global GI Contact Shadows
+* **Status**: Approved
+* **Decision**: Activate Blender Cycles Fast GI and define Ambient Occlusion factors (`ao_factor=0.6`, `ao_distance=2.5`) programmatically inside `blender_daemon.py` scene creation.
+* **Consequences**: Generates subtle contact shadows under geometry, eliminating character floating artifacts.

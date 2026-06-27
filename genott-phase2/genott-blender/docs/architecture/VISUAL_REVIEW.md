@@ -12,8 +12,8 @@
 > "Atmospheric dust and wind wiggles are missing from secondary motion tracks, showing no reaction to environmental physics."
 
 ## 📋 Prioritized Backlog
-1. **Facial Micro-Expressions & Breathing Keyframing** (Owner: Character Artist / Animation Director)
-2. **Global Bounce Ambient Lighting Refinement** (Owner: Lighting Artist)
+1. **Facial Micro-Expressions & Breathing Keyframing** (Status: ✅ Completed)
+2. **Global Bounce Ambient Lighting Refinement** (Status: ✅ Completed via Cycles Fast GI & Ambient Occlusion contact shadows)
 3. **Secondary Prop Motion Wiggle Constraints** (Owner: VFX Supervisor)
 
-*Selected Task for this Cycle:* **Facial Micro-Expressions & Breathing Keyframing in Blender Daemon**.
+*Selected Task for Next Cycle:* **Secondary Prop Motion Wiggle Constraints** to solve physics secondary motion.
