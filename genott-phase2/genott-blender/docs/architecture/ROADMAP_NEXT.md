@@ -9,11 +9,14 @@ This document tracks upcoming high-priority engineering tasks sorted by architec
 * **Goal**: Render node metadata compatible with Universal Scene Description structures.
 
 ### 2. Audio Spatial Placement Engine
-* **Impact**: Medium (Cinematic realism)
-* **Goal**: Calculate distance attenuation vectors for narration and dialogue placement.
+* **Status**: ✅ Completed (Implemented via AudioComposer distance gain solver)
 
 ## 📈 Medium Term Tasks
 
 ### 3. Procedural Weather & Volumetric Controls
 * **Impact**: Medium (Visual atmospheric enhancement)
 * **Goal**: Script-driven fog density, rain streaks, and lighting multipliers.
+
+### 4. Fluid Simulation Cache Manager
+* **Impact**: Medium (Physics realism)
+* **Goal**: Automatic caching and optimization of Blender fluid/smoke parameters.
