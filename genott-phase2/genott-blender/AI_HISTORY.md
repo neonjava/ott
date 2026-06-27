@@ -1661,3 +1661,21 @@ Apply professional cinematic color-grading view transforms and soft shadow sprea
 ### Files Changed
 * `ai/renderer/blender_daemon.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Spatial Audio Mixer & SFX Composer Subsystem (Autonomous Production Studio Phase)
+
+### Objective
+Provide procedural sound effect overlays based on storyboard event verbs and compute distance-based spatial audio attenuation gains.
+
+### Actions Taken
+1. **Design Documentation:** Authored `docs/architecture/audio_composer_design.md` detailing the subsystem layout.
+2. **Audio Composer Subsystem:** Created `ai/audio_composer.py` solving spatial volume gains and compiling multi-track voice, BGM, and SFX FFmpeg overlay commands.
+3. **Verification:** Updated `test_subsystems.py` asserting gain attenuation rates and command outputs, verifying unit tests pass (18/18 PASS).
+
+### Files Changed
+* `docs/architecture/audio_composer_design.md`
+* `ai/audio_composer.py`
+* `test_subsystems.py`
+* `AI_HISTORY.md`

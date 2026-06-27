@@ -20,6 +20,7 @@ from ai.camera_collision import CameraCollisionSolver
 from ai.animation_graph import AnimationGraph
 from ai.emotion_memory import EmotionMemoryEngine
 from ai.gpu_performance import GPUPerformanceMonitor
+from ai.audio_composer import AudioComposer
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
@@ -41,6 +42,7 @@ class TestEngineSubsystems(unittest.TestCase):
         self.anim_graph = AnimationGraph()
         self.emotion_engine = EmotionMemoryEngine()
         self.gpu_monitor = GPUPerformanceMonitor()
+        self.audio_composer = AudioComposer()
 
     def test_asset_pipeline(self):
         # Resolve sword
@@ -221,6 +223,22 @@ class TestEngineSubsystems(unittest.TestCase):
         metrics = self.gpu_monitor.calculate_render_metrics(time.time() - 2.0, frame_count=60)
         self.assertGreater(metrics["fps"], 0.0)
         self.assertGreater(metrics["elapsed_seconds"], 0.0)
+
+    def test_audio_composer(self):
+        # Attenuation check
+        near_gain = self.audio_composer.compute_spatial_gain(1.0)
+        far_gain = self.audio_composer.compute_spatial_gain(10.0)
+        self.assertGreater(near_gain, far_gain)
+        
+        # Command compilation check
+        cmd = self.audio_composer.compile_ffmpeg_mix_command(
+            "bgm.wav", 
+            [{"path": "v1.wav", "start": 1.0, "volume": 1.0}], 
+            [{"path": "s1.wav", "start": 2.5, "volume": 0.8}], 
+            "out.wav"
+        )
+        self.assertIn("ffmpeg", cmd)
+        self.assertIn("amix=inputs=3:normalize=0[aout]", "".join(cmd))
 
 if __name__ == "__main__":
     unittest.main()
