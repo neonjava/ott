@@ -22,6 +22,7 @@ from ai.emotion_memory import EmotionMemoryEngine
 from ai.gpu_performance import GPUPerformanceMonitor
 from ai.audio_composer import AudioComposer
 from ai.renderer.blender import BlenderVideoRenderer
+from ai.project_manager import MovieProjectManager
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
@@ -44,6 +45,7 @@ class TestEngineSubsystems(unittest.TestCase):
         self.emotion_engine = EmotionMemoryEngine()
         self.gpu_monitor = GPUPerformanceMonitor()
         self.audio_composer = AudioComposer()
+        self.project_manager = MovieProjectManager(self.project_dir)
 
     def test_asset_pipeline(self):
         # Resolve sword
@@ -246,6 +248,18 @@ class TestEngineSubsystems(unittest.TestCase):
         cache_dir = os.path.join(self.project_dir, "static", "videos", "cache")
         os.makedirs(cache_dir, exist_ok=True)
         self.assertTrue(os.path.exists(cache_dir))
+
+    def test_project_manager(self):
+        # Add scene check
+        s_id = self.project_manager.add_scene("Intro Scene", "Hero leaps into the dynamic fog")
+        self.assertIsNotNone(s_id)
+        
+        # Add shot check
+        shot_id = self.project_manager.add_shot(s_id, "wide_shot", 3.5)
+        self.assertIsNotNone(shot_id)
+        
+        # Validate data integrity
+        self.assertIn(shot_id, self.project_manager.project_data["scenes"][s_id]["shots"])
 
 if __name__ == "__main__":
     unittest.main()

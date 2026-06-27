@@ -11,7 +11,7 @@ def main():
         shutil.rmtree(target_dir)
     os.makedirs(target_dir, exist_ok=True)
     
-    # 8 Essential handoff files required by V8 specification
+    # Required handoff files for production review
     essential_files = [
         (os.path.join(workspace_dir, "README.md"), "README.md"),
         (os.path.join(workspace_dir, "AI_HISTORY.md"), "AI_HISTORY.md"),
@@ -20,10 +20,11 @@ def main():
         (os.path.join(workspace_dir, "MOVIE_REVIEW.md"), "MOVIE_REVIEW.md"),
         (os.path.join(workspace_dir, "docs", "architecture", "BENCHMARK_RESULTS.md"), "BENCHMARK_RESULTS.md"),
         (os.path.join(workspace_dir, "docs", "architecture", "ARCHITECTURE_DECISIONS.md"), "ARCHITECTURE_DECISIONS.md"),
-        (os.path.join(workspace_dir, "SESSION_STATUS.md"), "SESSION_STATUS.md")
+        (os.path.join(workspace_dir, "SESSION_STATUS.md"), "SESSION_STATUS.md"),
+        (os.path.join(workspace_dir, "NEXT_SESSION.md"), "NEXT_SESSION.md")
     ]
     
-    print(f"[SyncReview] Mirroring V8 handoff files to: {target_dir}")
+    print(f"[SyncReview] Mirroring V12 handoff files to: {target_dir}")
     for src, dst_name in essential_files:
         dst = os.path.join(target_dir, dst_name)
         if os.path.exists(src):

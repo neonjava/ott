@@ -1770,3 +1770,21 @@ Minimize redundant rendering compute cycles by checking MD5 hash keys of renderi
 * `ai/renderer/blender.py`
 * `test_subsystems.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Movie Project Manager Subsystem (Production Pipeline & Editor Mode)
+
+### Objective
+Ensure that movies are persistent, editable projects where acts, scenes, and shots reference dynamic UUIDs instead of rigid filenames.
+
+### Actions Taken
+1. **Design Documentation:** Authored `docs/architecture/project_manager_design.md` detailing project database schemas.
+2. **Project manager Subsystem:** Created `ai/project_manager.py` solving UUID registries and undo/redo stacks.
+3. **Verification:** Updated `test_subsystems.py` to assert scene/shot adding and key data integrity (**20/20 PASS**).
+
+### Files Changed
+* `docs/architecture/project_manager_design.md`
+* `ai/project_manager.py`
+* `test_subsystems.py`
+* `AI_HISTORY.md`
