@@ -1,8 +1,8 @@
-# Session Status — V8 Production Studio Mode
+# Session Status — V9 Film Studio Production Mode
 
 ## 🚀 Active Visual Target
-* **Current Task**: Procedural Secondary Prop Motion Wiggle Constraints.
-* **Objective**: Remove rigid accessory pose snapping by adding physically decaying inertia wiggles to active weapons/props in the Blender renderer.
+* **Current Task**: Dynamic camera Rack Focus target transitions.
+* **Objective**: Calculate frame viseme intervals to shift focus object focus limits dynamically toward active speakers.
 * **Status**: Completed & Verified.
 
 ## 🏛️ Project Release State

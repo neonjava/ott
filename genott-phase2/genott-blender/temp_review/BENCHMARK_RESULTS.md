@@ -13,3 +13,4 @@ This benchmark evaluates movie generation speeds, visual quality scores, and res
 | **Facial acting** | Rigid Mannequin | Procedural Breathing + Blinks | 🟢 Improved |
 | **Ambient Occlusion** | Flat Background | Cycles Fast GI Shadows | 🟢 Improved |
 | **Secondary Prop Motion**| Rigid Parent Attach| Decaying Sine Wobbles | 🟢 Improved |
+| **Camera Rack Focus** | Static Target Focus| Dynamic Speaker Shift | 🟢 Improved |

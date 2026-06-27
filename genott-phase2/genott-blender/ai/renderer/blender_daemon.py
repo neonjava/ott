@@ -1033,6 +1033,29 @@ class RenderHandler(BaseHTTPRequestHandler):
                         camera.data.dof.aperture_fstop = dof_aperture
                         camera.data.dof.use_dof = kf.get("use_dof", True)
                         
+                        # Dynamic Rack Focus: Check if any talking character matches this frame
+                        active_focus_char = primary_armature
+                        try:
+                            for other_char_data in characters:
+                                other_name = other_char_data.get("name", "")
+                                other_arm = bpy.context.scene.objects.get(other_name)
+                                vis_t = other_char_data.get("viseme_timeline", [])
+                                if vis_t:
+                                    t_curr = (frame - 1) / fps
+                                    is_speaking = any(item.get("viseme", "sil") != "sil" and abs(item.get("time", 0.0) - t_curr) < 0.5 for item in vis_t)
+                                    if is_speaking and other_arm:
+                                        active_focus_char = other_arm
+                                        break
+                        except Exception as focus_err:
+                            pass
+                            
+                        if active_focus_char:
+                            camera.data.dof.focus_object = active_focus_char
+                            try:
+                                camera.data.dof.keyframe_insert(data_path="focus_object", frame=frame)
+                            except:
+                                pass
+                        
                         camera.keyframe_insert(data_path="location", frame=frame)
                         camera.keyframe_insert(data_path="rotation_euler", frame=frame)
                         camera.data.keyframe_insert(data_path="lens", frame=frame)

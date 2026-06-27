@@ -29,3 +29,6 @@ This document tracks upcoming high-priority engineering tasks sorted by architec
 
 ### 7. Secondary Prop Motion Wiggle Constraints
 * **Status**: ✅ Completed (Programmed decaying physical sine wiggles on accessory objects)
+
+### 8. Dynamic Camera Rack Focus
+* **Status**: ✅ Completed (Programmed speech-driven focus object transitions on depth of field controls)

@@ -1724,3 +1724,18 @@ Provide secondary visual wobble effects to weapons and props to simulate physics
 ### Files Changed
 * `ai/renderer/blender_daemon.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Dynamic camera Rack Focus (Film Studio Production Mode)
+
+### Objective
+Configure the rendering camera's Depth of Field focus targets dynamically based on speech timelines.
+
+### Actions Taken
+1. **Dynamic Rack Focus:** Updated the camera keyframing loop in `blender_daemon.py` to trace viseme timelines across frame indices and dynamically assign `camera.data.dof.focus_object` to the active speaker armature.
+2. **Verification:** Terminated background processes and ran `e2e_test.py` successfully (**5/5 PASS**).
+
+### Files Changed
+* `ai/renderer/blender_daemon.py`
+* `AI_HISTORY.md`
