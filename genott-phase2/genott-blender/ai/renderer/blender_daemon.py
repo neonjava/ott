@@ -500,11 +500,11 @@ class RenderHandler(BaseHTTPRequestHandler):
                 # --- Configure Render Profile Settings ---
                 profile_name = payload.get("render_profile", "testing").lower().strip()
                 profiles = {
-                    "development": {"res_x": 64, "res_y": 64, "samples": 1, "use_denoise": False},
-                    "testing": {"res_x": 256, "res_y": 256, "samples": 2, "use_denoise": False},
-                    "preview": {"res_x": 640, "res_y": 360, "samples": 4, "use_denoise": True},
-                    "production": {"res_x": 1280, "res_y": 720, "samples": 8, "use_denoise": True},
-                    "ultra": {"res_x": 1920, "res_y": 1080, "samples": 16, "use_denoise": True}
+                    "development": {"res_x": 64, "res_y": 64, "samples": 1, "use_denoise": False, "motion_blur": False},
+                    "testing": {"res_x": 256, "res_y": 256, "samples": 2, "use_denoise": False, "motion_blur": False},
+                    "preview": {"res_x": 640, "res_y": 360, "samples": 4, "use_denoise": True, "motion_blur": True},
+                    "production": {"res_x": 1280, "res_y": 720, "samples": 16, "use_denoise": True, "motion_blur": True},
+                    "ultra": {"res_x": 1920, "res_y": 1080, "samples": 32, "use_denoise": True, "motion_blur": True}
                 }
                 profile_opts = profiles.get(profile_name, profiles["testing"])
                 
@@ -513,11 +513,40 @@ class RenderHandler(BaseHTTPRequestHandler):
                 bpy.context.scene.render.resolution_y = profile_opts["res_y"]
                 bpy.context.scene.cycles.samples = profile_opts["samples"]
                 
-                # Setup Denoising if requested
+                # Setup Denoising with best available denoiser
                 if profile_opts["use_denoise"]:
                     bpy.context.scene.cycles.use_denoising = True
+                    try:
+                        # Prefer OptiX AI denoiser (GPU-accelerated, best quality)
+                        bpy.context.scene.cycles.denoiser = 'OPTIX'
+                    except Exception:
+                        try:
+                            bpy.context.scene.cycles.denoiser = 'OPENIMAGEDENOISE'
+                        except Exception:
+                            pass  # Use default
                 else:
                     bpy.context.scene.cycles.use_denoising = False
+                
+                # Adaptive sampling: converge faster in uniform areas, spend
+                # more samples on noisy edges
+                try:
+                    bpy.context.scene.cycles.use_adaptive_sampling = True
+                    bpy.context.scene.cycles.adaptive_threshold = 0.01
+                except Exception:
+                    pass
+                
+                # Motion blur for cinematic animation quality
+                if profile_opts["motion_blur"]:
+                    bpy.context.scene.render.use_motion_blur = True
+                    bpy.context.scene.render.motion_blur_shutter = 0.5  # 180-degree shutter angle
+                else:
+                    bpy.context.scene.render.use_motion_blur = False
+                
+                # Film exposure (slight overexpose for cinematic punch)
+                try:
+                    bpy.context.scene.cycles.film_exposure = 1.05
+                except Exception:
+                    pass
 
                 # --- Environment Composition ---
                 location_str = payload.get("location", "environment")
