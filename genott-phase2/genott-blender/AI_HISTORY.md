@@ -1679,3 +1679,18 @@ Provide procedural sound effect overlays based on storyboard event verbs and com
 * `ai/audio_composer.py`
 * `test_subsystems.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Procedural Torso Breathing Animation (The Hollywood Challenge Phase)
+
+### Objective
+Eliminate rigid character postures during dialogue segments by programmatically injecting rhythmic breathing keyframe loops into the skeleton.
+
+### Actions Taken
+1. **Breathing Keyframes:** Updated the character posing loop in `blender_daemon.py` to query the character's spine/torso bones and keyframe a periodic sine wave rotation (`0.02 * sin(f * 0.15)`) representing physical respiration.
+2. **Verification:** Terminated background processes and ran `e2e_test.py` successfully (**5/5 PASS**).
+
+### Files Changed
+* `ai/renderer/blender_daemon.py`
+* `AI_HISTORY.md`

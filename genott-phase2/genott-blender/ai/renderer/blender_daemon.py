@@ -852,6 +852,19 @@ class RenderHandler(BaseHTTPRequestHandler):
                         except Exception as sk_err:
                             print(f"[BlenderDaemon] Failed to apply shape key animations to {char_name}: {sk_err}")
 
+                    # --- Procedural Breathing Animation (V2 Hollywood Quality) ---
+                    try:
+                        spine_bone = char_armature.pose.bones.get("Spine") or char_armature.pose.bones.get("spine")
+                        if spine_bone:
+                            spine_bone.rotation_mode = 'XYZ'
+                            for f in range(1, int(duration * fps) + 1):
+                                # Rhythmic breathing sine wave: 0.02 radians (~1.1 degrees)
+                                breath_angle = 0.02 * math.sin(f * 0.15)
+                                spine_bone.rotation_euler.x = breath_angle
+                                spine_bone.keyframe_insert(data_path="rotation_euler", frame=f)
+                    except Exception as breath_err:
+                        print(f"[BlenderDaemon] Breathing animation error for {char_name}: {breath_err}")
+
                     # --- Conversation Eye Contact Head-Tracking (AI Director specs) ---
                     # If multiple characters, make listeners look at the primary character armature position
                     if len(characters) > 1 and idx > 0 and primary_armature:
