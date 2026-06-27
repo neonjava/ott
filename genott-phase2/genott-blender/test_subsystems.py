@@ -28,6 +28,7 @@ from ai.usd.usd_importer import USDImporter
 from ai.fluid_cache import FluidCacheManager
 from ai.camera_motion import CameraMotionEngine
 from ai.facial_performance import FacialPerformanceEngine
+from ai.character_motion import CharacterMotionEngine
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
@@ -56,6 +57,7 @@ class TestEngineSubsystems(unittest.TestCase):
         self.fluid_cache = FluidCacheManager(self.project_dir)
         self.camera_motion = CameraMotionEngine()
         self.facial_engine = FacialPerformanceEngine()
+        self.char_motion = CharacterMotionEngine()
 
     def test_asset_pipeline(self):
         # Resolve sword
@@ -410,6 +412,50 @@ class TestEngineSubsystems(unittest.TestCase):
             for name, val in w.items():
                 self.assertGreaterEqual(val, 0.0, f"{name} below 0 at frame {f}")
                 self.assertLessEqual(val, 1.0, f"{name} above 1 at frame {f}")
+
+    def test_character_motion_balance_and_breathing(self):
+        """Verify dynamic balance leans and natural breathing offset updates."""
+        engine = self.char_motion
+        res = engine.compute_frame(
+            frame=5, f_start=1, f_end=48, fps=24.0,
+            action_name="idle", char_name="Thor",
+            velocity=(0.0, 0.0, 0.0), acceleration=(1.0, 2.0, 0.0)
+        )
+        self.assertIn("Spine", res["bones"])
+        self.assertIn("Hips", res["bones"])
+        
+        # Test breathing is non-zero
+        spine_rot = res["bones"]["Spine"]["rotation"]
+        self.assertNotEqual(spine_rot, (0.0, 0.0, 0.0))
+
+    def test_character_motion_foot_locking(self):
+        """Verify that feet planting states alternate during locomotion and lock flat."""
+        engine = self.char_motion
+        res = engine.compute_frame(
+            frame=15, f_start=1, f_end=48, fps=24.0,
+            action_name="walk", char_name="Tony",
+            velocity=(0.0, 1.2, 0.0), acceleration=(0.0, 0.0, 0.0)
+        )
+        self.assertIn("foot_locking", res)
+        self.assertIn("Foot.L", res["foot_locking"])
+        self.assertIn("Foot.R", res["foot_locking"])
+        
+        # UpperLeg pitch should change due to strides
+        leg_rot = res["bones"]["UpperLeg.L"]["rotation"]
+        self.assertNotEqual(leg_rot, (0.0, 0.0, 0.0))
+
+    def test_character_motion_blending(self):
+        """Verify action transition blending avoids snapping."""
+        engine = self.char_motion
+        # Frame during transition should smoothly interpolate offsets between walk and idle
+        res_blend = engine.compute_frame(
+            frame=10, f_start=1, f_end=48, fps=24.0,
+            action_name="walk", char_name="Hulk",
+            velocity=(0.0, 1.2, 0.0), acceleration=(0.0, 0.0, 0.0),
+            prev_action_name="idle", transition_t=0.2
+        )
+        self.assertIn("bones", res_blend)
+        self.assertIn("UpperLeg.L", res_blend["bones"])
 
 if __name__ == "__main__":
     unittest.main()

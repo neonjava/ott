@@ -1,4 +1,4 @@
-# Next Session Handoff — V16 FacialPerformanceEngine & Render Quality
+# Next Session Handoff — V17 CharacterMotionEngine & Body Dynamics
 
 ## 🏛️ Current Architecture
 * Decoupled modular engine subsystems (`ai/`) with persistent SQLite database schemas, non-destructive sequence timelines, and Cycles OPTIX/CUDA hardware preferences.
@@ -8,22 +8,19 @@
 * Fluid simulation cache serialization checks via `FluidCacheManager`.
 * Physically-based `CameraMotionEngine` with profiles (Tripod, Steadicam, Handheld, Dolly).
 * Production `FacialPerformanceEngine` with variable blink timing, saccades, breathing, behavioural states.
-* BEZIER camera keyframe interpolation (replaced CONSTANT).
-* OptiX denoiser, adaptive sampling, motion blur, film exposure in render profiles.
+* CharacterMotionEngine with weight shifting, center of mass, dynamic balance leans, and foot locking.
 
 ## 🛠️ Completed Work
-1. **FacialPerformanceEngine**: Created `ai/facial_performance.py` — full engine with 9 emotion profiles, 12 viseme profiles, variable blink timing, smoothstep saccades, eyelid follow, breathing, anticipation coarticulation, speaking/listening/idle states.
-2. **Integration**: Replaced 120 lines of inline facial animation in `blender_daemon.py` with 17-line delegation to engine.
-3. **Camera BEZIER fix**: Changed camera keyframe interpolation from CONSTANT to BEZIER with AUTO_CLAMPED handles.
-4. **Render quality upgrade**: OptiX denoiser, adaptive sampling, motion blur, increased sample counts, film exposure.
-5. **Verification**: 30/30 unit tests pass including 6 new facial performance tests.
+1. **CharacterMotionEngine**: Created `ai/character_motion.py` with multi-frequency breathing, weight shifting, hip sway, balance leans, foot planting/IK locks, stride prediction, arm reach, and finger curls.
+2. **Integration**: Replaced simplistic procedural body/head-track/breathing animations in `blender_daemon.py` with unified dynamic offsets from `CharacterMotionEngine`.
+3. **Verification**: 33/33 unit tests pass including 3 new test methods for balance/breathing, foot locking, and transition blending.
 
 ## 🔮 Remaining Blockers
-* **Head tracking**: Simple sine-wave head nods during conversation — could use multi-frequency noise.
+* **Secondary Physics**: Hair/Clothing dynamics could be enhanced with responsive procedural solver layers.
 
 ## 🎯 Exact Next Engineering Task
 1. **Continue auditing** the renderer for the next weakest production-quality implementation.
 
 ## 📋 Suggested Execution Order
-1. Review head tracking, body idle animation, and prop interaction code.
-2. Replace weak implementations with production-quality alternatives.
+1. Review cloth/hair secondary physics, lighting presets, or post-processing pipeline.
+2. Enhance with production-quality procedural layers.

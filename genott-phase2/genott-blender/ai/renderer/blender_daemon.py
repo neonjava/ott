@@ -800,19 +800,94 @@ class RenderHandler(BaseHTTPRequestHandler):
                         except Exception as sk_err:
                             print(f"[BlenderDaemon] Failed to apply shape key animations to {char_name}: {sk_err}")
 
-                    # --- Procedural Breathing Animation (V2 Hollywood Quality) ---
+                    # --- Procedural Body Dynamics via CharacterMotionEngine ---
                     try:
-                        spine_bone = char_armature.pose.bones.get("Spine") or char_armature.pose.bones.get("spine")
-                        if spine_bone:
-                            spine_bone.rotation_mode = 'XYZ'
-                            for f in range(1, int(duration * fps) + 1):
-                                # Rhythmic breathing sine wave: 0.02 radians (~1.1 degrees)
-                                breath_angle = 0.02 * math.sin(f * 0.15)
-                                spine_bone.rotation_euler.x = breath_angle
-                                spine_bone.keyframe_insert(data_path="rotation_euler", frame=f)
-                    except Exception as breath_err:
-                        print(f"[BlenderDaemon] Breathing animation error for {char_name}: {breath_err}")
- 
+                        if PROJECT_DIR not in sys.path:
+                            sys.path.append(PROJECT_DIR)
+                        from character_motion import CharacterMotionEngine
+                        
+                        motion_engine = CharacterMotionEngine()
+                        
+                        target_loc = None
+                        if len(characters) > 1 and idx > 0 and primary_armature:
+                            target_loc = tuple(primary_armature.location)
+                        
+                        char_loc = tuple(char_armature.location)
+                        
+                        # Velocity calculation based on action
+                        act_lower = char_data["action"].lower()
+                        speed = 0.0
+                        if "walk" in act_lower:
+                            speed = 1.2
+                        elif "run" in act_lower:
+                            speed = 3.0
+                            
+                        # Character facing direction is along Y axis (Euler rotation rotation_euler[2])
+                        heading = char_armature.rotation_euler[2]
+                        vel_x = -speed * math.sin(heading)
+                        vel_y = -speed * math.cos(heading)
+                        vel_z = 0.0
+                        
+                        total_frames = int(duration * fps)
+                        
+                        for f in range(1, total_frames + 1):
+                            # Acceleration logic for start/stop leans
+                            acc_x, acc_y, acc_z = 0.0, 0.0, 0.0
+                            if f < 12:  # Accelerating
+                                acc_x = vel_x / 0.5  # over 0.5 sec
+                                acc_y = vel_y / 0.5
+                            elif total_frames - f < 12:  # Decelerating
+                                acc_x = -vel_x / 0.5
+                                acc_y = -vel_y / 0.5
+                                
+                            frame_offsets = motion_engine.compute_frame(
+                                frame=f,
+                                f_start=1,
+                                f_end=total_frames,
+                                fps=fps,
+                                action_name=char_data["action"],
+                                char_name=char_name,
+                                target_location=target_loc,
+                                char_location=char_loc,
+                                velocity=(vel_x, vel_y, vel_z),
+                                acceleration=(acc_x, acc_y, acc_z)
+                            )
+                            
+                            # Apply computed offsets to pose bones
+                            for bone_name, transform_vals in frame_offsets["bones"].items():
+                                pb = char_armature.pose.bones.get(bone_name)
+                                if pb:
+                                    pb.rotation_mode = 'XYZ'
+                                    if "rotation" in transform_vals:
+                                        rx, ry, rz = transform_vals["rotation"]
+                                        # Add to current posture or base animations (using additive/relative offsets)
+                                        pb.rotation_euler = (pb.rotation_euler[0] + rx,
+                                                             pb.rotation_euler[1] + ry,
+                                                             pb.rotation_euler[2] + rz)
+                                        pb.keyframe_insert(data_path="rotation_euler", frame=f)
+                                        
+                                    if "location" in transform_vals:
+                                        lx, ly, lz = transform_vals["location"]
+                                        pb.location = (pb.location[0] + lx,
+                                                       pb.location[1] + ly,
+                                                       pb.location[2] + lz)
+                                        pb.keyframe_insert(data_path="location", frame=f)
+                                        
+                            # Foot locking IK adjustment
+                            for foot_name in ["Foot.L", "Foot.R"]:
+                                if foot_name in frame_offsets.get("foot_locking", {}):
+                                    plant_info = frame_offsets["foot_locking"][foot_name]
+                                    if plant_info["planted"]:
+                                        foot_bone = char_armature.pose.bones.get(foot_name)
+                                        if foot_bone:
+                                            # Apply local correction to keep foot rotation flat to ground
+                                            foot_bone.rotation_mode = 'XYZ'
+                                            foot_bone.rotation_euler = (0.0, 0.0, 0.0)
+                                            foot_bone.keyframe_insert(data_path="rotation_euler", frame=f)
+                                            
+                    except Exception as motion_err:
+                        print(f"[BlenderDaemon] CharacterMotionEngine simulation failed: {motion_err}")
+
                     # --- Procedural Secondary Prop Motion Wiggles (V8 Physics constraints) ---
                     try:
                         for suffix in [char_suffix, ""]:
@@ -829,31 +904,6 @@ class RenderHandler(BaseHTTPRequestHandler):
                                     print(f"[BlenderDaemon] Applied secondary prop wiggles to {prop_prefix}.")
                     except Exception as prop_wiggle_err:
                         print(f"[BlenderDaemon] Prop wiggle error: {prop_wiggle_err}")
-
-                    # --- Conversation Eye Contact Head-Tracking (AI Director specs) ---
-                    # If multiple characters, make listeners look at the primary character armature position
-                    if len(characters) > 1 and idx > 0 and primary_armature:
-                        try:
-                            # Direct bone rotation toward target
-                            neck_bone = char_armature.pose.bones.get("Neck")
-                            head_bone = char_armature.pose.bones.get("Head")
-                            if neck_bone and head_bone:
-                                neck_bone.rotation_mode = 'XYZ'
-                                head_bone.rotation_mode = 'XYZ'
-                                
-                                # Compute simple Euler rotation looking at the primary armature location
-                                dx = primary_armature.location.x - char_armature.location.x
-                                dy = primary_armature.location.y - char_armature.location.y
-                                angle_to_primary = math.atan2(dx, dy)
-                                
-                                # Animate head look rotation over the frame range
-                                for f in range(1, int(duration * fps) + 1):
-                                    # Add small natural head wiggles/nods
-                                    head_nod = 0.05 * math.sin(f * 0.2)
-                                    head_bone.rotation_euler = (head_nod, 0, angle_to_primary * 0.5)
-                                    head_bone.keyframe_insert(data_path="rotation_euler", frame=f)
-                        except Exception as track_err:
-                            print(f"[BlenderDaemon] Head tracking error for {char_name}: {track_err}")
                             
                     # Customize character materials & weapons
                     outfits_list = payload.get("outfits", [])
