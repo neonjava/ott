@@ -29,6 +29,7 @@ from ai.fluid_cache import FluidCacheManager
 from ai.camera_motion import CameraMotionEngine
 from ai.facial_performance import FacialPerformanceEngine
 from ai.character_motion import CharacterMotionEngine
+from ai.director_intelligence import DirectorIntelligenceEngine
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
@@ -58,6 +59,7 @@ class TestEngineSubsystems(unittest.TestCase):
         self.camera_motion = CameraMotionEngine()
         self.facial_engine = FacialPerformanceEngine()
         self.char_motion = CharacterMotionEngine()
+        self.director_engine = DirectorIntelligenceEngine()
 
     def test_asset_pipeline(self):
         # Resolve sword
@@ -456,6 +458,38 @@ class TestEngineSubsystems(unittest.TestCase):
         )
         self.assertIn("bones", res_blend)
         self.assertIn("UpperLeg.L", res_blend["bones"])
+
+    def test_director_intelligence(self):
+        """Verify Director Intelligence Engine generates consistent cinematic plans."""
+        engine = self.director_engine
+        
+        # Test Case 1: Threat/Fear scene
+        scene_fear = {
+            "scene_number": 1,
+            "character_name": "Thor",
+            "action": "retreat",
+            "mood": "fear",
+            "line": "Something approaches."
+        }
+        decision = engine.direct_shot(scene_fear, env_config={"weather": "clear"})
+        self.assertEqual(decision.camera_profile, "handheld")
+        self.assertEqual(decision.lens, 50.0)
+        self.assertEqual(decision.lighting_mood, "colder")
+        self.assertIn("handheld", decision.reasoning.lower())
+        self.assertFalse(decision.eye_contact)
+        
+        # Test Case 2: Action scene
+        scene_attack = {
+            "scene_number": 2,
+            "character_name": "Thor",
+            "action": "attack",
+            "mood": "epic",
+            "line": ""
+        }
+        decision_attack = engine.direct_shot(scene_attack)
+        self.assertEqual(decision_attack.camera_profile, "steadicam")
+        self.assertEqual(decision_attack.lens, 28.0)
+        self.assertEqual(decision_attack.lighting_mood, "neutral")
 
 if __name__ == "__main__":
     unittest.main()

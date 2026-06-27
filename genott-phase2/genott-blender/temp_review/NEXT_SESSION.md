@@ -1,4 +1,4 @@
-# Next Session Handoff — V17 CharacterMotionEngine & Body Dynamics
+# Next Session Handoff — V18 Director Intelligence Engine
 
 ## 🏛️ Current Architecture
 * Decoupled modular engine subsystems (`ai/`) with persistent SQLite database schemas, non-destructive sequence timelines, and Cycles OPTIX/CUDA hardware preferences.
@@ -9,11 +9,12 @@
 * Physically-based `CameraMotionEngine` with profiles (Tripod, Steadicam, Handheld, Dolly).
 * Production `FacialPerformanceEngine` with variable blink timing, saccades, breathing, behavioural states.
 * CharacterMotionEngine with weight shifting, center of mass, dynamic balance leans, and foot locking.
+* DirectorIntelligenceEngine generating reasoning-backed DirectorDecision configurations.
 
 ## 🛠️ Completed Work
-1. **CharacterMotionEngine**: Created `ai/character_motion.py` with multi-frequency breathing, weight shifting, hip sway, balance leans, foot planting/IK locks, stride prediction, arm reach, and finger curls.
-2. **Integration**: Replaced simplistic procedural body/head-track/breathing animations in `blender_daemon.py` with unified dynamic offsets from `CharacterMotionEngine`.
-3. **Verification**: 33/33 unit tests pass including 3 new test methods for balance/breathing, foot locking, and transition blending.
+1. **DirectorIntelligenceEngine**: Created `ai/director_intelligence.py` to analyze scenes and output a structured `DirectorDecision` object (focus target, DoF, lens, camera profile, blocking, stance, speech rhythm, lighting).
+2. **Integration**: Placed the decision engine at the entry point of the POST `/render` handler, replacing duplicate or hardcoded config variables for camera, lighting, and animation depth.
+3. **Verification**: 34/34 unit tests pass, and character validation benchmarks generated successfully.
 
 ## 🔮 Remaining Blockers
 * **Secondary Physics**: Hair/Clothing dynamics could be enhanced with responsive procedural solver layers.
@@ -22,5 +23,5 @@
 1. **Continue auditing** the renderer for the next weakest production-quality implementation.
 
 ## 📋 Suggested Execution Order
-1. Review cloth/hair secondary physics, lighting presets, or post-processing pipeline.
-2. Enhance with production-quality procedural layers.
+1. Audit secondary dynamics, light probes, or camera obstacle detection.
+2. Replace with production-grade solver layer.

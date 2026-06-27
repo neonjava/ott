@@ -377,7 +377,7 @@ def apply_emotion_posture(armature, mood: str, f_start: int, f_end: int):
     strip.blend_type = 'ADD'
     strip.extrapolation = 'HOLD'
 
-def apply_shape_key_animations(mesh_obj, mood: str, viseme_timeline: list, f_start: int, f_end: int, fps: int):
+def apply_shape_key_animations(mesh_obj, mood: str, viseme_timeline: list, f_start: int, f_end: int, fps: int, emotion_intensity: float = 1.0):
     if not mesh_obj or not mesh_obj.data.shape_keys:
         return
 
@@ -413,7 +413,7 @@ def apply_shape_key_animations(mesh_obj, mood: str, viseme_timeline: list, f_sta
             f_end=f_end,
             fps=float(fps),
             emotion=mood,
-            emotion_intensity=1.0,
+            emotion_intensity=emotion_intensity,
             viseme_timeline=viseme_timeline,
             mesh_name=mesh_obj.name,
             is_speaking=is_speaking,
@@ -439,9 +439,31 @@ class RenderHandler(BaseHTTPRequestHandler):
                 post_data = self.rfile.read(content_length)
                 payload = json.loads(post_data)
                 
+                # --- Director Intelligence Engine Analysis ---
+                if PROJECT_DIR not in sys.path:
+                    sys.path.append(PROJECT_DIR)
+                from director_intelligence import DirectorIntelligenceEngine
+                director_engine = DirectorIntelligenceEngine()
+                
+                location_str = payload.get("location", "environment")
+                from environment_director import get_environment_for_location
+                try:
+                    env_config = get_environment_for_location(location_str)
+                except Exception:
+                    env_config = {"environment_type": "forest", "weather": "clear"}
+                
+                director_decision = director_engine.direct_shot(
+                    scene=payload,
+                    prev_scene=None,
+                    next_scene=None,
+                    env_config=env_config
+                )
+                print(f"[BlenderDaemon] Director Decision: camera_profile={director_decision.camera_profile}, lens={director_decision.lens}, lighting_mood={director_decision.lighting_mood}, duration={director_decision.shot_duration}")
+                print(f"[BlenderDaemon] Director Reasoning: {director_decision.reasoning}")
+                
                 output_path = payload.get("output_path")
                 action_name = payload.get("action", "idle")
-                duration = payload.get("duration", 2.0)
+                duration = payload.get("duration", director_decision.shot_duration)
                 state_file_path = payload.get("state_file_path", "")
                 
                 print(f"\n[BlenderDaemon] Received job: {action_name} for {duration}s -> {output_path}")
@@ -665,7 +687,13 @@ class RenderHandler(BaseHTTPRequestHandler):
                     }
                 }
                 
-                lp = lighting_presets.get(mood_str, lighting_presets["neutral"])
+                lighting_presets["colder"] = {
+                    "key_color": (0.5, 0.6, 0.8, 1.0), "key_energy": 2.2,
+                    "fill_color": (0.4, 0.5, 0.7, 1.0), "fill_energy": 0.8,
+                    "rim_color": (0.6, 0.7, 0.9, 1.0), "rim_energy": 2.0
+                }
+                
+                lp = lighting_presets.get(director_decision.lighting_mood, lighting_presets.get(mood_str, lighting_presets["neutral"]))
                 
                 # Apply to KeyLight
                 key_light = bpy.data.lights.get("KeyLight")
@@ -828,7 +856,7 @@ class RenderHandler(BaseHTTPRequestHandler):
                             
                     if head_mesh:
                         try:
-                            apply_shape_key_animations(head_mesh, mood_str, viseme_timeline, 1, int(duration * fps), fps)
+                            apply_shape_key_animations(head_mesh, mood_str, viseme_timeline, 1, int(duration * fps), fps, emotion_intensity=director_decision.emotion_intensity)
                         except Exception as sk_err:
                             print(f"[BlenderDaemon] Failed to apply shape key animations to {char_name}: {sk_err}")
 
@@ -972,7 +1000,8 @@ class RenderHandler(BaseHTTPRequestHandler):
                     camera.data.dof.focus_object = primary_armature
                 else:
                     camera.data.dof.focus_distance = 4.0
-                camera.data.dof.aperture_fstop = 2.8 # F/2.8 cinematic background blur
+                camera.data.dof.aperture_fstop = director_decision.depth_of_field.get("fstop", 2.8)
+                camera.data.lens = director_decision.lens
 
                 # Update camera target position based on primary character
                 if primary_armature:
@@ -1036,7 +1065,7 @@ class RenderHandler(BaseHTTPRequestHandler):
                                         start_location[2] + delta_loc[2]]
                                         
                             # Resolve camera profiles (Tripod, Steadicam, Handheld, Dolly)
-                            profile_str = kf.get("camera_profile", "handheld")
+                            profile_str = kf.get("camera_profile", director_decision.camera_profile)
                             is_moving = "walk" in aname or "run" in aname
                             
                             base_l = (char_pos[0] + offset[0], char_pos[1] + offset[1], char_pos[2] + offset[2])
@@ -1053,11 +1082,11 @@ class RenderHandler(BaseHTTPRequestHandler):
                             camera.rotation_euler = c_rot
                         
                         # Dynamic focal length, FOV, and Depth of Field setup from AI Director Timeline
-                        focal_len = kf.get("focal_length", 35.0)  # default cinematic 35mm
+                        focal_len = kf.get("focal_length", director_decision.lens)
                         lens_unit = kf.get("lens_unit", "MILLIMETERS")
                         camera.data.lens = focal_len
                         
-                        dof_aperture = kf.get("aperture_fstop", 2.8)
+                        dof_aperture = kf.get("aperture_fstop", director_decision.depth_of_field.get("fstop", 2.8))
                         camera.data.dof.aperture_fstop = dof_aperture
                         camera.data.dof.use_dof = kf.get("use_dof", True)
                         
