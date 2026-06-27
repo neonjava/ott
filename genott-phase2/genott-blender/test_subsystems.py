@@ -27,6 +27,7 @@ from ai.usd.usd_exporter import USDExporter
 from ai.usd.usd_importer import USDImporter
 from ai.fluid_cache import FluidCacheManager
 from ai.camera_motion import CameraMotionEngine
+from ai.facial_performance import FacialPerformanceEngine
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
@@ -54,6 +55,7 @@ class TestEngineSubsystems(unittest.TestCase):
         self.usd_importer = USDImporter()
         self.fluid_cache = FluidCacheManager(self.project_dir)
         self.camera_motion = CameraMotionEngine()
+        self.facial_engine = FacialPerformanceEngine()
 
     def test_asset_pipeline(self):
         # Resolve sword
@@ -321,6 +323,93 @@ class TestEngineSubsystems(unittest.TestCase):
         h_loc, h_rot = self.camera_motion.apply_profile("handheld", 10, 24.0, (1.0, 2.0, 3.0), (0.1, 0.2, 0.3))
         self.assertNotEqual(h_loc, (1.0, 2.0, 3.0))
         self.assertNotEqual(h_rot, (0.1, 0.2, 0.3))
+
+    def test_facial_performance_emotion_interpolation(self):
+        """Verify that emotions produce non-zero, distinct weights and ease in."""
+        engine = self.facial_engine
+        # Frame 1 (start) should have reduced intensity due to ease-in
+        w_start = engine.compute_frame(1, 1, 48, 24.0, "happy", 1.0, None, "TestHead", False)
+        # Frame 24 should be fully eased in
+        w_full = engine.compute_frame(24, 1, 48, 24.0, "happy", 1.0, None, "TestHead", False)
+        # Happy should produce smiles
+        self.assertGreater(w_full.get("mouthSmileLeft", 0), 0.0)
+        self.assertGreater(w_full.get("mouthSmileRight", 0), 0.0)
+        # Ease-in: frame 1 smile should be weaker than frame 24
+        self.assertLess(w_start.get("mouthSmileLeft", 0), w_full.get("mouthSmileLeft", 0))
+
+        # Different emotions produce different profiles
+        w_angry = engine.compute_frame(24, 1, 48, 24.0, "angry", 1.0, None, "TestHead", False)
+        self.assertGreater(w_angry.get("browDownLeft", 0), 0.0)
+        # Angry should NOT have strong smile
+        self.assertGreater(w_angry.get("browDownLeft", 0), w_angry.get("mouthSmileLeft", 0))
+
+    def test_facial_performance_blink_generation(self):
+        """Verify blinks are generated and values stay in [0,1]."""
+        engine = self.facial_engine
+        blink_found = False
+        for f in range(1, 200):
+            w = engine.compute_frame(f, 1, 200, 24.0, "happy", 1.0, None, "BlinkTest", False)
+            blink_val = w.get("eyeBlinkLeft", 0.0)
+            self.assertGreaterEqual(blink_val, 0.0)
+            self.assertLessEqual(blink_val, 1.0)
+            if blink_val > 0.5:
+                blink_found = True
+        self.assertTrue(blink_found, "No blink detected across 200 frames")
+
+    def test_facial_performance_saccade_generation(self):
+        """Verify eye saccades produce gaze movement."""
+        engine = self.facial_engine
+        gaze_keys = {"eyeLookOutLeft", "eyeLookInRight", "eyeLookInLeft", "eyeLookOutRight",
+                     "eyeLookUpLeft", "eyeLookUpRight", "eyeLookDownLeft", "eyeLookDownRight"}
+        any_gaze = False
+        for f in range(1, 100):
+            w = engine.compute_frame(f, 1, 100, 24.0, "happy", 1.0, None, "GazeTest", False)
+            for gk in gaze_keys:
+                if w.get(gk, 0.0) > 0.01:
+                    any_gaze = True
+                    break
+            if any_gaze:
+                break
+        self.assertTrue(any_gaze, "No gaze saccade detected across 100 frames")
+
+    def test_facial_performance_viseme_interpolation(self):
+        """Verify viseme timeline produces lip movement."""
+        engine = self.facial_engine
+        timeline = [
+            {"time": 0.0, "viseme": "rest"},
+            {"time": 0.2, "viseme": "A"},
+            {"time": 0.4, "viseme": "O"},
+            {"time": 0.6, "viseme": "rest"},
+        ]
+        # At t=0.2 (frame ~6 at 24fps), viseme A should produce jawOpen
+        w = engine.compute_frame(6, 1, 24, 24.0, "happy", 1.0, timeline, "VisemeTest", True)
+        self.assertGreater(w.get("jawOpen", 0.0), 0.1, "Viseme A should open jaw")
+
+        # At t=0.3 (frame ~8), interpolation between A and O should produce mouthFunnel
+        w_mid = engine.compute_frame(8, 1, 24, 24.0, "happy", 1.0, timeline, "VisemeTest", True)
+        self.assertGreater(w_mid.get("mouthFunnel", 0.0), 0.0, "Interpolation should produce mouthFunnel")
+
+    def test_facial_performance_behavioural_states(self):
+        """Verify speaking vs listening produce different facial states."""
+        engine = self.facial_engine
+        w_speaking = engine.compute_frame(24, 1, 48, 24.0, "happy", 1.0, None, "StateTest", True)
+        w_listening = engine.compute_frame(24, 1, 48, 24.0, "happy", 1.0, None, "StateTest", False)
+        # Speaking should have jawForward (speech emphasis)
+        # Listening should have idle jaw relaxation
+        # They should differ in at least some weights
+        diffs = sum(1 for k in set(w_speaking.keys()) | set(w_listening.keys())
+                    if abs(w_speaking.get(k, 0) - w_listening.get(k, 0)) > 0.001)
+        self.assertGreater(diffs, 0, "Speaking and listening states should produce different weights")
+
+    def test_facial_performance_all_clamped(self):
+        """All output weights must be in [0, 1]."""
+        engine = self.facial_engine
+        timeline = [{"time": 0.0, "viseme": "A"}, {"time": 0.5, "viseme": "O"}, {"time": 1.0, "viseme": "M"}]
+        for f in range(1, 50):
+            w = engine.compute_frame(f, 1, 50, 24.0, "angry", 1.0, timeline, "ClampTest", True)
+            for name, val in w.items():
+                self.assertGreaterEqual(val, 0.0, f"{name} below 0 at frame {f}")
+                self.assertLessEqual(val, 1.0, f"{name} above 1 at frame {f}")
 
 if __name__ == "__main__":
     unittest.main()
