@@ -565,6 +565,38 @@ class RenderHandler(BaseHTTPRequestHandler):
                 except Exception as env_err:
                     print(f"[BlenderDaemon] Failed to build environment: {env_err}")
  
+                # --- Configure Scene Physics (PhysicsSimulationAgent Integration) ---
+                try:
+                    if PROJECT_DIR not in sys.path:
+                        sys.path.append(PROJECT_DIR)
+                    from physics_simulation import PhysicsSimulationAgent
+                    phys_agent = PhysicsSimulationAgent()
+                    mood_str = payload.get("mood", "neutral")
+                    phys_settings = phys_agent.get_simulation_settings(location_str, mood_str)
+                    
+                    # Apply gravity setting
+                    bpy.context.scene.use_gravity = True
+                    bpy.context.scene.gravity = (0.0, 0.0, phys_settings.get("gravity", -9.81))
+                    print(f"[BlenderDaemon] Physics settings applied. Gravity: {bpy.context.scene.gravity}")
+                    
+                    # Setup dynamic wind force field based on wind vector
+                    wind_v = phys_settings.get("wind_vector", [0.0, 0.0, 0.0])
+                    if sum(abs(x) for x in wind_v) > 0.01:
+                        wind_obj = bpy.data.objects.get("EnvWind")
+                        if not wind_obj:
+                            bpy.ops.object.effector_add(type='WIND', enter_editmode=False, align='WORLD', location=(0, 0, 10))
+                            wind_obj = bpy.context.active_object
+                            wind_obj.name = "EnvWind"
+                        
+                        import mathutils
+                        vec = mathutils.Vector(wind_v)
+                        wind_obj.rotation_mode = 'XYZ'
+                        wind_obj.rotation_euler = vec.to_track_quat('Z', 'Y').to_euler()
+                        wind_obj.field.strength = vec.length * 2.0
+                        print(f"[BlenderDaemon] EnvWind force field configured with strength: {wind_obj.field.strength}")
+                except Exception as phys_err:
+                    print(f"[BlenderDaemon] Failed to apply physics simulation settings: {phys_err}")
+ 
                 # --- Procedural Environmental Wind/Vegetation wiggles (V10 Physics) ---
                 try:
                     for obj in bpy.context.scene.objects:
