@@ -1869,3 +1869,22 @@ Replace basic camera coordinate wiggles with organic cinematographer profile sim
 * `ai/renderer/blender_daemon.py`
 * `test_subsystems.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-28 — Volumetric Weather and WebSocket Status Stream (Visual Atmospheric Upgrade)
+
+### Objective
+Implement script-driven fog scattering density and animated rain streak meshes in Blender, and add real-time WebSocket dashboard push streams.
+
+### Actions Taken
+1. **Procedural Weather:** Upgraded [environment_director.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender/engine/director/environment_director.py) to support volumetric scatter node configurations and spawned falling rain streak meshes.
+2. **WebSocket Dashboard:** Integrated `flask-socketio` into Flask applications, refactoring the system-status endpoint to push metrics over persistent WebSockets.
+3. **Verification:** Added test cases under [test_environment.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender/tests/unit/test_environment.py) and ran all unit tests successfully (**42/42 PASS**).
+
+### Files Changed
+* `engine/director/environment_director.py`
+* `backend/api/app.py`
+* `frontend/templates/status.html`
+* `tests/unit/test_environment.py`
+* `AI_HISTORY.md`

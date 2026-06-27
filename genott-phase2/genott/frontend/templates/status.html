@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GenOTT — Engine Status Dashboard</title>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -400,10 +401,9 @@
     }
   });
 
-  function updateDashboard() {
-    fetch('/api/system-status')
-      .then(res => res.json())
-      .then(data => {
+  const socket = io();
+
+  function renderData(data) {
         // Stats
         document.getElementById('cpu-val').innerText = data.system.cpu_usage + '%';
         document.getElementById('cpu-bar').style.width = data.system.cpu_usage + '%';
@@ -475,11 +475,11 @@
         gpuChart.data.datasets[0].data.shift();
         gpuChart.data.datasets[0].data.push(data.system.gpu_usage);
         gpuChart.update();
-      });
   }
 
-  setInterval(updateDashboard, 2000);
-  updateDashboard();
+  socket.on('status_update', (data) => {
+      renderData(data);
+  });
 </script>
 </body>
 </html>

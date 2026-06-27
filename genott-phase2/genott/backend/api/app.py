@@ -30,6 +30,8 @@ app = Flask(
     static_folder=os.path.join(BASE_DIR, 'frontend', 'static')
 )
 CORS(app)
+from flask_socketio import SocketIO, emit
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 
 # Initialize Architectures & Services
 char_library = CharacterLibrary(faces_dir=Config.FACES_DIR)
@@ -300,17 +302,14 @@ def api_delete_project(project_id):
 def gpu_status():
     return jsonify(get_pipeline_info())
 
-@app.route("/api/system-status", methods=["GET"])
-def api_system_status():
+def get_system_status_dict():
     import psutil
     import subprocess
     import shutil
     import torch
     
-    # Disk usage
     total, used, free = shutil.disk_usage("/")
     
-    # GPU stats (parse nvidia-smi if available)
     gpu_usage = 0
     gpu_temp = 0
     vram_used = 0
@@ -327,7 +326,7 @@ def api_system_status():
     except Exception:
         pass
         
-    status_data = {
+    return {
         "system": {
             "cpu_usage": psutil.cpu_percent(),
             "ram_usage": psutil.virtual_memory().percent,
@@ -375,11 +374,33 @@ def api_system_status():
             "warnings": []
         }
     }
-    return jsonify(status_data)
 
+@app.route("/api/system-status", methods=["GET"])
+def api_system_status():
+    return jsonify(get_system_status_dict())
+
+_broadcast_thread = None
+
+def status_broadcast_loop():
+    while True:
+        socketio.sleep(2.0)
+        try:
+            status = get_system_status_dict()
+            socketio.emit('status_update', status)
+        except Exception as e:
+            print(f"[WebSocket] Error in broadcast loop: {e}")
+
+@socketio.on('connect')
+def handle_connect():
+    global _broadcast_thread
+    print("[WebSocket] Client connected to status stream.")
+    emit('status_update', get_system_status_dict())
+    
+    if _broadcast_thread is None:
+        _broadcast_thread = socketio.start_background_task(status_broadcast_loop)
 
 
 if __name__ == "__main__":
     init_db()
     os.makedirs(Config.VIDEO_DIR, exist_ok=True)
-    app.run(debug=True, port=5000)
+    socketio.run(app, debug=True, port=5000, host="0.0.0.0")

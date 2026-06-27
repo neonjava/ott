@@ -40,6 +40,8 @@ app = Flask(
     static_folder=os.path.join(BASE_DIR, 'frontend', 'static')
 )
 CORS(app)
+from flask_socketio import SocketIO, emit
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 
 # Instantiate new engine subsystems
 asset_pipeline = AssetPipelineAgent()
@@ -1028,8 +1030,7 @@ def api_delete_project(project_id):
 def gpu_status():
     return jsonify(get_pipeline_info())
 
-@app.route("/api/system-status", methods=["GET"])
-def api_system_status():
+def get_system_status_dict():
     import psutil
     import subprocess
     import shutil
@@ -1053,7 +1054,7 @@ def api_system_status():
     except Exception:
         pass
         
-    status_data = {
+    return {
         "system": {
             "cpu_usage": psutil.cpu_percent(),
             "ram_usage": psutil.virtual_memory().percent,
@@ -1101,11 +1102,34 @@ def api_system_status():
             "warnings": []
         }
     }
-    return jsonify(status_data)
+
+@app.route("/api/system-status", methods=["GET"])
+def api_system_status():
+    return jsonify(get_system_status_dict())
+
+_broadcast_thread = None
+
+def status_broadcast_loop():
+    while True:
+        socketio.sleep(2.0)
+        try:
+            status = get_system_status_dict()
+            socketio.emit('status_update', status)
+        except Exception as e:
+            print(f"[WebSocket] Error in broadcast loop: {e}")
+
+@socketio.on('connect')
+def handle_connect():
+    global _broadcast_thread
+    print("[WebSocket] Client connected to status stream.")
+    emit('status_update', get_system_status_dict())
+    
+    if _broadcast_thread is None:
+        _broadcast_thread = socketio.start_background_task(status_broadcast_loop)
 
 
 if __name__ == "__main__":
     init_db()
     os.makedirs(Config.VIDEO_DIR, exist_ok=True)
     port = int(os.environ.get("FLASK_RUN_PORT", 5001))
-    app.run(debug=True, port=port)
+    socketio.run(app, debug=True, port=port, host="0.0.0.0")

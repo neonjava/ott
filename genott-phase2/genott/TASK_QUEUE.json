@@ -1,0 +1,42 @@
+[
+  {
+    "id": "websockets_dashboard",
+    "title": "Implement WebSockets for Real-Time Status Updates",
+    "priority": "HIGH",
+    "impact": "HIGH",
+    "estimated_effort": "Medium",
+    "dependencies": [],
+    "assigned_agent": "Backend & Frontend Agents",
+    "status": "COMPLETED"
+  },
+  {
+    "id": "secondary_physics_solver",
+    "title": "Implement Secondary Physics Solver Layer (Cloth/Wind Dynamics)",
+    "priority": "HIGH",
+    "impact": "HIGH",
+    "estimated_effort": "Medium",
+    "dependencies": [],
+    "assigned_agent": "Rendering & Character Agents",
+    "status": "READY"
+  },
+  {
+    "id": "camera_collision_avoidance",
+    "title": "Implement Camera Obstacle Collision Avoidance",
+    "priority": "MEDIUM",
+    "impact": "Medium",
+    "estimated_effort": "Medium",
+    "dependencies": [],
+    "assigned_agent": "Camera Agent",
+    "status": "READY"
+  },
+  {
+    "id": "fluid_simulation_refinement",
+    "title": "Integrate Fluid Simulation Caching in Rendering Pipeline",
+    "priority": "MEDIUM",
+    "impact": "Medium",
+    "estimated_effort": "Low",
+    "dependencies": [],
+    "assigned_agent": "Pipeline Agent",
+    "status": "READY"
+  }
+]
