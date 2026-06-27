@@ -983,11 +983,15 @@ class RenderHandler(BaseHTTPRequestHandler):
                             if hasattr(camera.animation_data.action, "fcurves"):
                                 for fcurve in camera.animation_data.action.fcurves:
                                     for kp in fcurve.keyframe_points:
-                                        kp.interpolation = "CONSTANT"
+                                        kp.interpolation = "BEZIER"
+                                        kp.handle_left_type = "AUTO_CLAMPED"
+                                        kp.handle_right_type = "AUTO_CLAMPED"
                             elif hasattr(camera.animation_data.action, "curves"):
                                 for curve in camera.animation_data.action.curves:
                                     for kp in curve.keyframe_points:
-                                        kp.interpolation = "CONSTANT"
+                                        kp.interpolation = "BEZIER"
+                                        kp.handle_left_type = "AUTO_CLAMPED"
+                                        kp.handle_right_type = "AUTO_CLAMPED"
                         except Exception as interp_err:
                             print(f"[BlenderDaemon] Failed to set camera keyframe interpolation: {interp_err}")
                 else:
