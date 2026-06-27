@@ -1,4 +1,7 @@
-import bpy
+try:
+    import bpy
+except ImportError:
+    bpy = None
 import sys
 import os
 import json
@@ -281,6 +284,61 @@ def customize_character(character_name: str, held_item: str = None, outfits: Lis
                 if pants_mat:
                     pants_mat.use_nodes = False
                     pants_mat.diffuse_color = (0.22, 0.15, 0.1, 1.0) # dark brown boots
+
+def apply_secondary_physics_solver(armature, duration_frames, fps, wind_vector=[0.0, 0.0, 0.0], motion_mult=1.0):
+    """
+    Applies a spring-mass-damper physics solver to secondary bones (hair, cape, cloth).
+    Computes lag, inertia, and wind force displacements frame-by-frame.
+    """
+    if not armature or not armature.pose:
+        return
+        
+    import math
+    import random
+    
+    secondary_bones = []
+    for bone in armature.pose.bones:
+        name_lower = bone.name.lower()
+        if any(k in name_lower for k in ["hair", "cape", "skirt", "cloth", "coat", "tail", "wing", "feather"]):
+            secondary_bones.append(bone)
+            
+    if not secondary_bones:
+        return
+        
+    print(f"[PhysicsSolver] Applying secondary physics on: {[b.name for b in secondary_bones]}")
+    
+    states = {}
+    for bone in secondary_bones:
+        states[bone.name] = {
+            "theta_x": 0.0, "vel_x": 0.0,
+            "theta_y": 0.0, "vel_y": 0.0,
+            "seed": random.uniform(0, 100)
+        }
+        
+    k = 15.0 # spring stiffness
+    c = 2.5  # damping coefficient
+    dt = 1.0 / fps
+    
+    for f in range(1, duration_frames + 1):
+        wind_force_x = wind_vector[0] * 0.02 + 0.08 * math.sin(f * 0.15) * motion_mult
+        wind_force_y = wind_vector[1] * 0.02 + 0.08 * math.cos(f * 0.12) * motion_mult
+        
+        for bone in secondary_bones:
+            state = states[bone.name]
+            
+            acc_x = -k * state["theta_x"] - c * state["vel_x"] + wind_force_x
+            state["vel_x"] += acc_x * dt
+            state["theta_x"] += state["vel_x"] * dt
+            
+            acc_y = -k * state["theta_y"] - c * state["vel_y"] + wind_force_y
+            state["vel_y"] += acc_y * dt
+            state["theta_y"] += state["vel_y"] * dt
+            
+            bone.rotation_mode = 'XYZ'
+            bone.rotation_euler.x = state["theta_x"]
+            bone.rotation_euler.y = state["theta_y"]
+            
+            bone.keyframe_insert(data_path="rotation_euler", frame=f)
 
 def apply_emotion_posture(armature, mood: str, f_start: int, f_end: int):
     if not armature: return
@@ -591,7 +649,7 @@ class RenderHandler(BaseHTTPRequestHandler):
                     env_seed = build_environment_in_blender(env_config, ref_pos, weather_str, props_list, assets_list, env_seed=env_seed)
                 except Exception as env_err:
                     print(f"[BlenderDaemon] Failed to build environment: {env_err}")
- 
+                phys_settings = {}
                 # --- Configure Scene Physics (PhysicsSimulationAgent Integration) ---
                 try:
                     if PROJECT_DIR not in sys.path:
@@ -874,6 +932,18 @@ class RenderHandler(BaseHTTPRequestHandler):
                         apply_emotion_posture(char_armature, mood_str, 1, int(duration * fps))
                     except Exception as mood_err:
                         print(f"[BlenderDaemon] Failed to apply posture to {char_name}: {mood_err}")
+                        
+                    # Apply secondary physics solver (cloth, wind, hair)
+                    try:
+                        apply_secondary_physics_solver(
+                            char_armature, 
+                            int(duration * fps), 
+                            fps, 
+                            wind_vector=phys_settings.get("wind_vector", [0.0, 0.0, 0.0]),
+                            motion_mult=phys_settings.get("secondary_motion_multiplier", 1.0)
+                        )
+                    except Exception as phys_solve_err:
+                        print(f"[BlenderDaemon] Failed to apply secondary physics to {char_name}: {phys_solve_err}")
                         
                     # Apply shape key animations (emotions & visemes)
                     viseme_timeline = char_data.get("viseme_timeline", None)

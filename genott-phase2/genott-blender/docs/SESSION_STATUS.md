@@ -1,8 +1,8 @@
-# Session Status — V21 Real-Time Status & Weather Controls
+# Session Status — V22 Dynamic Physics & Weather Controls
 
 ## 🚀 Active Visual Target
-* **Completed Task**: WebSockets for real-time status dashboard stream; Procedural Weather & Volumetric Controls.
-* **Objective**: Enable instant WebSocket pushing of GPU/CPU/Memory stats and Milestones, and implement falling rain streaks & volumetric fog density.
+* **Completed Task**: Secondary Physics Solver (Cloth/Hair/Wind dynamic bone wiggles).
+* **Objective**: Calculate frame-by-frame spring-mass-damper oscillations reactively to environment wind force vectors.
 * **Status**: Completed & Verified.
 
 ## 🏛️ Project Release State
@@ -10,4 +10,4 @@
 * **Last Build Verification**: 42/42 unit tests pass.
 
 ## 🔮 Next Priority Target
-* **Secondary Physics Solver**: Integrate clothing & hair dynamics solver to add natural overlapping motion under external wind vectors.
+* **Camera Collision Avoidance**: Implement camera obstacle detection and layout safety offsets.

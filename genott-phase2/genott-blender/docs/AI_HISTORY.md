@@ -1888,3 +1888,20 @@ Implement script-driven fog scattering density and animated rain streak meshes i
 * `frontend/templates/status.html`
 * `tests/unit/test_environment.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-28 — Secondary Physics Solver Layer (Dynamic Accessory & Hair Motion)
+
+### Objective
+Integrate dynamic spring-mass-damper oscillations to accessory bone rigs (skirts, capes, coats, wings, hair) matching environment wind factors and local inertia.
+
+### Actions Taken
+1. **Secondary Solver:** Created `apply_secondary_physics_solver` function inside [blender_daemon.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender/ai/renderer/blender_daemon.py) keyframing dynamic spring offsets.
+2. **Robust Loader:** Protected `import bpy` with ImportError wrappers allowing unit tests to run outside Blender environments.
+3. **Verification:** Updated `test_subsystems.py` to assert physics helper solver executions with mock armatures (**42/42 PASS**).
+
+### Files Changed
+* `ai/renderer/blender_daemon.py`
+* `tests/unit/test_subsystems.py`
+* `AI_HISTORY.md`

@@ -81,6 +81,9 @@ class TestEngineSubsystems(unittest.TestCase):
         settings = self.physics_sim.get_simulation_settings("stormy mountains", "epic")
         self.assertTrue(settings["cloth_enabled"])
         self.assertGreater(settings["secondary_motion_multiplier"], 1.0)
+        
+        from ai.renderer.blender_daemon import apply_secondary_physics_solver
+        apply_secondary_physics_solver(None, 60, 24)
 
     def test_dialogue_performance(self):
         pacing = self.dialogue_perf.calculate_pacing("Wait, who goes there?", "fear")

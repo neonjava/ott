@@ -1,17 +1,15 @@
-# Next Session Handoff — V21 Real-Time Status & Weather Controls
+# Next Session Handoff — V22 Dynamic Physics Solver
 
 ## 🏛️ Current Architecture
-* **Frontend**: Includes Socket.IO WebSockets client under `frontend/templates/status.html` streaming real-time status.
-* **Backend**: Flask endpoints serving Socket.IO background broadcast threads running on eventlet servers.
-* **Engine**: [environment_director.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender/engine/director/environment_director.py) now has built-in dynamic volumetric fog scatter and falling rain streak cylinders.
+* **Engine**: [blender_daemon.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender/ai/renderer/blender_daemon.py) features a spring-mass-damper physics solver for secondary joints (capes, hair, skirts, tails) reactively responding to environmental wind parameters.
+* **Imports**: Wrapped `import bpy` in `blender_daemon.py` with ImportError protection allowing standard python imports during unit test suites.
 
 ## 🛠️ Completed Work
-1. **Procedural Weather**: Dynamically adjusts World Volume Scatter density and animates falling rain cylinders.
-2. **WebSocket Dashboard**: Streamlined server statistics broadcast loops.
-3. **Verification**: 42/42 unit tests pass.
+1. **Secondary Physics Solver**: Successfully keyframes inertial lagging rotations on accessory/hair bone rigs.
+2. **Verification**: 42/42 unit tests pass.
 
 ## 🔮 Remaining Blockers
-* **Secondary Physics**: Hair/Clothing dynamics could be enhanced with responsive procedural solver layers.
+* **Camera Collision**: Camera coordinates need obstacle collision checks.
 
 ## 🎯 Exact Next Engineering Task
-1. **Secondary Physics Solver**: Integrate clothing & hair dynamics solver to add natural overlapping motion under external wind vectors.
+1. **Camera Collision Avoidance**: Implement camera obstacle detection and layout safety offsets.
