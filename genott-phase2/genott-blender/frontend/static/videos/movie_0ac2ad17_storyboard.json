@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "hero",
+            "action": "talk",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "Hero runs and says: \"Follow me!\""
+        }
+    ],
+    "transitions": []
+}

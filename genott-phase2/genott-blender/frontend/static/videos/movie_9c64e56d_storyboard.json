@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "forest",
+            "character": "hero",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "slow",
+            "sentence": "Hero walks slowly through the forest."
+        }
+    ],
+    "transitions": []
+}

@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "hero",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal",
+            "sentence": "Hero says: \"Victory is ours!\" Hero waves."
+        }
+    ],
+    "transitions": []
+}

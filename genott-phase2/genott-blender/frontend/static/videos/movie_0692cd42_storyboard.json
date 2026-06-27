@@ -1,0 +1,85 @@
+{
+    "scenes": [
+        {
+            "location": "forest",
+            "character": "knight",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "knight walks through the forest."
+        },
+        {
+            "location": "cave",
+            "character": "knight",
+            "action": "enter",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "knight enters cave."
+        },
+        {
+            "location": "cave",
+            "character": "knight",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal",
+            "sentence": "knight attacks the dragon."
+        },
+        {
+            "location": "cave",
+            "character": "knight",
+            "action": "duck",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "knight ducks behind rocks."
+        },
+        {
+            "location": "cave",
+            "character": "knight",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "knight strikes final blow."
+        },
+        {
+            "location": "cave",
+            "character": "knight",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "triumphant",
+            "speed": "normal",
+            "sentence": "knight stands victorious."
+        },
+        {
+            "location": "castle",
+            "character": "knight",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "knight returns to castle."
+        },
+        {
+            "location": "throne",
+            "character": "knight",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "knight sits on throne."
+        }
+    ],
+    "transitions": [
+        "fade",
+        "cut",
+        "cut",
+        "cut",
+        "cut",
+        "fade",
+        "fade"
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "canyon",
+            "character": "humanoid",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        },
+        {
+            "location": "canyon",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "triumphant",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

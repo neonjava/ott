@@ -1,0 +1,20 @@
+{
+    "movie_id": "e68fdd82-d583-4771-b609-d67ca994e968",
+    "name": "Untitled Movie",
+    "scenes": {
+        "9b2dab2d-99e3-4382-97a9-8ba3e338bb39": {
+            "uuid": "9b2dab2d-99e3-4382-97a9-8ba3e338bb39",
+            "name": "Intro Scene",
+            "script": "Hero leaps into the dynamic fog",
+            "shots": {
+                "3e7faa2e-73fd-44f1-810d-13562958dc97": {
+                    "uuid": "3e7faa2e-73fd-44f1-810d-13562958dc97",
+                    "camera_shot": "wide_shot",
+                    "duration": 3.5,
+                    "status": "pending"
+                }
+            }
+        }
+    },
+    "metadata": {}
+}

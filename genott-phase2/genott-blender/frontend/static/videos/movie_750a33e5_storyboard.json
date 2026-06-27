@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "hero",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "hero jumps over obstacle"
+        }
+    ],
+    "transitions": []
+}

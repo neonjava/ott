@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "warehouse",
+            "character": "humanoid",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "agent says 'the package is secure' in the warehouse."
+        }
+    ],
+    "transitions": []
+}

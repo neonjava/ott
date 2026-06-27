@@ -1,0 +1,45 @@
+{
+    "scenes": [
+        {
+            "location": "jungle",
+            "character": "humanoid",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "explorer walks in the jungle."
+        },
+        {
+            "location": "jungle",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "explorer climbs the cliff."
+        },
+        {
+            "location": "jungle",
+            "character": "humanoid",
+            "action": "discover",
+            "camera": "medium_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "explorer finds the relic."
+        },
+        {
+            "location": "jungle",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "explorer runs away."
+        }
+    ],
+    "transitions": [
+        "fade",
+        "fade",
+        "fade"
+    ]
+}

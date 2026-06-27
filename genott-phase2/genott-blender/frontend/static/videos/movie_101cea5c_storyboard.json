@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "library",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

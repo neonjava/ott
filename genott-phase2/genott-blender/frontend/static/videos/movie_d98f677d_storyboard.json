@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "forest",
+            "character": "fox",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "slow"
+        }
+    ],
+    "transitions": []
+}

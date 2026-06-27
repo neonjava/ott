@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "canyon",
+            "character": "humanoid",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "adventurer jumps across the canyon."
+        },
+        {
+            "location": "canyon",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "triumphant",
+            "speed": "normal",
+            "sentence": "adventurer stands proud."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

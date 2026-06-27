@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "beach",
+            "character": "humanoid",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "traveler_16 walks on the beach."
+        },
+        {
+            "location": "beach",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "traveler_16 watches the sunset."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

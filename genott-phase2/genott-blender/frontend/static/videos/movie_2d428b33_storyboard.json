@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "castle wall",
+            "character": "queen",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal",
+            "sentence": "queen waves from the castle wall."
+        },
+        {
+            "location": "throne room",
+            "character": "queen",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "queen walks into the throne room."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

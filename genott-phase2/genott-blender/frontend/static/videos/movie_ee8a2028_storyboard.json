@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "shadows",
+            "character": "assassin",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal"
+        },
+        {
+            "location": "shadows",
+            "character": "assassin",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

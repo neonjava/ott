@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "city",
+            "character": "guard",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "cop stands guard in the city."
+        }
+    ],
+    "transitions": []
+}

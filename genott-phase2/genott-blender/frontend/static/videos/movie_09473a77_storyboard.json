@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "crowd",
+            "character": "mage",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal",
+            "sentence": "Mage waves to the crowd."
+        }
+    ],
+    "transitions": []
+}

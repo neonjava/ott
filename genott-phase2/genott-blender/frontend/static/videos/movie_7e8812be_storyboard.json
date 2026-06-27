@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "arena",
+            "character": "humanoid",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "fighter punches the air in the arena."
+        },
+        {
+            "location": "arena",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "triumphant",
+            "speed": "normal",
+            "sentence": "fighter stands victorious."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

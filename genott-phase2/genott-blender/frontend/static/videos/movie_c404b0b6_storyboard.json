@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "bridge",
+            "character": "hero",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "Hero runs across the bridge."
+        }
+    ],
+    "transitions": []
+}

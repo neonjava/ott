@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "field",
+            "character": "humanoid",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

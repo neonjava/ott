@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "dungeon",
+            "character": "mage",
+            "action": "duck",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

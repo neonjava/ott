@@ -73,7 +73,7 @@ def main():
         if not os.path.exists(model_path) or os.path.getsize(model_path) < 100:
             missing_assets.append(f"Missing model asset {model_name} for {char_id}")
         
-        face_path = os.path.join(project_dir, "static", "faces", f"{char_id}.png")
+        face_path = os.path.join(project_dir, "frontend", "static", "faces", f"{char_id}.png")
         if not os.path.exists(face_path):
             missing_assets.append(f"Missing face asset {char_id}.png")
 
@@ -127,6 +127,8 @@ def main():
                 
                 # Verify video file
                 movie_path = data.get("movie", "").lstrip("/")
+                if movie_path.startswith("static/") and not os.path.exists(movie_path):
+                    movie_path = os.path.join("frontend", movie_path)
                 movie_exists = os.path.exists(movie_path)
                 
                 playable = False

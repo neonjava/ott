@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "castle",
+            "character": "humanoid",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "mysterious",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "humanoid",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        },
+        {
+            "location": "city",
+            "character": "humanoid",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

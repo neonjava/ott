@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "beach",
+            "character": "humanoid",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal",
+            "sentence": "anime_girl_11 waves cheerfully on the beach."
+        },
+        {
+            "location": "cave",
+            "character": "humanoid",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "anime_girl_11 jumps into the cave."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

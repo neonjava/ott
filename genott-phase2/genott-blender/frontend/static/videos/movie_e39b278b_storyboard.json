@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "arena",
+            "character": "humanoid",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal"
+        },
+        {
+            "location": "arena",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "triumphant",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

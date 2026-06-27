@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "museum",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        },
+        {
+            "location": "alley",
+            "character": "humanoid",
+            "action": "duck",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

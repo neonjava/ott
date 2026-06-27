@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "close up factory",
+            "character": "hero",
+            "action": "jump",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

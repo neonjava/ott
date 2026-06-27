@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "gym",
+            "character": "humanoid",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "fighter kicks the target in the gym."
+        },
+        {
+            "location": "coach",
+            "character": "humanoid",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal",
+            "sentence": "fighter waves to coach."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

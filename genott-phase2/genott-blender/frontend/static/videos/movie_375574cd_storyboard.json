@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "arena",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "rebel throws a grenade in the arena."
+        },
+        {
+            "location": "safety",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "rebel runs to safety."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

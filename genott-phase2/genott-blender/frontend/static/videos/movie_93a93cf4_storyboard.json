@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "panic in the street",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "witness runs in panic in the street."
+        }
+    ],
+    "transitions": []
+}

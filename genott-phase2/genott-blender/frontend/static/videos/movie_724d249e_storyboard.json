@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "shadows",
+            "character": "assassin",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "assassin walks silently in the shadows."
+        },
+        {
+            "location": "shadows",
+            "character": "assassin",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "assassin strikes."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

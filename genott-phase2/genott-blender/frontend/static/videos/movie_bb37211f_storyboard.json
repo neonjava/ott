@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "beach",
+            "character": "humanoid",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal"
+        },
+        {
+            "location": "cave",
+            "character": "humanoid",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

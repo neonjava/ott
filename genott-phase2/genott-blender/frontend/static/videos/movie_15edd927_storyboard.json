@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "crowd",
+            "character": "robot",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal",
+            "sentence": "Robot waves to the crowd."
+        }
+    ],
+    "transitions": []
+}

@@ -1,8 +1,8 @@
-# Session Status — V19 Environment Interaction Engine
+# Session Status — V20 Clean Production Repository Layout
 
 ## 🚀 Active Visual Target
-* **Current Task**: EnvironmentInteractionEngine / interaction realism.
-* **Objective**: Enable characters to intelligently interact with surroundings (sitting, picking up/placing, obstacle avoidance paths, weight lean comp, hand reach targets).
+* **Current Task**: Repository Architecture Refactoring.
+* **Objective**: Re-organize modules into a production-grade layout (backend/, frontend/, engine/, pipeline/) while maintaining 100% backwards-compatibility and passing all unit/benchmark suites.
 * **Status**: Completed & Verified.
 
 ## 🏛️ Project Release State

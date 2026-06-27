@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "forest",
+            "character": "humanoid",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "slow",
+            "sentence": "elf walks slowly in the forest."
+        },
+        {
+            "location": "forest",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "elf shoots an arrow."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

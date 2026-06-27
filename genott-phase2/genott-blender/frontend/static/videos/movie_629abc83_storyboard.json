@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "city",
+            "character": "humanoid",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "school_girl walks home in the city."
+        },
+        {
+            "location": "city",
+            "character": "humanoid",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal",
+            "sentence": "school_girl waves goodbye."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

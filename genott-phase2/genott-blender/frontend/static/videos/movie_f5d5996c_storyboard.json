@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "ship",
+            "character": "humanoid",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal"
+        },
+        {
+            "location": "ship",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

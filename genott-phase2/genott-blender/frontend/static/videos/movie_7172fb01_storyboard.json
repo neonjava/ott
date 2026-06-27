@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "library",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "stranger stands idle in the library."
+        }
+    ],
+    "transitions": []
+}

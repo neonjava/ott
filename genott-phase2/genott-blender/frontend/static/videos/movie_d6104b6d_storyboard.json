@@ -1,0 +1,55 @@
+{
+    "scenes": [
+        {
+            "location": "city streets",
+            "character": "robot",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "robot runs through the city streets."
+        },
+        {
+            "location": "warehouse",
+            "character": "robot",
+            "action": "enter",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "robot enters the warehouse."
+        },
+        {
+            "location": "warehouse",
+            "character": "robot",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal",
+            "sentence": "robot attacks the security drone."
+        },
+        {
+            "location": "warehouse",
+            "character": "robot",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "robot jumps out the window."
+        },
+        {
+            "location": "ruins",
+            "character": "robot",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "robot escapes to ruins."
+        }
+    ],
+    "transitions": [
+        "fade",
+        "cut",
+        "cut",
+        "fade"
+    ]
+}

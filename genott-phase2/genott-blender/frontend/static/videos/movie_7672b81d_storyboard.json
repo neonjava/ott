@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "cave",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "fast",
+            "sentence": "orc runs quickly in the cave."
+        }
+    ],
+    "transitions": []
+}

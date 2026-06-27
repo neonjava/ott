@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "establishing shot manor",
+            "character": "humanoid",
+            "action": "talk",
+            "camera": "establishing_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

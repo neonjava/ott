@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "ruins",
+            "character": "humanoid",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal"
+        },
+        {
+            "location": "ruins",
+            "character": "hero",
+            "action": "duck",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

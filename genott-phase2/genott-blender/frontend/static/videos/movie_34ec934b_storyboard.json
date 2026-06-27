@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "desert",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

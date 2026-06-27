@@ -1,0 +1,55 @@
+{
+    "scenes": [
+        {
+            "location": "magic laboratory",
+            "character": "mage",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "mage walks into the magic laboratory."
+        },
+        {
+            "location": "magic laboratory",
+            "character": "mage",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "mage reads the scrolls."
+        },
+        {
+            "location": "magic laboratory",
+            "character": "mage",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "mage casts a spell."
+        },
+        {
+            "location": "apprentice",
+            "character": "mage",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal",
+            "sentence": "mage waves to the apprentice."
+        },
+        {
+            "location": "forest",
+            "character": "mage",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "mage exits to the forest."
+        }
+    ],
+    "transitions": [
+        "cut",
+        "cut",
+        "fade",
+        "fade"
+    ]
+}

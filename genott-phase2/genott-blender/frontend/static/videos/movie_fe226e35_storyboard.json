@@ -1,0 +1,12 @@
+{
+    "scenes": [
+        {
+            "location": "air",
+            "character": "hero",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ]
+}

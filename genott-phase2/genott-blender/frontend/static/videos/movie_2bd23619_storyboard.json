@@ -1,0 +1,85 @@
+{
+    "scenes": [
+        {
+            "location": "city",
+            "character": "robot",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "robot runs fast through the city."
+        },
+        {
+            "location": "factory",
+            "character": "robot",
+            "action": "enter",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "robot enters factory."
+        },
+        {
+            "location": "factory",
+            "character": "robot",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal",
+            "sentence": "robot attacks the security guards."
+        },
+        {
+            "location": "gears",
+            "character": "robot",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "robot jumps across gears."
+        },
+        {
+            "location": "gears",
+            "character": "robot",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "robot destroys control panel."
+        },
+        {
+            "location": "roof",
+            "character": "robot",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "robot runs to roof."
+        },
+        {
+            "location": "roof",
+            "character": "robot",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "robot jumps off."
+        },
+        {
+            "location": "roof",
+            "character": "robot",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "triumphant",
+            "speed": "normal",
+            "sentence": "robot stands victorious."
+        }
+    ],
+    "transitions": [
+        "fade",
+        "cut",
+        "fade",
+        "cut",
+        "fade",
+        "cut",
+        "cut"
+    ]
+}

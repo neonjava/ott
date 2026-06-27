@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "castle",
+            "character": "humanoid",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "mage_12 says 'behold the fire magic' in the castle."
+        }
+    ],
+    "transitions": []
+}

@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "park",
+            "character": "humanoid",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "informant whispers in the park."
+        },
+        {
+            "location": "park",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "informant runs away."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

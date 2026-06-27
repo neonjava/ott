@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "cave",
+            "character": "humanoid",
+            "action": "discover",
+            "camera": "medium_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        },
+        {
+            "location": "cave",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

@@ -1,0 +1,32 @@
+{
+    "scenes": [
+        {
+            "location": "forest",
+            "character": "hero",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal"
+        },
+        {
+            "location": "castle",
+            "character": "hero",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal"
+        },
+        {
+            "location": "city",
+            "character": "hero",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade",
+        "white"
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "wide shot warehouse",
+            "character": "humanoid",
+            "action": "talk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

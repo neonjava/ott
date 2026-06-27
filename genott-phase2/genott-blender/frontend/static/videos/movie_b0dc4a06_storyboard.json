@@ -1,0 +1,35 @@
+{
+    "scenes": [
+        {
+            "location": "n ancient ruins",
+            "character": "knight",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "A noble Knight stands in an ancient ruins."
+        },
+        {
+            "location": "n ancient ruins",
+            "character": "knight",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "slow",
+            "sentence": "He walks slowly forward."
+        },
+        {
+            "location": "n ancient dragon",
+            "character": "knight",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal",
+            "sentence": "suddenly he discovers an ancient dragon and attacks it with his sword."
+        }
+    ],
+    "transitions": [
+        "fade",
+        "fade"
+    ]
+}

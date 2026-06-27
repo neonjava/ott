@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "village",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "anime_girl_10 stands still in the village."
+        }
+    ],
+    "transitions": []
+}

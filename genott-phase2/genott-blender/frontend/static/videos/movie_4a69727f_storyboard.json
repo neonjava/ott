@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "dojo",
+            "character": "humanoid",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "sensei says 'focus your energy' in the dojo."
+        }
+    ],
+    "transitions": []
+}

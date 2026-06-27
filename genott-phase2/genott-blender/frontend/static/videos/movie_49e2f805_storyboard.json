@@ -1,0 +1,55 @@
+{
+    "scenes": [
+        {
+            "location": "forest",
+            "character": "knight",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "knight walks through the forest."
+        },
+        {
+            "location": "dark cave",
+            "character": "knight",
+            "action": "enter",
+            "camera": "tracking_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "knight enters the dark cave."
+        },
+        {
+            "location": "dark cave",
+            "character": "knight",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal",
+            "sentence": "knight attacks the dragon."
+        },
+        {
+            "location": "mountain peak",
+            "character": "knight",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "triumphant",
+            "speed": "normal",
+            "sentence": "knight stands victorious on the mountain peak."
+        },
+        {
+            "location": "kingdom",
+            "character": "knight",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "knight returns to the kingdom."
+        }
+    ],
+    "transitions": [
+        "fade",
+        "fade",
+        "fade",
+        "fade"
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "ruins",
+            "character": "soldier",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "mysterious",
+            "speed": "normal"
+        },
+        {
+            "location": "ruins",
+            "character": "soldier",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

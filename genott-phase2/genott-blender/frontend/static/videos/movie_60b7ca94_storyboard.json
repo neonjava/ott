@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "factory",
+            "character": "hero",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "hero jumps over the fire in the factory."
+        }
+    ],
+    "transitions": []
+}

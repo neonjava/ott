@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "beach",
+            "character": "humanoid",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        },
+        {
+            "location": "beach",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

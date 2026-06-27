@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "ruins",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "soldier_1 runs through the ruins."
+        },
+        {
+            "location": "ruins",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "soldier_1 fires a weapon."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

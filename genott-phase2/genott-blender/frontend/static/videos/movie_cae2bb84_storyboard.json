@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "manor",
+            "character": "humanoid",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "butler says 'dinner is served' in the manor."
+        }
+    ],
+    "transitions": []
+}

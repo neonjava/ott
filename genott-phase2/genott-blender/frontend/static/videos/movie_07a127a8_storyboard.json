@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "beach",
+            "character": "anime_girl",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal"
+        },
+        {
+            "location": "cave",
+            "character": "anime_girl",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

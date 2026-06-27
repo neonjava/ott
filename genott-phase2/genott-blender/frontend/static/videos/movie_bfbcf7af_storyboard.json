@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "mountain peak",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "epic",
+            "speed": "normal",
+            "sentence": "hiker stands on the mountain peak."
+        }
+    ],
+    "transitions": []
+}

@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "fog",
+            "character": "humanoid",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        },
+        {
+            "location": "fog",
+            "character": "humanoid",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

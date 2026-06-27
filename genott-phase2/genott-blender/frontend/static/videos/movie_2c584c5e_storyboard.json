@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "hero",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal",
+            "sentence": "Hero attacks the enemy."
+        },
+        {
+            "location": "environment",
+            "character": "hero",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "Hero says: \"Take that!\""
+        }
+    ],
+    "transitions": [
+        "cut"
+    ]
+}

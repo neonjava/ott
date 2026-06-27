@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "desert",
+            "character": "robot",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "slow",
+            "sentence": "robot walks slowly in the desert."
+        }
+    ],
+    "transitions": []
+}

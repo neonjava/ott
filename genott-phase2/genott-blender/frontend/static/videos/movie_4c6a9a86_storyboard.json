@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "close up car",
+            "character": "humanoid",
+            "action": "jump",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

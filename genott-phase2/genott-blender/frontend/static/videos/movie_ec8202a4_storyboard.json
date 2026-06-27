@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "city",
+            "character": "robot",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "robot runs fast through the city."
+        }
+    ],
+    "transitions": []
+}

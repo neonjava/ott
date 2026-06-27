@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "village",
+            "character": "anime_boy",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

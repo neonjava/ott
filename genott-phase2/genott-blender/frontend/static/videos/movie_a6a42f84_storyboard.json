@@ -1,0 +1,35 @@
+{
+    "scenes": [
+        {
+            "location": "forest",
+            "character": "knight",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "sad",
+            "speed": "normal",
+            "sentence": "A lonely knight loses faith in the forest."
+        },
+        {
+            "location": "n ancient dragon in",
+            "character": "knight",
+            "action": "discover",
+            "camera": "medium_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "The knight discovers an ancient dragon in the forest."
+        },
+        {
+            "location": "dragon",
+            "character": "knight",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal",
+            "sentence": "The knight waves at the dragon."
+        }
+    ],
+    "transitions": [
+        "fade",
+        "fade"
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "cave",
+            "character": "humanoid",
+            "action": "discover",
+            "camera": "medium_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "archaeologist finds the relic in the cave."
+        },
+        {
+            "location": "cave",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "archaeologist runs away."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

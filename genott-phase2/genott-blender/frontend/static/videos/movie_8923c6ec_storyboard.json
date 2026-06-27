@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "arena",
+            "character": "robot",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

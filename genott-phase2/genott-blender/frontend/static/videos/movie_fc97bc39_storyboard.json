@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "arena",
+            "character": "hero",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        },
+        {
+            "location": "arena",
+            "character": "hero",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "cut"
+    ]
+}

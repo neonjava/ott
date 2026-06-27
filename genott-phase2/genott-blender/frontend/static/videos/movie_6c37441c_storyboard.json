@@ -1,0 +1,35 @@
+{
+    "scenes": [
+        {
+            "location": "forest",
+            "character": "hero",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "hero walks forward in the forest."
+        },
+        {
+            "location": "castle",
+            "character": "hero",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "hero jumps in the castle."
+        },
+        {
+            "location": "city",
+            "character": "hero",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal",
+            "sentence": "hero attacks in the city."
+        }
+    ],
+    "transitions": [
+        "fade",
+        "white"
+    ]
+}

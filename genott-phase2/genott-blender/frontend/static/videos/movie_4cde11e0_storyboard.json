@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "air",
+            "character": "hero",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "hero says 'Let's fly' and jumps into the air"
+        }
+    ],
+    "transitions": []
+}

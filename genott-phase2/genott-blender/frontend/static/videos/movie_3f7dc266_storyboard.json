@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "mountain",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "triumphant",
+            "speed": "normal",
+            "sentence": "knight_18 stands victorious on the mountain."
+        },
+        {
+            "location": "castle",
+            "character": "humanoid",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "knight_18 walks into the castle."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

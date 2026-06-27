@@ -1,0 +1,12 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "knight",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ]
+}

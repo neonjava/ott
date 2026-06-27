@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "wide shot mountains",
+            "character": "humanoid",
+            "action": "talk",
+            "camera": "wide_shot",
+            "mood": "epic",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

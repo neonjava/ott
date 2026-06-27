@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "city",
+            "character": "anime_girl",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

@@ -1,0 +1,12 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "mage",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal"
+        }
+    ]
+}

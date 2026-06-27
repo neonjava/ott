@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "humanoid",
+            "action": "discover",
+            "camera": "medium_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        },
+        {
+            "location": "environment",
+            "character": "humanoid",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

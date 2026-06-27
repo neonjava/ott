@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "fog",
+            "character": "humanoid",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "shadowy_figure walks in the fog."
+        },
+        {
+            "location": "fog",
+            "character": "humanoid",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal",
+            "sentence": "shadowy_figure attacks."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

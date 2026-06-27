@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "ruins",
+            "character": "humanoid",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal",
+            "sentence": "dragon attacks in the ruins."
+        },
+        {
+            "location": "ruins",
+            "character": "hero",
+            "action": "duck",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "hero ducks behind a stone."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

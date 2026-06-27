@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "castle",
+            "character": "mage",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "mage says 'behold the fire magic' in the castle."
+        },
+        {
+            "location": "wide shot forest",
+            "character": "mage",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "mage stands in the wide shot forest."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

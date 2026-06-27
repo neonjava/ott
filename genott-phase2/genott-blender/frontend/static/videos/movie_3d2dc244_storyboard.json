@@ -1,0 +1,32 @@
+{
+    "scenes": [
+        {
+            "location": "forest",
+            "character": "knight",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "sad",
+            "speed": "normal"
+        },
+        {
+            "location": "n ancient dragon in",
+            "character": "knight",
+            "action": "discover",
+            "camera": "medium_shot",
+            "mood": "mysterious",
+            "speed": "normal"
+        },
+        {
+            "location": "dragon",
+            "character": "knight",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade",
+        "fade"
+    ]
+}

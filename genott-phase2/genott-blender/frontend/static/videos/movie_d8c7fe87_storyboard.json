@@ -1,0 +1,12 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "knight",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "close up desert",
+            "character": "robot",
+            "action": "walk",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "slow"
+        }
+    ],
+    "transitions": []
+}

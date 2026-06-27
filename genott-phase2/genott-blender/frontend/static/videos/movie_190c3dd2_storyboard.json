@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "sea",
+            "character": "humanoid",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "captain says 'steer west' in the sea."
+        }
+    ],
+    "transitions": []
+}

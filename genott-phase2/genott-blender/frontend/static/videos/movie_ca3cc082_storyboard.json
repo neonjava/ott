@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "ruins",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "mysterious",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

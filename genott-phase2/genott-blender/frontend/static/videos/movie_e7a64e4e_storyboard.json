@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "museum",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "thief_13 runs from the museum."
+        },
+        {
+            "location": "alley",
+            "character": "humanoid",
+            "action": "duck",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "thief_13 hides in the alley."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

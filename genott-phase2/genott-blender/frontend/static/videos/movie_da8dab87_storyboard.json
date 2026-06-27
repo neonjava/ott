@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "jungle",
+            "character": "humanoid",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "explorer_11 walks in the jungle."
+        },
+        {
+            "location": "jungle",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "explorer_11 climbs the cliff."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

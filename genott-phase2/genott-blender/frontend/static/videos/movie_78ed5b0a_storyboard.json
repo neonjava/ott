@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "city",
+            "character": "humanoid",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "anime_boy_12 says 'we must defeat them' in the city."
+        }
+    ],
+    "transitions": []
+}

@@ -3,8 +3,8 @@ import os
 
 class Config:
     PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    FACES_DIR = os.path.join(PROJECT_DIR, "static", "faces")
-    VIDEO_DIR = os.path.join(PROJECT_DIR, "static", "videos")
+    FACES_DIR = os.path.join(PROJECT_DIR, "frontend", "static", "faces")
+    VIDEO_DIR = os.path.join(PROJECT_DIR, "frontend", "static", "videos")
     SADTALKER_DIR = os.path.join(PROJECT_DIR, "SadTalker")
     SADTALKER_CHECKPOINTS = os.path.join(SADTALKER_DIR, "checkpoints")
     PYTHON_VENV = os.path.join(PROJECT_DIR, "venv", "bin", "python3")

@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "city",
+            "character": "guard",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

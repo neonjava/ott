@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "rain",
+            "character": "humanoid",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "detective_11 walks in the rain."
+        },
+        {
+            "location": "rain",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "detective_11 examines the clue."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

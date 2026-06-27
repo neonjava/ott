@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "hero",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "slow"
+        }
+    ],
+    "transitions": []
+}

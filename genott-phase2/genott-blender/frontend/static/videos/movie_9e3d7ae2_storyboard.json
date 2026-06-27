@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "hero",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "Hero jumps high."
+        },
+        {
+            "location": "environment",
+            "character": "hero",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "Hero says: \"Watch this!\""
+        }
+    ],
+    "transitions": [
+        "cut"
+    ]
+}

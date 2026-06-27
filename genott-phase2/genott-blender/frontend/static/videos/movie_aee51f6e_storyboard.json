@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "forest",
+            "character": "humanoid",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "knight_11 walks through the forest."
+        },
+        {
+            "location": "cave",
+            "character": "humanoid",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal",
+            "sentence": "knight_11 attacks inside the cave."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

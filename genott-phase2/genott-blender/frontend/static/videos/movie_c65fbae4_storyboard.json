@@ -1,0 +1,23 @@
+{
+    "scenes": [
+        {
+            "location": "castle",
+            "character": "mage",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "mysterious",
+            "speed": "normal"
+        },
+        {
+            "location": "wide shot forest",
+            "character": "mage",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal"
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

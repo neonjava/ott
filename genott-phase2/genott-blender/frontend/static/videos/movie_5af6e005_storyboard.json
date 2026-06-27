@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "city",
+            "character": "hero",
+            "action": "walk",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

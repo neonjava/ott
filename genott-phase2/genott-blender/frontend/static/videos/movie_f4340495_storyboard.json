@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "castle wall",
+            "character": "knight",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

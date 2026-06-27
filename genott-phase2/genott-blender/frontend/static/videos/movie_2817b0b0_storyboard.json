@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "establishing shot castle",
+            "character": "king",
+            "action": "talk",
+            "camera": "establishing_shot",
+            "mood": "mysterious",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

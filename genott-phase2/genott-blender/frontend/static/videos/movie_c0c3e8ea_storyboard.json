@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "close up cave",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "fast"
+        }
+    ],
+    "transitions": []
+}

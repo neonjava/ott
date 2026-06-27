@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "ship",
+            "character": "humanoid",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal",
+            "sentence": "pirate waves from the ship."
+        },
+        {
+            "location": "ship",
+            "character": "humanoid",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "pirate digs for treasure."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "scenes": [
+        {
+            "location": "manor",
+            "character": "humanoid",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal"
+        }
+    ],
+    "transitions": []
+}

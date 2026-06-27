@@ -1,0 +1,45 @@
+{
+    "scenes": [
+        {
+            "location": "rooftops",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "ninja runs on the rooftops."
+        },
+        {
+            "location": "rooftops",
+            "character": "humanoid",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal",
+            "sentence": "ninja attacks the enemy."
+        },
+        {
+            "location": "rooftops",
+            "character": "humanoid",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "ninja jumps off the roof."
+        },
+        {
+            "location": "shadows",
+            "character": "humanoid",
+            "action": "duck",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "ninja hides in shadows."
+        }
+    ],
+    "transitions": [
+        "fade",
+        "fade",
+        "fade"
+    ]
+}

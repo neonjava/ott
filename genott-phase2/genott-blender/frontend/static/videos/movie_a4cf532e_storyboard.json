@@ -1,0 +1,25 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "humanoid",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "cyborg jumps off the building."
+        },
+        {
+            "location": "city",
+            "character": "humanoid",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal",
+            "sentence": "cyborg attacks in the city."
+        }
+    ],
+    "transitions": [
+        "fade"
+    ]
+}

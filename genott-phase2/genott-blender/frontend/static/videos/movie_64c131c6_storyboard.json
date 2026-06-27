@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "castle",
+            "character": "mage",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "mage says 'behold the fire magic' in the castle."
+        }
+    ],
+    "transitions": []
+}

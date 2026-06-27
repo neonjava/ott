@@ -1,0 +1,35 @@
+{
+    "scenes": [
+        {
+            "location": "city",
+            "character": "robot",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "robot runs fast through the city."
+        },
+        {
+            "location": "ruins",
+            "character": "robot",
+            "action": "jump",
+            "camera": "wide_shot",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "robot jumps into the ruins."
+        },
+        {
+            "location": "ruins",
+            "character": "robot",
+            "action": "idle",
+            "camera": "wide_shot",
+            "mood": "triumphant",
+            "speed": "normal",
+            "sentence": "robot stands victorious."
+        }
+    ],
+    "transitions": [
+        "fade",
+        "fade"
+    ]
+}

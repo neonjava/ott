@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "castle",
+            "character": "king",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "mysterious",
+            "speed": "normal",
+            "sentence": "king says 'welcome to our kingdom' in the castle."
+        }
+    ],
+    "transitions": []
+}

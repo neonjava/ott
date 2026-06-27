@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "village",
+            "character": "humanoid",
+            "action": "run",
+            "camera": "tracking_shot",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "boy runs through the village."
+        }
+    ],
+    "transitions": []
+}
