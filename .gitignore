@@ -1,0 +1,30 @@
+# Git ignore for large binary models and local python environments
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+db.sqlite3
+*.db
+*.log
+*.mp4
+*.mp3
+*.png
+*.jpg
+*.jpeg
+
+# Heavy ML Checkpoints
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.bin
+*.safetensors
+*weights/
+*checkpoints/
+*gfpgan/weights/
+*SadTalker/checkpoints/
+*static/videos/
+*static/faces/

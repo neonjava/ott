@@ -14,6 +14,11 @@ DAEMON_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(os.path.dirname(DAEMON_DIR))
 CHARACTER_FILE = os.path.join(PROJECT_DIR, "assets", "characters", "humanoid.glb")
 
+# Register refactored engine and pipeline modules in Blender python path
+for path in [PROJECT_DIR, os.path.join(PROJECT_DIR, "ai"), os.path.join(PROJECT_DIR, "engine", "director"), os.path.join(PROJECT_DIR, "engine", "character"), os.path.join(PROJECT_DIR, "engine", "camera"), os.path.join(PROJECT_DIR, "engine", "interaction"), os.path.join(PROJECT_DIR, "engine", "physics"), os.path.join(PROJECT_DIR, "engine", "audio"), os.path.join(PROJECT_DIR, "engine", "cache"), os.path.join(PROJECT_DIR, "engine", "renderer"), os.path.join(PROJECT_DIR, "engine", "environment")]:
+    if path not in sys.path:
+        sys.path.append(path)
+
 def init_blender_env():
     print("[BlenderDaemon] Initializing persistent environment...")
     
@@ -825,9 +830,8 @@ class RenderHandler(BaseHTTPRequestHandler):
                     char_armature.location = (pos_x, pos_y, pos_z)
                     char_armature.rotation_euler = (rot_x, rot_y, rot_z)
                     
-                    # --- Character Memory Integration (Apply state scaling dynamically) ---
                     try:
-                        from character_state_manager import CharacterStateManager
+                        from backend.services.character_state_manager import CharacterStateManager
                         c_state_manager = CharacterStateManager()
                         c_profile_state = c_state_manager.get_character_state(char_name)
                         custom_scale = c_profile_state.get("scale", [1.0, 1.0, 1.0])

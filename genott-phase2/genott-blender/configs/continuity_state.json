@@ -1,0 +1,13 @@
+{
+  "scene_index": 1,
+  "location": "environment",
+  "weather": "clear",
+  "characters": {},
+  "environment_props": [],
+  "held_items": {
+    "robot": null
+  },
+  "outfit_state": {
+    "robot": []
+  }
+}

@@ -243,6 +243,10 @@ def api_render_action():
 def index():
     return render_template("index.html")
 
+@app.route("/status")
+def status_page():
+    return render_template("status.html")
+
 
 @app.route("/project/<int:project_id>")
 def project_page(project_id):

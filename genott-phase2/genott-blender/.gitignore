@@ -80,3 +80,4 @@ storage/
 outputs/
 cache/
 tmp/
+genott/gfpgan/weights/

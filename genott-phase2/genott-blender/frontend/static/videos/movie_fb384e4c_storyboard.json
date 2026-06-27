@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "anime_boy",
+            "action": "talk",
+            "camera": "close_up",
+            "mood": "neutral",
+            "speed": "normal",
+            "sentence": "Anime Boy says: \"Greetings traveler.\""
+        }
+    ],
+    "transitions": []
+}

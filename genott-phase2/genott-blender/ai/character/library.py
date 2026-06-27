@@ -8,8 +8,7 @@ class CharacterLibrary:
         self.faces_dir = faces_dir
         self._characters: Dict[str, CharacterProfile] = {}
         
-        # Load character states memory profile
-        from character_state_manager import CharacterStateManager
+        from backend.services.character_state_manager import CharacterStateManager
         self.state_manager = CharacterStateManager()
         
         self._initialize_default_library()

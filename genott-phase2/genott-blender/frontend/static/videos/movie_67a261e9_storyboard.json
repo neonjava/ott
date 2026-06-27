@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "crowd",
+            "character": "knight",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal",
+            "sentence": "Knight waves to the crowd."
+        }
+    ],
+    "transitions": []
+}

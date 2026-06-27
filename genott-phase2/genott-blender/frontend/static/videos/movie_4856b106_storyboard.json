@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "crowd",
+            "character": "anime_boy",
+            "action": "wave",
+            "camera": "medium_shot",
+            "mood": "cheerful",
+            "speed": "normal",
+            "sentence": "Anime Boy waves to the crowd."
+        }
+    ],
+    "transitions": []
+}

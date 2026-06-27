@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "knight",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal",
+            "sentence": "Knight jumps high and attacks."
+        }
+    ],
+    "transitions": []
+}

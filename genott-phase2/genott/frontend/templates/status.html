@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenOTT — Engine Status Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050508;
+      --surface: rgba(17, 17, 27, 0.4);
+      --card: rgba(22, 22, 35, 0.6);
+      --border: rgba(255, 255, 255, 0.05);
+      --accent: #7c3aed;
+      --accent2: #a855f7;
+      --cyan: #06b6d4;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+      --success: #10b981;
+      --error: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 40px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5, 5, 8, 0.8);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .logo span {
+      background: linear-gradient(135deg, var(--accent2), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .badge {
+      font-size: 12px;
+      background: rgba(124, 58, 237, 0.15);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      color: var(--accent2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px;
+      flex-grow: 1;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      background: var(--card);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(6, 182, 212, 0.2);
+    }
+
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .stat-label {
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .stat-val {
+      font-weight: 600;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 3px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--cyan));
+      width: 0%;
+      border-radius: 3px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+    }
+    .indicator.running { background: var(--success); box-shadow: 0 0 12px var(--success); animation: pulse 1.5s infinite; }
+    .indicator.idle { background: var(--muted); }
+    .indicator.loading { background: #f59e0b; box-shadow: 0 0 12px #f59e0b; }
+    .indicator.completed { background: #3b82f6; box-shadow: 0 0 12px #3b82f6; }
+    .indicator.error { background: var(--error); box-shadow: 0 0 12px var(--error); }
+
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.6; }
+    }
+
+    /* History Chart container styling */
+    .chart-container {
+      margin-top: 20px;
+      height: 200px;
+      position: relative;
+    }
+
+    /* Footer release specs */
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: var(--muted);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="logo">Gen<span>OTT</span> Status</div>
+  <div class="badge">Engine V1.0.0-rc1</div>
+</header>
+
+<div class="container">
+  <div class="grid">
+    <!-- Card 1: Live Hardware Specs -->
+    <div class="card">
+      <div class="card-title">
+        <span>🖥️ Live Resource Monitor</span>
+        <span class="indicator running"></span>
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <div class="stat-row">
+          <span class="stat-label">CPU Load</span>
+          <span class="stat-val" id="cpu-val">0%</span>
+        </div>
+        <div class="progress-bar-container"><div class="progress-bar" id="cpu-bar"></div></div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <div class="stat-row">
+          <span class="stat-label">System RAM</span>
+          <span class="stat-val" id="ram-val">0%</span>
+        </div>
+        <div class="progress-bar-container"><div class="progress-bar" id="ram-bar"></div></div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <div class="stat-row">
+          <span class="stat-label">GPU Utilization</span>
+          <span class="stat-val" id="gpu-val">0%</span>
+        </div>
+        <div class="progress-bar-container"><div class="progress-bar" id="gpu-bar"></div></div>
+      </div>
+
+      <div class="stat-row">
+        <span class="stat-label">GPU Temperature</span>
+        <span class="stat-val" id="temp-val">0°C</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">VRAM Usage</span>
+        <span class="stat-val" id="vram-val">0 MB / 0 MB</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Storage (Disk)</span>
+        <span class="stat-val" id="disk-val">0%</span>
+      </div>
+    </div>
+
+    <!-- Card 2: GPU Performance Graph -->
+    <div class="card">
+      <div class="card-title">
+        <span>📈 Historical GPU Load</span>
+      </div>
+      <div class="chart-container">
+        <canvas id="gpuChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Card 3: Active Render Pipeline -->
+    <div class="card">
+      <div class="card-title">
+        <span>🎬 Rendering Pipeline</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Active Job</span>
+        <span class="stat-val" id="render-job">Idle</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Current Scene</span>
+        <span class="stat-val" id="render-scene">N/A</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Renderer Device</span>
+        <span class="stat-val" id="render-engine">Cycles GPU (OptiX)</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Render Passes</span>
+        <span class="stat-val" id="render-samples">128 samples</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Resolution Specs</span>
+        <span class="stat-val">1920x1080 (HD)</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Target Rate</span>
+        <span class="stat-val">24.0 FPS</span>
+      </div>
+    </div>
+
+    <!-- Card 4: Orchestrated AI Engines -->
+    <div class="card">
+      <div class="card-title">
+        <span>🧠 AI Subsystem Controls</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Director Decision Matrix</span>
+        <span><span class="indicator idle" id="sub-director-pulse"></span><span id="sub-director-text">Idle</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Character Motion Engine</span>
+        <span><span class="indicator idle" id="sub-character-pulse"></span><span id="sub-character-text">Idle</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Facial Performance Engine</span>
+        <span><span class="indicator idle" id="sub-facial-pulse"></span><span id="sub-facial-text">Idle</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Camera Obstacle solver</span>
+        <span><span class="indicator idle" id="sub-camera-pulse"></span><span id="sub-camera-text">Idle</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Environment Placement Director</span>
+        <span><span class="indicator idle" id="sub-environment-pulse"></span><span id="sub-environment-text">Idle</span></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Interaction Trajectory Solver</span>
+        <span><span class="indicator idle" id="sub-interaction-pulse"></span><span id="sub-interaction-text">Idle</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  GenOTT Cinematic Studio Engine · Git Branch: feature/blender-pipeline · Commit Hash: 5bfc803
+</footer>
+
+<script>
+  // Setup Chart.js history
+  const ctx = document.getElementById('gpuChart').getContext('2d');
+  const gpuChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: Array(10).fill(''),
+      datasets: [{
+        label: 'GPU Load (%)',
+        data: Array(10).fill(0),
+        borderColor: '#06b6d4',
+        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { min: 0, max: 100, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+        x: { grid: { display: false } }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  function updateDashboard() {
+    fetch('/api/system-status')
+      .then(res => res.json())
+      .then(data => {
+        // Stats
+        document.getElementById('cpu-val').innerText = data.system.cpu_usage + '%';
+        document.getElementById('cpu-bar').style.width = data.system.cpu_usage + '%';
+        
+        document.getElementById('ram-val').innerText = data.system.ram_usage + '%';
+        document.getElementById('ram-bar').style.width = data.system.ram_usage + '%';
+
+        document.getElementById('gpu-val').innerText = data.system.gpu_usage + '%';
+        document.getElementById('gpu-bar').style.width = data.system.gpu_usage + '%';
+
+        document.getElementById('temp-val').innerText = data.system.gpu_temp + '°C';
+        document.getElementById('vram-val').innerText = data.system.vram_used_mb + ' MB / ' + data.system.vram_total_mb + ' MB';
+        document.getElementById('disk-val').innerText = data.system.disk_usage + '%';
+
+        // Render pipeline
+        document.getElementById('render-job').innerText = data.rendering.current_render;
+        document.getElementById('render-scene').innerText = data.rendering.active_scene;
+        document.getElementById('render-samples').innerText = data.rendering.active_renderer.includes('OptiX') ? '128 samples (OptiX)' : '32 samples (CPU)';
+        document.getElementById('render-engine').innerText = data.rendering.active_renderer;
+
+        // Subsystems
+        const updateSub = (id, status) => {
+          const t = document.getElementById('sub-' + id + '-text');
+          const p = document.getElementById('sub-' + id + '-pulse');
+          if (t && p) {
+            t.innerText = status;
+            p.className = 'indicator ' + status.toLowerCase();
+          }
+        };
+        updateSub('director', data.subsystems.director);
+        updateSub('character', data.subsystems.character);
+        updateSub('facial', data.subsystems.facial);
+        updateSub('camera', data.subsystems.camera);
+        updateSub('environment', data.subsystems.environment);
+        updateSub('interaction', data.subsystems.interaction);
+
+        // Chart update
+        gpuChart.data.datasets[0].data.shift();
+        gpuChart.data.datasets[0].data.push(data.system.gpu_usage);
+        gpuChart.update();
+      });
+  }
+
+  setInterval(updateDashboard, 2000);
+  updateDashboard();
+</script>
+</body>
+</html>

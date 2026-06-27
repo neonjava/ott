@@ -1,0 +1,14 @@
+{
+    "scenes": [
+        {
+            "location": "environment",
+            "character": "anime_boy",
+            "action": "attack",
+            "camera": "close_up",
+            "mood": "aggressive",
+            "speed": "normal",
+            "sentence": "Anime Boy jumps high and attacks."
+        }
+    ],
+    "transitions": []
+}
