@@ -1,4 +1,4 @@
-# Next Session Handoff — V18 Director Intelligence Engine
+# Next Session Handoff — V19 Environment Interaction Engine
 
 ## 🏛️ Current Architecture
 * Decoupled modular engine subsystems (`ai/`) with persistent SQLite database schemas, non-destructive sequence timelines, and Cycles OPTIX/CUDA hardware preferences.
@@ -10,11 +10,12 @@
 * Production `FacialPerformanceEngine` with variable blink timing, saccades, breathing, behavioural states.
 * CharacterMotionEngine with weight shifting, center of mass, dynamic balance leans, and foot locking.
 * DirectorIntelligenceEngine generating reasoning-backed DirectorDecision configurations.
+* EnvironmentInteractionEngine computing approach points, sitting offsets, grab/place trajectories, obstacle avoidance.
 
 ## 🛠️ Completed Work
-1. **DirectorIntelligenceEngine**: Created `ai/director_intelligence.py` to analyze scenes and output a structured `DirectorDecision` object (focus target, DoF, lens, camera profile, blocking, stance, speech rhythm, lighting).
-2. **Integration**: Placed the decision engine at the entry point of the POST `/render` handler, replacing duplicate or hardcoded config variables for camera, lighting, and animation depth.
-3. **Verification**: 34/34 unit tests pass, and character validation benchmarks generated successfully.
+1. **EnvironmentInteractionEngine**: Created `ai/environment_interaction.py` to compute dynamic interaction parameters (door open, sit, pick up, place), obstacle avoidance paths, and weight-based compensations.
+2. **Integration**: Integrated the engine into the import placement and bone keyframing pipelines in `blender_daemon.py`.
+3. **Verification**: 35/35 unit tests pass, and character validation benchmarks generated successfully.
 
 ## 🔮 Remaining Blockers
 * **Secondary Physics**: Hair/Clothing dynamics could be enhanced with responsive procedural solver layers.

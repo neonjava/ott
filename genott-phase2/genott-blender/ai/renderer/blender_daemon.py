@@ -797,6 +797,31 @@ class RenderHandler(BaseHTTPRequestHandler):
                         pos_z = orig_pos[2]
                         rot_x, rot_y, rot_z = tuple(orig_rot)
                     
+                    # --- Environment Interaction Engine Integration ---
+                    interact_res = None
+                    try:
+                        if PROJECT_DIR not in sys.path:
+                            sys.path.append(PROJECT_DIR)
+                        from environment_interaction import EnvironmentInteractionEngine
+                        interact_engine = EnvironmentInteractionEngine()
+                        
+                        held_item = payload.get("held_item", "Cup")
+                        target_obj = bpy.context.scene.objects.get(held_item)
+                        obj_pos = (pos_x, pos_y + 1.2, pos_z)
+                        if target_obj:
+                            obj_pos = tuple(target_obj.location)
+                        
+                        interact_res = interact_engine.compute_interaction(
+                            interaction_type=char_data.get("action", "idle"),
+                            char_pos=(pos_x, pos_y, pos_z),
+                            object_pos=obj_pos,
+                            object_mass=payload.get("held_item_mass", 1.0),
+                            shot_duration=duration
+                        )
+                        pos_x, pos_y, pos_z = interact_res["approach_position"]
+                    except Exception as interact_err:
+                        print(f"[BlenderDaemon] EnvironmentInteractionEngine setup failed: {interact_err}")
+                    
                     char_armature.location = (pos_x, pos_y, pos_z)
                     char_armature.rotation_euler = (rot_x, rot_y, rot_z)
                     
@@ -944,6 +969,36 @@ class RenderHandler(BaseHTTPRequestHandler):
                                             foot_bone.rotation_mode = 'XYZ'
                                             foot_bone.rotation_euler = (0.0, 0.0, 0.0)
                                             foot_bone.keyframe_insert(data_path="rotation_euler", frame=f)
+                                            
+                            # Apply Environment Interaction offsets
+                            if interact_res:
+                                stance = interact_res.get("stance", "relaxed")
+                                if stance == "sitting":
+                                    pb_hips = char_armature.pose.bones.get("Hips")
+                                    if pb_hips:
+                                        pb_hips.location = (pb_hips.location[0], pb_hips.location[1], pb_hips.location[2] - 0.45)
+                                        pb_hips.keyframe_insert(data_path="location", frame=f)
+                                        
+                                lean_x, lean_y, lean_z = interact_res.get("balance_adjustment", (0.0, 0.0, 0.0))
+                                if abs(lean_x) + abs(lean_y) > 0.001:
+                                    pb_spine = char_armature.pose.bones.get("Spine")
+                                    if pb_spine:
+                                        pb_spine.rotation_mode = 'XYZ'
+                                        pb_spine.rotation_euler = (pb_spine.rotation_euler[0] + lean_x,
+                                                                   pb_spine.rotation_euler[1] + lean_y,
+                                                                   pb_spine.rotation_euler[2])
+                                        pb_spine.keyframe_insert(data_path="rotation_euler", frame=f)
+                                        
+                                act_name_lower = char_data["action"].lower()
+                                if "pick_up" in act_name_lower or "open_door" in act_name_lower:
+                                    t_curr = (f - 1) / fps
+                                    g_time = interact_res.get("grasp_time", 0.0)
+                                    if abs(t_curr - g_time) < 0.8:
+                                        pb_arm = char_armature.pose.bones.get("UpperArm.R")
+                                        if pb_arm:
+                                            pb_arm.rotation_mode = 'XYZ'
+                                            pb_arm.rotation_euler = (-0.6, 0.0, 0.4)
+                                            pb_arm.keyframe_insert(data_path="rotation_euler", frame=f)
                                             
                     except Exception as motion_err:
                         print(f"[BlenderDaemon] CharacterMotionEngine simulation failed: {motion_err}")

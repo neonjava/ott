@@ -30,6 +30,7 @@ from ai.camera_motion import CameraMotionEngine
 from ai.facial_performance import FacialPerformanceEngine
 from ai.character_motion import CharacterMotionEngine
 from ai.director_intelligence import DirectorIntelligenceEngine
+from ai.environment_interaction import EnvironmentInteractionEngine
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
@@ -60,6 +61,7 @@ class TestEngineSubsystems(unittest.TestCase):
         self.facial_engine = FacialPerformanceEngine()
         self.char_motion = CharacterMotionEngine()
         self.director_engine = DirectorIntelligenceEngine()
+        self.interact_engine = EnvironmentInteractionEngine()
 
     def test_asset_pipeline(self):
         # Resolve sword
@@ -491,5 +493,46 @@ class TestEngineSubsystems(unittest.TestCase):
         self.assertEqual(decision_attack.lens, 28.0)
         self.assertEqual(decision_attack.lighting_mood, "neutral")
 
+    def test_environment_interaction(self):
+        """Verify EnvironmentInteractionEngine resolves sit, pick, and obstacle avoidance paths."""
+        engine = self.interact_engine
+        
+        # Test Case 1: Pick up object
+        res_pick = engine.compute_interaction(
+            interaction_type="pick_up",
+            char_pos=(0.0, 0.0, 0.0),
+            object_pos=(0.0, 2.0, 0.0),
+            object_mass=5.0,
+            shot_duration=4.0
+        )
+        self.assertEqual(res_pick["stance"], "leaning")
+        self.assertGreater(res_pick["grasp_time"], 0.0)
+        self.assertGreater(res_pick["balance_adjustment"][0], 0.0) # lean forward
+        
+        # Test Case 2: Sit down
+        res_sit = engine.compute_interaction(
+            interaction_type="sit",
+            char_pos=(0.0, 0.0, 0.0),
+            object_pos=(0.0, 1.0, 0.0),
+            shot_duration=4.0
+        )
+        self.assertEqual(res_sit["stance"], "sitting")
+        
+        # Test Case 3: Obstacle avoidance pathing
+        import math
+        obstacles = [(0.0, 1.0, 0.5, 0.2)] # x, y, radius, margin
+        path = engine.compute_avoidance_path(
+            start_pos=(0.0, 0.0, 0.0),
+            end_pos=(0.0, 2.0, 0.0),
+            obstacles=obstacles
+        )
+        # Verify start and end nodes, and that it successfully detours around (0.0, 1.0)
+        self.assertEqual(path[0], (0.0, 0.0, 0.0))
+        for wp in path:
+            dist_to_obstacle = math.sqrt(wp[0]**2 + (wp[1] - 1.0)**2)
+            if wp != (0.0, 0.0, 0.0) and wp != (0.0, 2.0, 0.0):
+                self.assertGreaterEqual(dist_to_obstacle, 0.7)
+
 if __name__ == "__main__":
+    import math
     unittest.main()
