@@ -53,31 +53,42 @@ def init_blender_env():
     bpy.context.scene.render.resolution_y = 256
     bpy.context.scene.render.fps = 12
     
+    # Enable Filmic View Transform and High Contrast Look for cinematic color grading
+    try:
+        bpy.context.scene.view_settings.view_transform = 'Filmic'
+        bpy.context.scene.view_settings.look = 'High Contrast'
+        print("[BlenderDaemon] Color Management set to Filmic High Contrast.")
+    except Exception as ce:
+        print(f"[BlenderDaemon] Color settings failed: {ce}")
+    
     # 3. Import Character
     if os.path.exists(CHARACTER_FILE):
         bpy.ops.import_scene.gltf(filepath=CHARACTER_FILE)
     
     # 4. Setup Cinematic Three-Point Studio Lighting Setup (M4 Visual Quality Upgrades)
-    # Key Light (Strong front-side lighting defining shape)
+    # Key Light (Strong front-side lighting defining shape with soft shadows)
     key_data = bpy.data.lights.new(name="KeyLight", type='SUN')
     key_data.energy = 4.0
+    key_data.angle = 0.1  # Soft shadow boundaries
     key_obj = bpy.data.objects.new(name="KeyLight", object_data=key_data)
     bpy.context.collection.objects.link(key_obj)
     key_obj.location = (5, -5, 8)
     # Rotate Key Light toward origin (approximate)
     key_obj.rotation_euler = (math.radians(45), 0, math.radians(45))
-
+ 
     # Fill Light (Softer lighting filling shadows)
     fill_data = bpy.data.lights.new(name="FillLight", type='SUN')
     fill_data.energy = 1.5
+    fill_data.angle = 0.15  # Extremely soft fill shadows
     fill_obj = bpy.data.objects.new(name="FillLight", object_data=fill_data)
     bpy.context.collection.objects.link(fill_obj)
     fill_obj.location = (-5, -5, 6)
     fill_obj.rotation_euler = (math.radians(35), 0, math.radians(-45))
-
+ 
     # Rim Light (Back light highlighting silhouettes and edges)
     rim_data = bpy.data.lights.new(name="RimLight", type='SUN')
     rim_data.energy = 3.0
+    rim_data.angle = 0.12  # Soft rim outline
     rim_obj = bpy.data.objects.new(name="RimLight", object_data=rim_data)
     bpy.context.collection.objects.link(rim_obj)
     rim_obj.location = (0, 5, 8)

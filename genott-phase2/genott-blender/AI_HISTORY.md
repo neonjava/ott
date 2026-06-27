@@ -1645,3 +1645,19 @@ Configure Blender's Cycles rendering engine to explicitly activate OptiX or CUDA
 ### Files Changed
 * `ai/renderer/blender_daemon.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Filmic High Contrast Mapping & Soft Shadows (Hollywood Quality Phase)
+
+### Objective
+Apply professional cinematic color-grading view transforms and soft shadow spreads to eliminate harsh digital edges and increase rendering contrast.
+
+### Actions Taken
+1. **Cinematic Grading:** Configured Blender's color management module inside `blender_daemon.py` to use the `Filmic` view transform with the `High Contrast` look profile.
+2. **Soft Shadowing:** Assigned physical `angle` offsets (`0.1`, `0.15`, and `0.12` radians) to the key, fill, and rim lights to compute realistic, soft boundary shadow filters instead of sharp digital cuts.
+3. **Verification:** Ran `e2e_test.py` confirming successful rendering output under new configurations (**5/5 PASS**).
+
+### Files Changed
+* `ai/renderer/blender_daemon.py`
+* `AI_HISTORY.md`
