@@ -1008,6 +1008,11 @@ class RenderHandler(BaseHTTPRequestHandler):
                     return shot_presets["wide_shot"]
 
                 if camera_timeline:
+                    if PROJECT_DIR not in sys.path:
+                        sys.path.append(PROJECT_DIR)
+                    from camera_motion import CameraMotionEngine
+                    motion_engine = CameraMotionEngine()
+                    
                     if camera.animation_data:
                         camera.animation_data_clear()
                         
@@ -1036,21 +1041,22 @@ class RenderHandler(BaseHTTPRequestHandler):
                                         start_location[1] + delta_loc[1],
                                         start_location[2] + delta_loc[2]]
                                         
-                            # Procedural Handheld Camera Operator Shake
-                            shake_x = 0.015 * math.sin(frame * 0.25) + 0.005 * math.cos(frame * 0.55)
-                            shake_y = 0.012 * math.cos(frame * 0.3) + 0.004 * math.sin(frame * 0.6)
-                            shake_z = 0.010 * math.sin(frame * 0.15)
+                            # Resolve camera profiles (Tripod, Steadicam, Handheld, Dolly)
+                            profile_str = kf.get("camera_profile", "handheld")
+                            is_moving = "walk" in aname or "run" in aname
                             
-                            rot_shake_x = 0.004 * math.sin(frame * 0.2)
-                            rot_shake_y = 0.003 * math.cos(frame * 0.3)
-                            rot_shake_z = 0.004 * math.sin(frame * 0.15)
+                            base_l = (char_pos[0] + offset[0], char_pos[1] + offset[1], char_pos[2] + offset[2])
                             
-                            camera.location = (char_pos[0] + offset[0] + shake_x, 
-                                               char_pos[1] + offset[1] + shake_y, 
-                                               char_pos[2] + offset[2] + shake_z)
-                            camera.rotation_euler = (rot[0] + rot_shake_x,
-                                                     rot[1] + rot_shake_y,
-                                                     rot[2] + rot_shake_z)
+                            c_loc, c_rot = motion_engine.apply_profile(
+                                profile_str,
+                                frame,
+                                fps,
+                                base_l,
+                                rot,
+                                is_walking=is_moving
+                            )
+                            camera.location = c_loc
+                            camera.rotation_euler = c_rot
                         
                         # Dynamic focal length, FOV, and Depth of Field setup from AI Director Timeline
                         focal_len = kf.get("focal_length", 35.0)  # default cinematic 35mm

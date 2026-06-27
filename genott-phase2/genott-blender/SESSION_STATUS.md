@@ -1,8 +1,8 @@
-# Session Status — V15 Handheld Camera Shake Operator Simulation
+# Session Status — V15 Physically-Based CameraMotionEngine
 
 ## 🚀 Active Visual Target
-* **Current Task**: Handheld Camera Shake.
-* **Objective**: Add sinusoidal coordinate noise offsets to camera locations/rotations to replicate natural camera jitter.
+* **Current Task**: CameraMotionEngine.
+* **Objective**: Replace simple wiggles with simulated camera operator profiles (Tripod, Steadicam, Handheld, Dolly).
 * **Status**: Completed & Verified.
 
 ## 🏛️ Project Release State

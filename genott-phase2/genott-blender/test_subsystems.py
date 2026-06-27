@@ -26,6 +26,7 @@ from ai.project_manager import MovieProjectManager
 from ai.usd.usd_exporter import USDExporter
 from ai.usd.usd_importer import USDImporter
 from ai.fluid_cache import FluidCacheManager
+from ai.camera_motion import CameraMotionEngine
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
@@ -52,6 +53,7 @@ class TestEngineSubsystems(unittest.TestCase):
         self.usd_exporter = USDExporter()
         self.usd_importer = USDImporter()
         self.fluid_cache = FluidCacheManager(self.project_dir)
+        self.camera_motion = CameraMotionEngine()
 
     def test_asset_pipeline(self):
         # Resolve sword
@@ -294,18 +296,31 @@ class TestEngineSubsystems(unittest.TestCase):
 
     def test_fluid_cache(self):
         # Cache resolution lookup checks
-        key = self.fluid_cache.generate_cache_key("scene-123", "fluid", "obj-456", 64, {"viscosity": 0.1}, (1, 100))
+        import uuid
+        unique_scene = f"scene-{uuid.uuid4()}"
+        key = self.fluid_cache.generate_cache_key(unique_scene, "fluid", "obj-456", 64, {"viscosity": 0.1}, (1, 100))
         self.assertIsNotNone(key)
         
         # Lookups and registrations
         miss = self.fluid_cache.check_cache(key)
         self.assertIsNone(miss)
         
-        path = self.fluid_cache.register_cache(key, {"scene_uuid": "scene-123", "resolution": 64})
+        path = self.fluid_cache.register_cache(key, {"scene_uuid": unique_scene, "resolution": 64})
         self.assertTrue(os.path.exists(path))
         
         hit = self.fluid_cache.check_cache(key)
         self.assertEqual(hit, path)
+
+    def test_camera_motion(self):
+        # Tripod profile check
+        c_loc, c_rot = self.camera_motion.apply_profile("tripod", 10, 24.0, (1.0, 2.0, 3.0), (0.1, 0.2, 0.3))
+        self.assertEqual(c_loc, (1.0, 2.0, 3.0))
+        self.assertEqual(c_rot, (0.1, 0.2, 0.3))
+        
+        # Handheld profile check
+        h_loc, h_rot = self.camera_motion.apply_profile("handheld", 10, 24.0, (1.0, 2.0, 3.0), (0.1, 0.2, 0.3))
+        self.assertNotEqual(h_loc, (1.0, 2.0, 3.0))
+        self.assertNotEqual(h_rot, (0.1, 0.2, 0.3))
 
 if __name__ == "__main__":
     unittest.main()

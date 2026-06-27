@@ -1851,3 +1851,21 @@ Enhance rendering realism by simulating physical handheld operator jitter on the
 ### Files Changed
 * `ai/renderer/blender_daemon.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Physically-Based CameraMotionEngine (Cinematographer Camera System)
+
+### Objective
+Replace basic camera coordinate wiggles with organic cinematographer profile simulations (Tripod, Steadicam, Handheld, Dolly).
+
+### Actions Taken
+1. **CameraMotionEngine Subsystem:** Created `ai/camera_motion.py` implementing multi-octave pseudo-random breathing and walking cadence shakes.
+2. **Integration:** Integrated profiles into the frame loop inside `blender_daemon.py`.
+3. **Verification:** Updated `test_subsystems.py` to assert static tripod and noisy handheld profiles (**24/24 PASS**).
+
+### Files Changed
+* `ai/camera_motion.py`
+* `ai/renderer/blender_daemon.py`
+* `test_subsystems.py`
+* `AI_HISTORY.md`
