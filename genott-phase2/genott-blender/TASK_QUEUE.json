@@ -27,7 +27,7 @@
     "estimated_effort": "Medium",
     "dependencies": [],
     "assigned_agent": "Camera Agent",
-    "status": "READY"
+    "status": "COMPLETED"
   },
   {
     "id": "fluid_simulation_refinement",

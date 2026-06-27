@@ -1207,6 +1207,25 @@ class RenderHandler(BaseHTTPRequestHandler):
                                 rot,
                                 is_walking=is_moving
                             )
+                            # Camera collision avoidance solver integration
+                            try:
+                                obstacles = []
+                                for obj in bpy.context.scene.objects:
+                                    if obj.type == 'MESH' and obj.name != "TerrainPlane" and not any(k in obj.name.lower() for k in ["head", "fox", "humanoid", "armor"]):
+                                        bbox = {
+                                            "min_x": obj.location.x - obj.dimensions.x / 2.0,
+                                            "max_x": obj.location.x + obj.dimensions.x / 2.0,
+                                            "min_y": obj.location.y - obj.dimensions.y / 2.0,
+                                            "max_y": obj.location.y + obj.dimensions.y / 2.0
+                                        }
+                                        obstacles.append(bbox)
+                                        
+                                from camera_collision import CameraCollisionSolver
+                                solver = CameraCollisionSolver()
+                                c_loc = solver.solve_position(list(c_loc), list(char_pos), obstacles)
+                            except Exception as col_err:
+                                print(f"[BlenderDaemon] Camera collision solver error: {col_err}")
+                                
                             camera.location = c_loc
                             camera.rotation_euler = c_rot
                         

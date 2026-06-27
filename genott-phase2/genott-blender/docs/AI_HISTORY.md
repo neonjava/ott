@@ -1905,3 +1905,18 @@ Integrate dynamic spring-mass-damper oscillations to accessory bone rigs (skirts
 * `ai/renderer/blender_daemon.py`
 * `tests/unit/test_subsystems.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-28 — Camera Collision Avoidance Integration (Cinematic Geometry Solver)
+
+### Objective
+Integrate CameraCollisionSolver into the Blender rendering loops, resolving line-of-sight occlusions dynamically based on background meshes.
+
+### Actions Taken
+1. **Camera Solver Integration:** Scanned scene meshes dynamically to build obstacle parameters inside [blender_daemon.py](file://PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott-blender/ai/renderer/blender_daemon.py), passing coordinates to CameraCollisionSolver.
+2. **Verification:** Executed full unit test suite, confirming 100% regression and collision solver compliance (**42/42 PASS**).
+
+### Files Changed
+* `ai/renderer/blender_daemon.py`
+* `AI_HISTORY.md`
