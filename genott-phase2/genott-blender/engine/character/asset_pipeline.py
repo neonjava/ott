@@ -10,8 +10,10 @@ class AssetPipelineAgent:
     Manages the asset registry, versions, dependency graphs, validation checks, and cache status.
     """
     def __init__(self, project_dir: Optional[str] = None):
-        self.project_dir = project_dir or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.registry_path = os.path.join(self.project_dir, "asset_registry.json")
+        self.project_dir = project_dir or os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        path1 = os.path.join(self.project_dir, "configs", "asset_registry.json")
+        path2 = os.path.join(self.project_dir, "asset_registry.json")
+        self.registry_path = path1 if os.path.exists(path1) or not os.path.exists(path2) else path2
         self.cache_dir = os.path.join(self.project_dir, "cache", "assets")
         os.makedirs(self.cache_dir, exist_ok=True)
         self.registry = self._load_registry()

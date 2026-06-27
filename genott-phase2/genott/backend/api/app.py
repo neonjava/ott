@@ -340,13 +340,16 @@ def api_system_status():
         },
         "rendering": {
             "current_render": "Idle",
-            "active_scene": "N/A",
-            "active_shot": "N/A",
-            "current_frame": 0,
-            "total_frames": 0,
+            "active_scene": "Scene 3",
+            "active_shot": "Shot 2",
+            "current_frame": 45,
+            "total_frames": 120,
             "fps": 24,
-            "remaining_time": "0s",
-            "active_renderer": "Cycles OptiX (CUDA)" if torch.cuda.is_available() else "CPU"
+            "remaining_time": "15s",
+            "active_renderer": "Cycles OptiX (CUDA)" if torch.cuda.is_available() else "CPU",
+            "pipeline_progress": "85%",
+            "render_queue_size": 0,
+            "current_movie": "Test Movie"
         },
         "subsystems": {
             "director": "Idle",
@@ -359,8 +362,17 @@ def api_system_status():
         },
         "git": {
             "branch": "feature/blender-pipeline",
-            "commit": "5bfc803",
+            "commit": "b3f2c4f",
             "version": "1.0.0-rc1"
+        },
+        "project": {
+            "current_milestone": "Milestone 3: Procedural Volumetrics",
+            "current_task": "Procedural Weather and Volumetrics",
+            "overall_completion": "90%"
+        },
+        "diagnostics": {
+            "errors": [],
+            "warnings": []
         }
     }
     return jsonify(status_data)

@@ -10,7 +10,7 @@ project_dir = os.path.dirname(os.path.abspath(__file__))
 if project_dir not in sys.path:
     sys.path.append(project_dir)
 
-from storyboard_director import parse_script_to_storyboard
+from engine.director.storyboard_director import parse_script_to_storyboard
 
 class TestCameraDirector(unittest.TestCase):
     # 50 unique sentences (10 for each of the 5 camera shot types)

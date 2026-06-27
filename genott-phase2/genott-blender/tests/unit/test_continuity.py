@@ -10,7 +10,7 @@ project_dir = os.path.dirname(os.path.abspath(__file__))
 if project_dir not in sys.path:
     sys.path.append(project_dir)
 
-from continuity_engine_v2 import ContinuityEngineV2
+from engine.director.continuity_engine_v2 import ContinuityEngineV2
 
 class TestVisualContinuity(unittest.TestCase):
     def setUp(self):

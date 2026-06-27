@@ -10,7 +10,7 @@ project_dir = os.path.dirname(os.path.abspath(__file__))
 if project_dir not in sys.path:
     sys.path.append(project_dir)
 
-from asset_director import AssetDirector
+from engine.director.asset_director import AssetDirector
 
 class TestAssetRegistrySystem(unittest.TestCase):
     # 100 unique sentences, each containing one or more of the 100 registered nouns

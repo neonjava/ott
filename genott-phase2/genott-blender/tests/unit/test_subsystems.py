@@ -35,7 +35,7 @@ from ai.environment_interaction import EnvironmentInteractionEngine
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
         self.project_dir = os.path.dirname(os.path.abspath(__file__))
-        self.asset_pipeline = AssetPipelineAgent(project_dir=self.project_dir)
+        self.asset_pipeline = AssetPipelineAgent()
         self.motion_intel = MotionIntelligenceAgent()
         self.physics_sim = PhysicsSimulationAgent()
         self.dialogue_perf = DialoguePerformanceAgent()

@@ -253,8 +253,20 @@
         <span class="stat-val" id="render-job">Idle</span>
       </div>
       <div class="stat-row">
+        <span class="stat-label">Current Movie</span>
+        <span class="stat-val" id="render-movie">Test Movie</span>
+      </div>
+      <div class="stat-row">
         <span class="stat-label">Current Scene</span>
         <span class="stat-val" id="render-scene">N/A</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Current Shot</span>
+        <span class="stat-val" id="render-shot">N/A</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Current Frame</span>
+        <span class="stat-val" id="render-frame">0 / 0</span>
       </div>
       <div class="stat-row">
         <span class="stat-label">Renderer Device</span>
@@ -265,12 +277,12 @@
         <span class="stat-val" id="render-samples">128 samples</span>
       </div>
       <div class="stat-row">
-        <span class="stat-label">Resolution Specs</span>
-        <span class="stat-val">1920x1080 (HD)</span>
+        <span class="stat-label">ETA</span>
+        <span class="stat-val" id="render-eta">0s</span>
       </div>
       <div class="stat-row">
         <span class="stat-label">Target Rate</span>
-        <span class="stat-val">24.0 FPS</span>
+        <span class="stat-val" id="render-fps">24.0 FPS</span>
       </div>
     </div>
 
@@ -304,11 +316,61 @@
         <span><span class="indicator idle" id="sub-interaction-pulse"></span><span id="sub-interaction-text">Idle</span></span>
       </div>
     </div>
+
+    <!-- Card 5: Project Milestones -->
+    <div class="card">
+      <div class="card-title">
+        <span>🚀 Milestones & autopilot</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Current Milestone</span>
+        <span class="stat-val" id="proj-milestone">Milestone 3</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Current Task</span>
+        <span class="stat-val" id="proj-task">Procedural Volumetrics</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Autopilot Completion</span>
+        <span class="stat-val" id="proj-completion">90%</span>
+      </div>
+    </div>
+
+    <!-- Card 6: Diagnostics & Progress -->
+    <div class="card">
+      <div class="card-title">
+        <span>⚠️ Diagnostics & Pipeline</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">NVIDIA CUDA Status</span>
+        <span class="stat-val" id="diag-cuda">Active</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">NVIDIA OptiX Status</span>
+        <span class="stat-val" id="diag-optix">Active</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Movie Pipeline Progress</span>
+        <span class="stat-val" id="render-progress">85%</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Render Queue size</span>
+        <span class="stat-val" id="render-queue">0 jobs</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Active Errors</span>
+        <span class="stat-val" id="diag-errors" style="color: var(--success)">None</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Active Warnings</span>
+        <span class="stat-val" id="diag-warnings" style="color: var(--success)">None</span>
+      </div>
+    </div>
   </div>
 </div>
 
 <footer>
-  GenOTT Cinematic Studio Engine · Git Branch: feature/blender-pipeline · Commit Hash: 5bfc803
+  GenOTT Cinematic Studio Engine · Git Branch: <span id="git-branch">feature/blender-pipeline</span> · Commit Hash: <span id="git-commit">b3f2c4f</span>
 </footer>
 
 <script>
@@ -358,9 +420,40 @@
 
         // Render pipeline
         document.getElementById('render-job').innerText = data.rendering.current_render;
+        document.getElementById('render-movie').innerText = data.rendering.current_movie;
         document.getElementById('render-scene').innerText = data.rendering.active_scene;
+        document.getElementById('render-shot').innerText = data.rendering.active_shot;
+        document.getElementById('render-frame').innerText = data.rendering.current_frame + ' / ' + data.rendering.total_frames;
         document.getElementById('render-samples').innerText = data.rendering.active_renderer.includes('OptiX') ? '128 samples (OptiX)' : '32 samples (CPU)';
         document.getElementById('render-engine').innerText = data.rendering.active_renderer;
+        document.getElementById('render-eta').innerText = data.rendering.remaining_time;
+        document.getElementById('render-fps').innerText = data.rendering.fps + '.0 FPS';
+        
+        // Milestones
+        document.getElementById('proj-milestone').innerText = data.project.current_milestone;
+        document.getElementById('proj-task').innerText = data.project.current_task;
+        document.getElementById('proj-completion').innerText = data.project.overall_completion;
+
+        // Diagnostics
+        document.getElementById('diag-cuda').innerText = data.system.optix_status === "Active" ? "Active" : "Inactive";
+        document.getElementById('diag-optix').innerText = data.system.optix_status;
+        document.getElementById('render-progress').innerText = data.rendering.pipeline_progress;
+        document.getElementById('render-queue').innerText = data.rendering.render_queue_size + ' jobs';
+        
+        const errors_val = data.diagnostics.errors.length > 0 ? data.diagnostics.errors.join(', ') : "None";
+        const warnings_val = data.diagnostics.warnings.length > 0 ? data.diagnostics.warnings.join(', ') : "None";
+        
+        const err_el = document.getElementById('diag-errors');
+        err_el.innerText = errors_val;
+        err_el.style.color = errors_val === "None" ? "var(--success)" : "var(--error)";
+        
+        const warn_el = document.getElementById('diag-warnings');
+        warn_el.innerText = warnings_val;
+        warn_el.style.color = warnings_val === "None" ? "var(--success)" : "#f59e0b";
+
+        // Git details
+        document.getElementById('git-branch').innerText = data.git.branch;
+        document.getElementById('git-commit').innerText = data.git.commit;
 
         // Subsystems
         const updateSub = (id, status) => {

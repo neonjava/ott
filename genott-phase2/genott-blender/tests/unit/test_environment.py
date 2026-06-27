@@ -10,7 +10,7 @@ project_dir = os.path.dirname(os.path.abspath(__file__))
 if project_dir not in sys.path:
     sys.path.append(project_dir)
 
-from environment_director import get_environment_for_location
+from engine.director.environment_director import get_environment_for_location
 
 class TestEnvironmentClassification(unittest.TestCase):
     # 100 unique environment classification test cases
@@ -153,6 +153,14 @@ class TestEnvironmentClassification(unittest.TestCase):
             print("Failures:")
             for fc in failed_cases:
                 print(f"  - '{fc[0]}': expected '{fc[1]}', got '{fc[2]}'")
+
+    def test_weather_volumetrics(self):
+        """Verify build_environment_in_blender completes or skips gracefully on environment configs."""
+        from engine.director.environment_director import build_environment_in_blender
+        env_config = {"environment_type": "forest", "weather": "rainy"}
+        # Ensure it runs without exception in both Blender and mock contexts
+        seed = build_environment_in_blender(env_config, (0, 0, 0), "rainy")
+        self.assertTrue(seed is None or isinstance(seed, int))
 
 if __name__ == "__main__":
     unittest.main()

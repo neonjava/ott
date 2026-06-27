@@ -55,7 +55,8 @@ COLOR_PALETTE = {
 }
 
 def get_registry_path() -> str:
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "environment_registry.json")
+    proj_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    return os.path.join(proj_dir, "configs", "environment_registry.json")
 
 def get_environment_for_location(location_string: str) -> Dict[str, Any]:
     """
@@ -136,6 +137,56 @@ def create_colored_material(name: str, color_key: str):
     rgba = COLOR_PALETTE.get(color_key, (0.5, 0.5, 0.5, 1.0))
     mat.diffuse_color = rgba
     return mat
+
+def setup_procedural_rain(character_pos, frame_start=1, frame_end=120):
+    """Procedurally spawns falling rain streaks in the Blender scene."""
+    if not bpy:
+        return
+    import random
+    
+    mat_name = "RainStreakMaterial"
+    mat = bpy.data.materials.get(mat_name)
+    if not mat:
+        mat = bpy.data.materials.new(name=mat_name)
+        mat.use_nodes = True
+        nodes = mat.node_tree.nodes
+        links = mat.node_tree.links
+        for n in list(nodes): 
+            nodes.remove(n)
+            
+        output = nodes.new(type="ShaderNodeOutputMaterial")
+        mix = nodes.new(type="ShaderNodeMixShader")
+        transparent = nodes.new(type="ShaderNodeBsdfTransparent")
+        emission = nodes.new(type="ShaderNodeEmission")
+        
+        emission.inputs['Color'].default_value = (0.7, 0.85, 1.0, 1.0)
+        emission.inputs['Strength'].default_value = 2.0
+        mix.inputs['Fac'].default_value = 0.25
+        
+        links.new(transparent.outputs['BSDF'], mix.inputs[1])
+        links.new(emission.outputs['Emission'], mix.inputs[2])
+        links.new(mix.outputs['Shader'], output.inputs['Surface'])
+
+    random.seed(12345)
+    for i in range(50):
+        x = character_pos[0] + random.uniform(-10.0, 10.0)
+        y = character_pos[1] + random.uniform(-10.0, 10.0)
+        z_start = character_pos[2] + random.uniform(8.0, 18.0)
+        
+        bpy.ops.mesh.primitive_cylinder_add(radius=0.01, depth=1.5, location=(x, y, z_start))
+        rain_obj = bpy.context.active_object
+        rain_obj.name = f"RainStreak_{i}"
+        rain_obj.data.materials.append(mat)
+        
+        rain_obj.location.z = z_start
+        rain_obj.keyframe_insert(data_path="location", index=2, frame=frame_start)
+        
+        rain_obj.location.z = z_start - 20.0
+        rain_obj.keyframe_insert(data_path="location", index=2, frame=frame_end)
+        
+        if rain_obj.animation_data and rain_obj.animation_data.action:
+            for fcurve in rain_obj.animation_data.action.fcurves:
+                fcurve.extrapolation = 'LINEAR'
 
 def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0, 0), weather: str = "clear", environment_props: List[str] = None, resolved_assets: List[Dict[str, Any]] = None, env_seed: int = None) -> int:
     """
@@ -298,6 +349,56 @@ def build_environment_in_blender(env_config: Dict[str, Any], character_pos=(0, 0
             bg_node.inputs['Strength'].default_value = 0.4
         else: # clear / dusty
             bg_node.inputs['Strength'].default_value = 1.0
+
+    # 4b. CONFIGURE VOLUMETRIC WEATHER AND PROCEDURAL FOG/RAIN STREAKS
+    out_node = world.node_tree.nodes.get("World Output")
+    if not out_node:
+        for node in world.node_tree.nodes:
+            if node.type == 'OUTPUT_WORLD':
+                out_node = node
+                break
+                
+    if out_node:
+        for node in list(world.node_tree.nodes):
+            if node.type == 'VOLUME_SCATTER':
+                world.node_tree.nodes.remove(node)
+                
+        fog_density = 0.03
+        anisotropy = 0.7
+        
+        if weather_clean in ["fog", "foggy", "mist"]:
+            fog_density = 0.22
+            anisotropy = 0.8
+        elif weather_clean in ["storm", "rain", "rainy", "stormy"]:
+            fog_density = 0.12
+            anisotropy = 0.75
+        elif weather_clean == "clear":
+            fog_density = 0.005
+            
+        try:
+            vol_node = world.node_tree.nodes.new(type="ShaderNodeVolumeScatter")
+            vol_node.inputs['Density'].default_value = fog_density
+            vol_node.inputs['Anisotropy'].default_value = anisotropy
+            world.node_tree.links.new(vol_node.outputs['Volume'], out_node.inputs['Volume'])
+        except Exception as vol_err:
+            print(f"[EnvironmentDirector] Volumetric weather scatter setup failed: {vol_err}")
+
+    if weather_clean in ["rain", "rainy", "storm", "stormy"]:
+        setup_procedural_rain(character_pos, frame_start=1, frame_end=120)
+
+    lighting_mult = 1.0
+    if weather_clean in ["rain", "rainy", "storm", "stormy"]:
+        lighting_mult = 0.45
+    elif weather_clean in ["fog", "foggy", "mist"]:
+        lighting_mult = 0.7
+        
+    if lighting_mult != 1.0:
+        for obj in bpy.context.scene.objects:
+            if obj.type == 'LIGHT' and obj.name not in ["KeyLight", "FillLight", "RimLight"]:
+                try:
+                    obj.data.energy *= lighting_mult
+                except Exception:
+                    pass
 
     # 5. LOAD MATCHING ASSETS / BUILD PROCEDURAL PRIMITIVES
     # Place assets around character_pos to populate scene environment

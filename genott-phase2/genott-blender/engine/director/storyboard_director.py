@@ -51,8 +51,8 @@ def load_known_characters() -> List[str]:
     chars = ["anime_girl", "anime_boy", "knight", "mage", "robot", "humanoid", "fox", "thor", "tony stark", "hulk", "hero"]
     
     # Try loading from character_registry.json
-    project_dir = os.path.dirname(os.path.abspath(__file__))
-    char_reg_path = os.path.join(project_dir, "character_registry.json")
+    project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    char_reg_path = os.path.join(project_dir, "configs", "character_registry.json")
     if os.path.exists(char_reg_path):
         try:
             with open(char_reg_path, "r") as f:
@@ -63,7 +63,7 @@ def load_known_characters() -> List[str]:
         except: pass
         
     # Try loading from asset_registry.json
-    asset_reg_path = os.path.join(project_dir, "asset_registry.json")
+    asset_reg_path = os.path.join(project_dir, "configs", "asset_registry.json")
     if os.path.exists(asset_reg_path):
         try:
             with open(asset_reg_path, "r") as f:

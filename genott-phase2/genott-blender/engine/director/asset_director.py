@@ -8,13 +8,14 @@ import re
 from typing import Dict, Any, List
 
 def get_registry_path() -> str:
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "asset_registry.json")
+    proj_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    return os.path.join(proj_dir, "configs", "asset_registry.json")
 
 class AssetDirector:
     def __init__(self):
         self.registry_path = get_registry_path()
         self.registry = self._load_registry()
-        self.project_dir = os.path.dirname(os.path.abspath(__file__))
+        self.project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
     def _load_registry(self) -> Dict[str, Any]:
         if os.path.exists(self.registry_path):
