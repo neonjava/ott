@@ -17,3 +17,4 @@ This benchmark evaluates movie generation speeds, visual quality scores, and res
 | **Environmental Wind** | Static Vegetation | Procedural Sine Wiggles| 🟢 Improved |
 | **Render Cache** | Rerender All | Payload Hashing Cache | 🟢 Improved (100% Hit speedup) |
 | **OpenUSD Exporter** | None | USDA ASCII Exporter | 🟢 Improved |
+| **OpenUSD Importer** | None | USDA ASCII Parser | 🟢 Improved |

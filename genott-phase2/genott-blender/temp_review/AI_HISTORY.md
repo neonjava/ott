@@ -1804,3 +1804,19 @@ Provide OpenUSD (Pixar standard) metadata scene graph format outputs representin
 * `ai/usd/usd_exporter.py`
 * `test_subsystems.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — OpenUSD Importer Subsystem (OpenUSD Importer & Scene Reconstruction)
+
+### Objective
+Reconstruct layout details, cameras, and lights from USDA text files back into the project database.
+
+### Actions Taken
+1. **USD Importer Subsystem:** Created `ai/usd/usd_importer.py` resolving regex matches to parse transform matrices.
+2. **Verification:** Updated `test_subsystems.py` to run round-trip tests and verify imported structures match exported states (**22/22 PASS**).
+
+### Files Changed
+* `ai/usd/usd_importer.py`
+* `test_subsystems.py`
+* `AI_HISTORY.md`

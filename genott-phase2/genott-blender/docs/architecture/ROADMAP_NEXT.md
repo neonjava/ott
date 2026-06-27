@@ -40,3 +40,6 @@ This document tracks upcoming high-priority engineering tasks sorted by architec
 
 ### 11. Movie Project Manager Subsystem
 * **Status**: ✅ Completed (Programmed hierarchical UUID mapping and version histories stack)
+
+### 12. OpenUSD Importer Subsystem
+* **Status**: ✅ Completed (Programmed ASCII USDA parsing and scene layout reconstruction)

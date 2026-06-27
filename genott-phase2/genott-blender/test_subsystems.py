@@ -24,6 +24,7 @@ from ai.audio_composer import AudioComposer
 from ai.renderer.blender import BlenderVideoRenderer
 from ai.project_manager import MovieProjectManager
 from ai.usd.usd_exporter import USDExporter
+from ai.usd.usd_importer import USDImporter
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
@@ -48,6 +49,7 @@ class TestEngineSubsystems(unittest.TestCase):
         self.audio_composer = AudioComposer()
         self.project_manager = MovieProjectManager(self.project_dir)
         self.usd_exporter = USDExporter()
+        self.usd_importer = USDImporter()
 
     def test_asset_pipeline(self):
         # Resolve sword
@@ -273,6 +275,20 @@ class TestEngineSubsystems(unittest.TestCase):
         self.assertTrue(os.path.exists(output_usda))
         self.assertIn("def Camera \"MainCam\"", full_usda)
         self.assertIn("float inputs:intensity = 5.0", full_usda)
+
+    def test_usd_importer_and_round_trip(self):
+        output_usda = os.path.join(self.project_dir, "static", "videos", "test_scene.usda")
+        self.assertTrue(os.path.exists(output_usda))
+        
+        # Import and parse back
+        reconstructed = self.usd_importer.import_scene(output_usda)
+        self.assertEqual(len(reconstructed["cameras"]), 1)
+        self.assertEqual(reconstructed["cameras"][0]["name"], "MainCam")
+        self.assertEqual(reconstructed["cameras"][0]["location"], [0.0, -4.0, 1.5])
+        
+        self.assertEqual(len(reconstructed["lights"]), 1)
+        self.assertEqual(reconstructed["lights"][0]["name"], "KeyLight")
+        self.assertEqual(reconstructed["lights"][0]["intensity"], 5.0)
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,8 +1,8 @@
-# Session Status — V13 OpenUSD / Pixar Pipeline
+# Session Status — V14 OpenUSD Importer & Scene Reconstruction
 
 ## 🚀 Active Visual Target
-* **Current Task**: USD Compliance Schema Exporter.
-* **Objective**: Compile camera matrix, focus variables, and lighting attributes into conforming Pixar `.usda` format.
+* **Current Task**: USD Importer & Scene Reconstruction.
+* **Objective**: Parse ASCII USDA files and build reconstructed scene objects back into project timelines.
 * **Status**: Completed & Verified.
 
 ## 🏛️ Project Release State
@@ -10,4 +10,4 @@
 * **Last Build Verification**: Successful E2E movie rendering pipeline (**5/5 PASS**).
 
 ## 🔮 Next Priority Target
-* **USD Importer / Scene graph reconstruction**: Build parser templates to recreate movie project assets from USD scene definitions.
+* **Fluid Simulation Caching Subsystem**: Implement serialization managers for Blender fluid and smoke caches.
