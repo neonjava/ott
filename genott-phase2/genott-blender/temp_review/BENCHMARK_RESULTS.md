@@ -14,3 +14,4 @@ This benchmark evaluates movie generation speeds, visual quality scores, and res
 | **Ambient Occlusion** | Flat Background | Cycles Fast GI Shadows | 🟢 Improved |
 | **Secondary Prop Motion**| Rigid Parent Attach| Decaying Sine Wobbles | 🟢 Improved |
 | **Camera Rack Focus** | Static Target Focus| Dynamic Speaker Shift | 🟢 Improved |
+| **Environmental Wind** | Static Vegetation | Procedural Sine Wiggles| 🟢 Improved |

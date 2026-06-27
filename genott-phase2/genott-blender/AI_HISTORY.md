@@ -1739,3 +1739,18 @@ Configure the rendering camera's Depth of Field focus targets dynamically based 
 ### Files Changed
 * `ai/renderer/blender_daemon.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Environmental Wind & Vegetation Wiggles (Production Pipeline Mode)
+
+### Objective
+Provide procedural low-frequency wind noise animations on environmental mesh nodes to simulate dynamic outdoor atmospheric forces.
+
+### Actions Taken
+1. **Environmental Wind:** Added geometry scanning in `blender_daemon.py` to identify vegetation, tree, leaf, and grass props, applying keyframed low-frequency sine wiggles to their Euler rotations.
+2. **Verification:** Terminated background processes and ran `e2e_test.py` successfully (**5/5 PASS**).
+
+### Files Changed
+* `ai/renderer/blender_daemon.py`
+* `AI_HISTORY.md`

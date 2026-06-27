@@ -1,8 +1,8 @@
-# Session Status — V9 Film Studio Production Mode
+# Session Status — V10 Production Pipeline Mode
 
 ## 🚀 Active Visual Target
-* **Current Task**: Dynamic camera Rack Focus target transitions.
-* **Objective**: Calculate frame viseme intervals to shift focus object focus limits dynamically toward active speakers.
+* **Current Task**: Procedural Environmental Wind/Vegetation motion wiggles.
+* **Objective**: Query scene geometry names matching vegetation tags and apply low-frequency sin/cos rotation wiggles representing wind dynamics.
 * **Status**: Completed & Verified.
 
 ## 🏛️ Project Release State

@@ -652,6 +652,23 @@ class RenderHandler(BaseHTTPRequestHandler):
                     env_seed = build_environment_in_blender(env_config, ref_pos, weather_str, props_list, assets_list, env_seed=env_seed)
                 except Exception as env_err:
                     print(f"[BlenderDaemon] Failed to build environment: {env_err}")
+ 
+                # --- Procedural Environmental Wind/Vegetation wiggles (V10 Physics) ---
+                try:
+                    for obj in bpy.context.scene.objects:
+                        name_lower = obj.name.lower()
+                        # Match environmental/background objects like grass, trees, leaves, vegetation
+                        if any(k in name_lower for k in ["grass", "tree", "leaf", "leaves", "plant", "vegetation", "prop"]):
+                            obj.rotation_mode = 'XYZ'
+                            for f in range(1, int(duration * fps) + 1):
+                                # Dynamic low-frequency wind noise: 0.03 radians max wiggle (approx 1.7 degrees)
+                                wind_wiggle_x = 0.03 * math.sin(f * 0.15 + hash(obj.name) % 10)
+                                wind_wiggle_y = 0.02 * math.cos(f * 0.12 + hash(obj.name) % 10)
+                                obj.rotation_euler = (wind_wiggle_x, wind_wiggle_y, 0)
+                                obj.keyframe_insert(data_path="rotation_euler", frame=f)
+                    print("[BlenderDaemon] Dynamic environmental wind wiggles applied to vegetation.")
+                except Exception as wind_err:
+                    print(f"[BlenderDaemon] Failed to apply environmental wind wiggles: {wind_err}")
 
                 # --- Story-Based Lighting Intelligence (AI Director Lighting Integration) ---
                 mood_str = payload.get("mood", "neutral").lower().strip()

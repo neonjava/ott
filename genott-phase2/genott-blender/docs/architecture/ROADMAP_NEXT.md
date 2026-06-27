@@ -32,3 +32,6 @@ This document tracks upcoming high-priority engineering tasks sorted by architec
 
 ### 8. Dynamic Camera Rack Focus
 * **Status**: ✅ Completed (Programmed speech-driven focus object transitions on depth of field controls)
+
+### 9. Procedural Environmental Wind/Vegetation wiggles
+* **Status**: ✅ Completed (Programmed procedural noise-based displacement loop for background vegetation meshes)
