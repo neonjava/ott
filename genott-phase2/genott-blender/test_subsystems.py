@@ -25,6 +25,7 @@ from ai.renderer.blender import BlenderVideoRenderer
 from ai.project_manager import MovieProjectManager
 from ai.usd.usd_exporter import USDExporter
 from ai.usd.usd_importer import USDImporter
+from ai.fluid_cache import FluidCacheManager
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
@@ -50,6 +51,7 @@ class TestEngineSubsystems(unittest.TestCase):
         self.project_manager = MovieProjectManager(self.project_dir)
         self.usd_exporter = USDExporter()
         self.usd_importer = USDImporter()
+        self.fluid_cache = FluidCacheManager(self.project_dir)
 
     def test_asset_pipeline(self):
         # Resolve sword
@@ -289,6 +291,21 @@ class TestEngineSubsystems(unittest.TestCase):
         self.assertEqual(len(reconstructed["lights"]), 1)
         self.assertEqual(reconstructed["lights"][0]["name"], "KeyLight")
         self.assertEqual(reconstructed["lights"][0]["intensity"], 5.0)
+
+    def test_fluid_cache(self):
+        # Cache resolution lookup checks
+        key = self.fluid_cache.generate_cache_key("scene-123", "fluid", "obj-456", 64, {"viscosity": 0.1}, (1, 100))
+        self.assertIsNotNone(key)
+        
+        # Lookups and registrations
+        miss = self.fluid_cache.check_cache(key)
+        self.assertIsNone(miss)
+        
+        path = self.fluid_cache.register_cache(key, {"scene_uuid": "scene-123", "resolution": 64})
+        self.assertTrue(os.path.exists(path))
+        
+        hit = self.fluid_cache.check_cache(key)
+        self.assertEqual(hit, path)
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,8 +1,8 @@
-# Session Status — V14 OpenUSD Importer & Scene Reconstruction
+# Session Status — V15 Fluid Simulation Cache Manager
 
 ## 🚀 Active Visual Target
-* **Current Task**: USD Importer & Scene Reconstruction.
-* **Objective**: Parse ASCII USDA files and build reconstructed scene objects back into project timelines.
+* **Current Task**: Fluid Simulation Cache Manager.
+* **Objective**: Generate deterministic SHA256 simulation metadata indices to reuse cached Blender physics results.
 * **Status**: Completed & Verified.
 
 ## 🏛️ Project Release State
@@ -10,4 +10,4 @@
 * **Last Build Verification**: Successful E2E movie rendering pipeline (**5/5 PASS**).
 
 ## 🔮 Next Priority Target
-* **Fluid Simulation Caching Subsystem**: Implement serialization managers for Blender fluid and smoke caches.
+* **USD Animation Sequence Exporter**: Extend openUSD animation tracks to support complex skeletal bone updates.

@@ -1820,3 +1820,19 @@ Reconstruct layout details, cameras, and lights from USDA text files back into t
 * `ai/usd/usd_importer.py`
 * `test_subsystems.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Fluid Simulation Cache Manager (V15 — Fluid Simulation Cache Manager)
+
+### Objective
+Provide deterministic cache directories and registration records to bypass re-baking fluid, smoke, and Mantaflow simulation computations.
+
+### Actions Taken
+1. **Fluid Cache Manager:** Created `ai/fluid_cache.py` resolving SHA256 hashes of viscosity/density options.
+2. **Verification:** Updated `test_subsystems.py` to assert hit/miss lookup properties (**23/23 PASS**).
+
+### Files Changed
+* `ai/fluid_cache.py`
+* `test_subsystems.py`
+* `AI_HISTORY.md`
