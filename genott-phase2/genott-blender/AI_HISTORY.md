@@ -1630,3 +1630,18 @@ Expose automatic CUDA device enumeration, VRAM headroom limits, and log frame ra
 * `ai/gpu_performance.py`
 * `test_subsystems.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Cycles CUDA & OptiX GPU Preferences Activation (Production Quality Phase)
+
+### Objective
+Configure Blender's Cycles rendering engine to explicitly activate OptiX or CUDA GPU hardware, avoiding slow CPU fallback pathways.
+
+### Actions Taken
+1. **Preferences Configuration:** Updated `init_blender_env` in `blender_daemon.py` to fetch Cycles addon system preferences, discover local OptiX/CUDA devices, and enable them programmatically.
+2. **Verification:** Terminated running Blender daemons and ran `e2e_test.py` to confirm initialization, pre-warming, and successful renders (**5/5 PASS**).
+
+### Files Changed
+* `ai/renderer/blender_daemon.py`
+* `AI_HISTORY.md`

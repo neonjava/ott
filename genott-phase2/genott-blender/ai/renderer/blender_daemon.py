@@ -20,9 +20,34 @@ def init_blender_env():
     # 1. Clear scene
     bpy.ops.wm.read_factory_settings(use_empty=True)
 
-    # 2. Setup GPU
+    # 2. Setup GPU (OptiX / CUDA preferences activation)
     bpy.context.scene.render.engine = 'CYCLES'
     bpy.context.scene.cycles.device = 'GPU'
+    
+    try:
+        preferences = bpy.context.preferences
+        cycles_preferences = preferences.addons['cycles'].preferences
+        cycles_preferences.refresh_devices()
+        
+        # Prefer OPTIX, fallback to CUDA
+        device_type = "CUDA"
+        for device_group in cycles_preferences.get_device_types():
+            if device_group[0] == "OPTIX":
+                device_type = "OPTIX"
+                break
+                
+        cycles_preferences.compute_device_type = device_type
+        print(f"[BlenderDaemon] Cycles compute device type set to: {device_type}")
+        
+        for device in cycles_preferences.devices:
+            if device.type == device_type:
+                device.use = True
+                print(f"[BlenderDaemon] Enabled Cycles GPU device: {device.name}")
+            else:
+                device.use = False
+    except Exception as e:
+        print(f"[BlenderDaemon] Failed to configure GPU preferences: {e}")
+        
     bpy.context.scene.cycles.samples = 2
     bpy.context.scene.render.resolution_x = 256
     bpy.context.scene.render.resolution_y = 256
