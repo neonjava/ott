@@ -883,6 +883,23 @@ class RenderHandler(BaseHTTPRequestHandler):
                                 spine_bone.keyframe_insert(data_path="rotation_euler", frame=f)
                     except Exception as breath_err:
                         print(f"[BlenderDaemon] Breathing animation error for {char_name}: {breath_err}")
+ 
+                    # --- Procedural Secondary Prop Motion Wiggles (V8 Physics constraints) ---
+                    try:
+                        for suffix in [char_suffix, ""]:
+                            for prop_prefix in ["Shovel", "Knife_1", "Pistol", "AK"]:
+                                prop_obj = bpy.context.scene.objects.get(f"{prop_prefix}{suffix}")
+                                if prop_obj and not prop_obj.hide_render:
+                                    prop_obj.rotation_mode = 'XYZ'
+                                    for f in range(1, int(duration * fps) + 1):
+                                        # Inject secondary inertial wobble rotation (decaying sine wave)
+                                        wobble_x = 0.04 * math.sin(f * 0.45) * math.exp(-f * 0.05)
+                                        wobble_y = 0.03 * math.cos(f * 0.35) * math.exp(-f * 0.05)
+                                        prop_obj.rotation_euler = (wobble_x, wobble_y, 0)
+                                        prop_obj.keyframe_insert(data_path="rotation_euler", frame=f)
+                                    print(f"[BlenderDaemon] Applied secondary prop wiggles to {prop_prefix}.")
+                    except Exception as prop_wiggle_err:
+                        print(f"[BlenderDaemon] Prop wiggle error: {prop_wiggle_err}")
 
                     # --- Conversation Eye Contact Head-Tracking (AI Director specs) ---
                     # If multiple characters, make listeners look at the primary character armature position

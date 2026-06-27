@@ -26,3 +26,6 @@ This document tracks upcoming high-priority engineering tasks sorted by architec
 
 ### 6. Procedural Torso Breathing Animation
 * **Status**: ✅ Completed (Programmed rhythmic sine-wave skeleton breathing keyframe loop)
+
+### 7. Secondary Prop Motion Wiggle Constraints
+* **Status**: ✅ Completed (Programmed decaying physical sine wiggles on accessory objects)

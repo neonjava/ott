@@ -11,21 +11,19 @@ def main():
         shutil.rmtree(target_dir)
     os.makedirs(target_dir, exist_ok=True)
     
-    # 10 Essential handoff documents for ChatGPT reference
+    # 8 Essential handoff files required by V8 specification
     essential_files = [
+        (os.path.join(workspace_dir, "README.md"), "README.md"),
         (os.path.join(workspace_dir, "AI_HISTORY.md"), "AI_HISTORY.md"),
         (os.path.join(workspace_dir, "docs", "architecture", "ROADMAP_NEXT.md"), "ROADMAP_NEXT.md"),
         (os.path.join(workspace_dir, "PROJECT_GAP_ANALYSIS.md"), "PROJECT_GAP_ANALYSIS.md"),
         (os.path.join(workspace_dir, "MOVIE_REVIEW.md"), "MOVIE_REVIEW.md"),
         (os.path.join(workspace_dir, "docs", "architecture", "BENCHMARK_RESULTS.md"), "BENCHMARK_RESULTS.md"),
-        (os.path.join(workspace_dir, "CHANGELOG.md"), "CHANGELOG.md"),
         (os.path.join(workspace_dir, "docs", "architecture", "ARCHITECTURE_DECISIONS.md"), "ARCHITECTURE_DECISIONS.md"),
-        (os.path.join(workspace_dir, "docs", "architecture", "VISUAL_REVIEW.md"), "VISUAL_REVIEW.md"),
-        (os.path.join(workspace_dir, "README.md"), "README.md"),
-        ("PROJECT_ROOT/.gemini/antigravity-cli/brain/3496fc80-3ea9-4817-8bc4-b4e0e2ff7b60/TASK_BOARD.md", "TASK_BOARD.md")
+        (os.path.join(workspace_dir, "SESSION_STATUS.md"), "SESSION_STATUS.md")
     ]
     
-    print(f"[SyncReview] Mirroring ONLY 10 essential documents to: {target_dir}")
+    print(f"[SyncReview] Mirroring V8 handoff files to: {target_dir}")
     for src, dst_name in essential_files:
         dst = os.path.join(target_dir, dst_name)
         if os.path.exists(src):

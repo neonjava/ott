@@ -14,6 +14,6 @@
 ## 📋 Prioritized Backlog
 1. **Facial Micro-Expressions & Breathing Keyframing** (Status: ✅ Completed)
 2. **Global Bounce Ambient Lighting Refinement** (Status: ✅ Completed via Cycles Fast GI & Ambient Occlusion contact shadows)
-3. **Secondary Prop Motion Wiggle Constraints** (Owner: VFX Supervisor)
+3. **Secondary Prop Motion Wiggle Constraints** (Status: ✅ Completed via decaying sine inertia wiggles)
 
-*Selected Task for Next Cycle:* **Secondary Prop Motion Wiggle Constraints** to solve physics secondary motion.
+*Selected Task for Next Cycle:* **Environmental Wind/Dust Particles wiggles**.

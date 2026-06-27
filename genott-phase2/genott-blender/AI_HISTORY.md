@@ -1709,3 +1709,18 @@ Incorporate physical volumetric fog and density scattering inside the Cycles ren
 ### Files Changed
 * `ai/renderer/blender_daemon.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Secondary Prop Motion Wiggle Constraints (Production Studio Phase)
+
+### Objective
+Provide secondary visual wobble effects to weapons and props to simulate physics decay inertia and prevent rigid accessory snapping during rendering.
+
+### Actions Taken
+1. **Secondary Prop Physics:** Updated `blender_daemon.py` to identify active weapon objects (`Shovel`, `Knife_1`, `Pistol`, `AK`) and apply an exponentially decaying sinusoidal rotation wobble keyframe sequence.
+2. **Verification:** Terminated background processes and ran `e2e_test.py` successfully (**5/5 PASS**).
+
+### Files Changed
+* `ai/renderer/blender_daemon.py`
+* `AI_HISTORY.md`
