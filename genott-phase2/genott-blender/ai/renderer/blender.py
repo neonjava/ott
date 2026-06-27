@@ -286,6 +286,26 @@ class BlenderVideoRenderer(VideoRenderer):
             "render_profile": getattr(Config, "RENDER_PROFILE", "testing")
         }
 
+        # Render Cache Agent: Hash payload configuration to determine if identical render already exists
+        import hashlib
+        import shutil
+        cache_payload = payload.copy()
+        cache_payload.pop("output_path", None)
+        payload_hash = hashlib.md5(json.dumps(cache_payload, sort_keys=True).encode("utf-8")).hexdigest()
+        
+        cache_dir = os.path.join(self.project_dir, "static", "videos", "cache")
+        os.makedirs(cache_dir, exist_ok=True)
+        cached_file_path = os.path.join(cache_dir, f"render_{payload_hash}.mp4")
+        
+        if os.path.exists(cached_file_path):
+            print(f"[BlenderRenderer] Render Cache Hit! Reusing cached video: {cached_file_path}")
+            shutil.copy2(cached_file_path, output_path)
+            cached_thumb = cached_file_path.replace(".mp4", "_thumb.png")
+            output_thumb = output_path.replace(".mp4", "_thumb.png")
+            if os.path.exists(cached_thumb):
+                shutil.copy2(cached_thumb, output_thumb)
+            return
+
         # Write payload JSON for logging
         payload_path = os.path.abspath(os.path.join(
             self.project_dir, "static", "videos",
@@ -346,6 +366,18 @@ class BlenderVideoRenderer(VideoRenderer):
                     continue
                 else:
                     raise RuntimeError(last_error)
+
+        # Cache the completed render output
+        if success and os.path.exists(output_path):
+            try:
+                shutil.copy2(output_path, cached_file_path)
+                output_thumb = output_path.replace(".mp4", "_thumb.png")
+                cached_thumb = cached_file_path.replace(".mp4", "_thumb.png")
+                if os.path.exists(output_thumb):
+                    shutil.copy2(output_thumb, cached_thumb)
+                print(f"[BlenderRenderer] Render Cache populated: {cached_file_path}")
+            except Exception as cache_err:
+                print(f"[BlenderRenderer] Failed to populate render cache: {cache_err}")
 
         # Cleanup payload
         if not getattr(Config, "DEBUG_KEEP_INTERMEDIATE", False) and os.path.exists(payload_path):

@@ -35,3 +35,6 @@ This document tracks upcoming high-priority engineering tasks sorted by architec
 
 ### 9. Procedural Environmental Wind/Vegetation wiggles
 * **Status**: ✅ Completed (Programmed procedural noise-based displacement loop for background vegetation meshes)
+
+### 10. Blender Render Cache Agent
+* **Status**: ✅ Completed (Programmed payload hashing verification checks to reuse cached frame renders)

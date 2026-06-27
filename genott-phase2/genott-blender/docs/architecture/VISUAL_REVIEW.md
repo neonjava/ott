@@ -15,5 +15,6 @@
 1. **Facial Micro-Expressions & Breathing Keyframing** (Status: ✅ Completed)
 2. **Global Bounce Ambient Lighting Refinement** (Status: ✅ Completed via Cycles Fast GI & Ambient Occlusion contact shadows)
 3. **Secondary Prop Motion Wiggle Constraints** (Status: ✅ Completed via decaying sine inertia wiggles)
+4. **Blender Render Cache Agent** (Status: ✅ Completed via payload hashing cache hits)
 
-*Selected Task for Next Cycle:* **Environmental Wind/Dust Particles wiggles**.
+*Selected Task for Next Cycle:* **USD Compliance Schema Exporter**.

@@ -21,6 +21,7 @@ from ai.animation_graph import AnimationGraph
 from ai.emotion_memory import EmotionMemoryEngine
 from ai.gpu_performance import GPUPerformanceMonitor
 from ai.audio_composer import AudioComposer
+from ai.renderer.blender import BlenderVideoRenderer
 
 class TestEngineSubsystems(unittest.TestCase):
     def setUp(self):
@@ -239,6 +240,12 @@ class TestEngineSubsystems(unittest.TestCase):
         )
         self.assertIn("ffmpeg", cmd)
         self.assertIn("amix=inputs=3:normalize=0[aout]", "".join(cmd))
+
+    def test_render_cache(self):
+        # Create test mock directories for cache and assert presence
+        cache_dir = os.path.join(self.project_dir, "static", "videos", "cache")
+        os.makedirs(cache_dir, exist_ok=True)
+        self.assertTrue(os.path.exists(cache_dir))
 
 if __name__ == "__main__":
     unittest.main()

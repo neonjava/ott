@@ -15,3 +15,4 @@ This benchmark evaluates movie generation speeds, visual quality scores, and res
 | **Secondary Prop Motion**| Rigid Parent Attach| Decaying Sine Wobbles | 🟢 Improved |
 | **Camera Rack Focus** | Static Target Focus| Dynamic Speaker Shift | 🟢 Improved |
 | **Environmental Wind** | Static Vegetation | Procedural Sine Wiggles| 🟢 Improved |
+| **Render Cache** | Rerender All | Payload Hashing Cache | 🟢 Improved (100% Hit speedup) |

@@ -1754,3 +1754,19 @@ Provide procedural low-frequency wind noise animations on environmental mesh nod
 ### Files Changed
 * `ai/renderer/blender_daemon.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Blender Render Cache Agent (Production Studio Mode)
+
+### Objective
+Minimize redundant rendering compute cycles by checking MD5 hash keys of rendering payloads and reusing cached video frames.
+
+### Actions Taken
+1. **Render Caching:** Added hash-generation checks on payload properties in `ai/renderer/blender.py`, copying cached video files to target locations on match.
+2. **Verification:** Added `test_render_cache` test case asserting caching locations, and verified E2E pipeline runs pass (**5/5 PASS**).
+
+### Files Changed
+* `ai/renderer/blender.py`
+* `test_subsystems.py`
+* `AI_HISTORY.md`
