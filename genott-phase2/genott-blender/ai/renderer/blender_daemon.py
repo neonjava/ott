@@ -94,10 +94,19 @@ def init_blender_env():
     rim_obj.location = (0, 5, 8)
     rim_obj.rotation_euler = (math.radians(-45), 0, 0)
     
-    # 5. Setup World
+    # 5. Setup World and Global Illumination (Fast GI / AO Contact Shadows)
     world = bpy.data.worlds.new("World")
     bpy.context.scene.world = world
     world.use_nodes = True
+    
+    try:
+        bpy.context.scene.cycles.use_fast_gi = True
+        bpy.context.scene.cycles.ao_factor = 0.6
+        bpy.context.scene.cycles.ao_distance = 2.5
+        print("[BlenderDaemon] Enabled Cycles Fast GI and Ambient Occlusion Contact Shadows.")
+    except Exception as gi_err:
+        print(f"[BlenderDaemon] GI configuration error: {gi_err}")
+        
     tree = world.node_tree
     for node in tree.nodes:
         tree.nodes.remove(node)
@@ -106,6 +115,16 @@ def init_blender_env():
     bg_node.inputs['Color'].default_value = (0.5, 0.6, 0.7, 1.0)
     tree.links.new(bg_node.outputs['Background'], out_node.inputs['Surface'])
     
+    # Enable volumetric atmospheric fog
+    try:
+        vol_node = tree.nodes.new(type="ShaderNodeVolumeScatter")
+        vol_node.inputs['Density'].default_value = 0.05
+        vol_node.inputs['Anisotropy'].default_value = 0.7
+        tree.links.new(vol_node.outputs['Volume'], out_node.inputs['Volume'])
+        print("[BlenderDaemon] Volumetric atmospheric fog node initialized.")
+    except Exception as vol_err:
+        print(f"[BlenderDaemon] Volumetric fog setup failed: {vol_err}")
+        
     print("[BlenderDaemon] Initialization complete.")
 
 def customize_character(character_name: str, held_item: str = None, outfits: List[str] = None):

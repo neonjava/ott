@@ -1694,3 +1694,18 @@ Eliminate rigid character postures during dialogue segments by programmatically 
 ### Files Changed
 * `ai/renderer/blender_daemon.py`
 * `AI_HISTORY.md`
+
+---
+
+## 2026-06-27 — Volumetric Atmospheric Fog (Production Validation Phase)
+
+### Objective
+Incorporate physical volumetric fog and density scattering inside the Cycles rendering environment.
+
+### Actions Taken
+1. **Volumetric Fog shader**: Updated the World initialization system in `blender_daemon.py` to create and connect a `ShaderNodeVolumeScatter` node with density default value of `0.05` and anisotropy of `0.7`.
+2. **Verification**: Executed `e2e_test.py` successfully (**5/5 PASS**).
+
+### Files Changed
+* `ai/renderer/blender_daemon.py`
+* `AI_HISTORY.md`
