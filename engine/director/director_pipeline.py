@@ -6,6 +6,7 @@ from engine.director.shot_planner import ShotPlanner
 from engine.director.shot_spec import ShotSpec
 from engine.director.backend_router import BackendRouter
 from models.adapters.base import BackendAdapter
+from engine.storyboard.movie_graph import MovieGraph
 
 class DirectorPipeline:
     """
@@ -101,3 +102,60 @@ class DirectorPipeline:
             "shot_specs": shot_specs,
             "backend_decisions": backend_decisions
         }
+
+    def run_intelligent_pipeline(self, graph: MovieGraph, idea_text: str) -> MovieGraph:
+        """
+        Runs the complete intelligent planning sequence:
+        StoryAI -> SceneAI -> ShotAI -> EditorAI -> CriticAI.
+        Loops back to StoryAI if CriticAI rejects the plan.
+        """
+        from engine.director.story_ai import StoryAI
+        from engine.director.scene_ai import SceneAI
+        from engine.director.shot_ai import ShotAI
+        from engine.director.editor_ai import EditorAI
+        from engine.director.critic_ai import CriticAI
+
+        story_ai = StoryAI()
+        scene_ai = SceneAI()
+        shot_ai = ShotAI()
+        editor_ai = EditorAI()
+        critic_ai = CriticAI()
+
+        max_revisions = 3
+        revision = 0
+        approved = False
+
+        while not approved and revision < max_revisions:
+            # Clear previous plan
+            graph.scenes = {}
+            graph.shots = {}
+            
+            # Step 1: Story Planning
+            revised_idea = idea_text if revision == 0 else f"{idea_text} with more visual variety"
+            story_ai.plan_story(graph, revised_idea)
+            
+            # Step 2: Scene Planning
+            scene_ai.plan_scenes(graph)
+            
+            # Step 3: Shot Planning
+            shot_ai.plan_shots(graph)
+            
+            # Step 4: Editing / Pacing Optimizations
+            editor_ai.optimize_plan(graph)
+            
+            # Step 5: Route Backends
+            for shot_id, shot in graph.shots.items():
+                selected_adapter = self.router.route_shot(shot)
+                caps = selected_adapter.get_capabilities()
+                graph.add_backend_task(f"task_{shot_id}", shot_id, caps["name"])
+            
+            # Step 6: Movie Critic Pre-Render Review
+            review = critic_ai.evaluate_production_plan(graph)
+            approved = review["approved"]
+            
+            # Record Review Task
+            graph.add_review_task(f"critic_pre_{revision}", list(graph.shots.keys())[0], review["score"], approved)
+            revision += 1
+            
+        graph.validate()
+        return graph
