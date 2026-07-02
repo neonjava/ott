@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenOTT — Production Pipeline Visualizer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050508;
+      --surface: rgba(17, 17, 27, 0.4);
+      --card: rgba(22, 22, 35, 0.6);
+      --border: rgba(255, 255, 255, 0.05);
+      --accent: #7c3aed;
+      --accent2: #a855f7;
+      --cyan: #06b6d4;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+      --success: #10b981;
+      --error: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5, 5, 8, 0.8);
+      backdrop-filter: blur(16px);
+    }
+    .logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent2), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .container {
+      padding: 40px;
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      margin-bottom: 30px;
+      font-weight: 800;
+    }
+
+    .tree-node {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(12px);
+    }
+    .tree-node:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .node-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 600;
+    }
+
+    .node-title {
+      font-size: 18px;
+      color: #fff;
+    }
+
+    .node-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-completed { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+    .badge-rendering { background: rgba(6, 182, 212, 0.1); color: var(--cyan); }
+    .badge-draft { background: rgba(107, 107, 128, 0.1); color: var(--muted); }
+
+    .node-content {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+    .node-content.active { display: block; }
+
+    .sub-tree {
+      margin-left: 20px;
+      border-left: 2px solid var(--border);
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+
+    .shot-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    .detail-item span {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">GenOTT V2</div>
+  <div>AI Production Studio</div>
+</header>
+
+<div class="container">
+  <h1>🎬 Live Production Pipeline</h1>
+  
+  <div id="pipeline-tree">
+    <!-- Active portable project tree injected here -->
+  </div>
+</div>
+
+<script>
+  function toggleNode(event, nodeId) {
+    event.stopPropagation();
+    const content = document.getElementById(nodeId);
+    if (content) {
+      content.classList.toggle('active');
+    }
+  }
+
+  // Load production plan dynamically
+  fetch('/api/system-status')
+    .then(res => res.json())
+    .then(data => {
+      const treeContainer = document.getElementById('pipeline-tree');
+      
+      // Render dummy/mock production node for visualization
+      treeContainer.innerHTML = `
+        <div class="tree-node" onclick="toggleNode(event, 'movie-content')">
+          <div class="node-header">
+            <span class="node-title">🎥 Movie: Iron and Moss</span>
+            <span class="node-badge badge-rendering">Rendering</span>
+          </div>
+          <div class="node-content active" id="movie-content">
+            <p style="margin-bottom: 15px; color: var(--muted)">A short film exploring an encounter between a humanoid character and an ancient mossy robot in the forest.</p>
+            
+            <div class="sub-tree">
+              <h3>Scenes</h3>
+              
+              <!-- Scene 1 -->
+              <div class="tree-node" onclick="toggleNode(event, 'scene-1-content')">
+                <div class="node-header">
+                  <span>🎬 Scene 1: The Encounter</span>
+                  <span class="node-badge badge-completed">Completed</span>
+                </div>
+                <div class="node-content" id="scene-1-content">
+                  <p style="color: var(--muted)">Location: Forest | Weather: Clear | Emotion: Mysterious</p>
+                  
+                  <div class="sub-tree">
+                    <h4>Shots</h4>
+                    
+                    <div class="tree-node" onclick="toggleNode(event, 'shot-1-1')">
+                      <div class="node-header">
+                        <span>📹 Shot 01: Wide Angle</span>
+                        <span class="node-badge badge-completed">Score: 0.92</span>
+                      </div>
+                      <div class="node-content" id="shot-1-1">
+                        <div class="shot-details">
+                          <div class="detail-item"><span>Purpose</span>Establish forest path</div>
+                          <div class="detail-item"><span>Backend</span>Blender Cycles</div>
+                          <div class="detail-item"><span>Camera Profile</span>Steadicam</div>
+                          <div class="detail-item"><span>Status</span>Completed</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+</script>
+</body>
+</html>

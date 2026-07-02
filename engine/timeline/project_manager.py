@@ -43,7 +43,13 @@ class MovieProjectManager:
             "fps": 24,
             "status": "Draft",
             "scenes": {},
-            "metadata": {}
+            "metadata": {},
+            "story": {},
+            "shots": {},
+            "shot_specs": [],
+            "backend_decisions": [],
+            "generation_history": [],
+            "review_history": []
         }
         
     def _get_project_folders(self, project_path: str) -> List[str]:
@@ -96,7 +102,13 @@ class MovieProjectManager:
             "fps": 24,
             "status": "Draft",
             "scenes": {},
-            "metadata": {}
+            "metadata": {},
+            "story": {},
+            "shots": {},
+            "shot_specs": [],
+            "backend_decisions": [],
+            "generation_history": [],
+            "review_history": []
         }
         self.save_project()
         return project_path
