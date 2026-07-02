@@ -1,10 +1,10 @@
 {
-    "movie_id": "53fad44b-0901-402b-9518-de41d5ac3a89",
+    "movie_id": "a49f56ec-ae17-436c-97e3-486b94d23bbc",
     "name": "Untitled Movie",
-    "project_id": "0b9f1fe8-2d32-4f78-bac4-902b240cadb9",
+    "project_id": "8e9e0269-aef8-49ed-a839-fba2e1857f09",
     "project_version": "1.0.0",
-    "created_at": 1783000684.4214137,
-    "updated_at": 1783000684.421628,
+    "created_at": 1783000912.7655401,
+    "updated_at": 1783000912.7659888,
     "author": "System",
     "engine_version": "2.0.0",
     "supported_backends": [
@@ -18,13 +18,13 @@
     "fps": 24,
     "status": "Draft",
     "scenes": {
-        "421ce537-8f0a-4f5c-857f-c7cd2333fe6f": {
-            "uuid": "421ce537-8f0a-4f5c-857f-c7cd2333fe6f",
+        "b568c3c0-bbcb-4516-a496-c8effe28ab5a": {
+            "uuid": "b568c3c0-bbcb-4516-a496-c8effe28ab5a",
             "name": "Intro Scene",
             "script": "Hero leaps into the dynamic fog",
             "shots": {
-                "78f45a08-025d-481d-9156-c211bb6f13ec": {
-                    "uuid": "78f45a08-025d-481d-9156-c211bb6f13ec",
+                "ac09c25e-fb80-48bd-93db-ab0eb3da2d74": {
+                    "uuid": "ac09c25e-fb80-48bd-93db-ab0eb3da2d74",
                     "camera_shot": "wide_shot",
                     "duration": 3.5,
                     "status": "pending"

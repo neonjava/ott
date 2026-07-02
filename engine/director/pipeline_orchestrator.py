@@ -22,6 +22,9 @@ class PipelineOrchestrator:
         Runs the full generation, review, and selective regeneration loop for all shots.
         Returns a list of verified shot video paths.
         """
+        # Strict contract validation check
+        graph.validate()
+        
         os.makedirs(output_dir, exist_ok=True)
         verified_shots: List[str] = []
         
@@ -53,15 +56,14 @@ class PipelineOrchestrator:
             
             while not approved and retries <= max_retries:
                 if retries > 0:
-                    continuity = shot.setdefault("continuity", {})
-                    continuity["seed"] = continuity.get("seed", 42) + 1
-                    continuity["environmental_seed"] = continuity.get("environmental_seed", 100) + 1
+                    shot["continuity"]["seed"] += 1
+                    shot["continuity"]["environmental_seed"] += 1
                     
                 # Trigger Backend Generation
                 try:
                     # Generate a mock output file since we are running headless
                     with open(video_path, "w") as f:
-                        f.write(f"video data for shot {shot_id} seed {shot.setdefault('continuity', {}).get('seed', 42)}" + " " * 1000)
+                        f.write(f"video data for shot {shot_id} seed {shot['continuity']['seed']}" + " " * 1000)
                     
                     adapter.render_shot(shot, video_path)
                     
