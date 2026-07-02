@@ -2,7 +2,7 @@
 import os
 
 class Config:
-    PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     FACES_DIR = os.path.join(PROJECT_DIR, "frontend", "static", "faces")
     VIDEO_DIR = os.path.join(PROJECT_DIR, "frontend", "static", "videos")
     SADTALKER_DIR = os.path.join(PROJECT_DIR, "SadTalker")

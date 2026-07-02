@@ -81,7 +81,7 @@ def ensure_blender_daemon():
 def _load_character_registry():
     registry_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "character_registry.json"
+        "configs", "character_registry.json"
     )
     if os.path.exists(registry_path):
         with open(registry_path, "r") as f:
@@ -168,7 +168,7 @@ class BlenderVideoRenderer(VideoRenderer):
             
         plan_placements = getattr(plan, "character_placements", None)
         if not plan_placements:
-            from spatial_placement_engine import SpatialPlacementEngine
+            from engine.characters.spatial_placement_engine import SpatialPlacementEngine
             spatial_engine = SpatialPlacementEngine()
             plan_placements = spatial_engine.calculate_positions(plan_characters)
 

@@ -212,12 +212,12 @@ class ScenePlanner:
         self.model = model
 
     def plan_rule_based(self, script: str, character: str, target_duration: float = 45.0) -> List[ScenePlan]:
-        from dialogue_engine import generate_dialogue_timeline
-        from storyboard_director import parse_script_to_storyboard
-        from character_interaction_engine import CharacterInteractionEngine
-        from environment_generation_engine import EnvironmentGenerationEngine
-        from director_v2 import DirectorV2
-        from spatial_placement_engine import SpatialPlacementEngine
+        from engine.characters.dialogue_engine import generate_dialogue_timeline
+        from engine.director.storyboard_director import parse_script_to_storyboard
+        from engine.characters.character_interaction_engine import CharacterInteractionEngine
+        from engine.world.environment_generation_engine import EnvironmentGenerationEngine
+        from engine.director.director_v2 import DirectorV2
+        from engine.characters.spatial_placement_engine import SpatialPlacementEngine
         
         # 1. Generate structured dialogue timeline
         timeline = generate_dialogue_timeline(script, character)
@@ -374,7 +374,7 @@ class ScenePlanner:
                 chars_in_scene.remove(primary_char)
                 chars_in_scene.insert(0, primary_char)
                 
-            from spatial_placement_engine import SpatialPlacementEngine
+            from engine.characters.spatial_placement_engine import SpatialPlacementEngine
             spatial_engine = SpatialPlacementEngine()
             placements = spatial_engine.calculate_positions(chars_in_scene)
 

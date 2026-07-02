@@ -14,14 +14,14 @@ project_dir = os.path.dirname(os.path.abspath(__file__))
 if project_dir not in sys.path:
     sys.path.append(project_dir)
 
-from story_understanding_engine import StoryUnderstandingEngine
-from scene_planner_v2 import ScenePlannerV2
-from emotion_engine import EmotionEngine
-from character_interaction_engine import CharacterInteractionEngine
-from spatial_placement_engine import SpatialPlacementEngine
-from environment_generation_engine import EnvironmentGenerationEngine
-from director_v2 import DirectorV2
-from story_understanding_benchmark import STORIES
+from engine.director.story_understanding_engine import StoryUnderstandingEngine
+from engine.director.scene_planner_v2 import ScenePlannerV2
+from engine.characters.emotion_engine import EmotionEngine
+from engine.characters.character_interaction_engine import CharacterInteractionEngine
+from engine.characters.spatial_placement_engine import SpatialPlacementEngine
+from engine.world.environment_generation_engine import EnvironmentGenerationEngine
+from engine.director.director_v2 import DirectorV2
+from engine.director.ai_research import STORIES
 
 class VisualPipelineRunner:
     def __init__(self):
