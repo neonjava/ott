@@ -5,6 +5,7 @@ import uuid
 import time
 import shutil
 from typing import Dict, Any, List, Optional
+from engine.storyboard.movie_graph import MovieGraph
 
 class MovieProjectManager:
     """
@@ -20,6 +21,7 @@ class MovieProjectManager:
         self.project_name: Optional[str] = None
         self.project_path: Optional[str] = None
         self.project_file: Optional[str] = None
+        self.movie_graph = MovieGraph()
         
         self.history_stack: List[Dict[str, Any]] = []
         self.redo_stack: List[Dict[str, Any]] = []
@@ -128,6 +130,8 @@ class MovieProjectManager:
                 self.project_file = project_file
                 self.history_stack = []
                 self.redo_stack = []
+                if "movie_graph" in self.project_data:
+                    self.movie_graph.deserialize(self.project_data["movie_graph"])
                 return True
             except Exception as e:
                 print(f"[ProjectManager] Failed to load project: {e}")
@@ -139,6 +143,8 @@ class MovieProjectManager:
             try:
                 with open(self.project_file, "r") as f:
                     self.project_data = json.load(f)
+                if "movie_graph" in self.project_data:
+                    self.movie_graph.deserialize(self.project_data["movie_graph"])
                 return True
             except Exception as e:
                 print(f"[ProjectManager] load_project wrapper failure: {e}")
@@ -159,6 +165,7 @@ class MovieProjectManager:
                 self.history_stack.pop(0)
                 
             self.project_data["updated_at"] = time.time()
+            self.project_data["movie_graph"] = self.movie_graph.serialize()
             with open(self.project_file, "w") as f:
                 json.dump(self.project_data, f, indent=4)
         except Exception as e:
