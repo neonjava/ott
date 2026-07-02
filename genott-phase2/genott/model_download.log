@@ -1,11 +1,0 @@
-PROJECT_ROOT/Documents/LLM/ott/genott-phase2/genott/venv/lib64/python3.14/site-packages/huggingface_hub/utils/_validators.py:205: UserWarning: The `local_dir_use_symlinks` argument is deprecated and ignored in `hf_hub_download`. Downloading to a local directory does not use symlinks anymore.
-  warnings.warn(
-The config attributes {'motion_activation_fn': 'geglu', 'motion_attention_bias': False, 'motion_cross_attention_dim': None} were passed to MotionAdapter, but are not expected and will be ignored. Please verify your config.json configuration file.
-=========================================
-Pre-downloading AnimateDiff Models...
-=========================================
-
-1/2: Downloading Motion Adapter...
-
-2/2: Downloading AnimateDiff Base Model (epiCRealism)...
-Fetching 15 files:   0%|          | 0/15 [00:00<?, ?it/s]
