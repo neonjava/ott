@@ -185,13 +185,17 @@ class DemoOrchestrator:
         production_metadata = {
             "title": "Echoes of the Void",
             "duration_sec": 30.0,
+            "total_duration_sec": 30.0,
             "total_shots": len(shots_data),
+            "number_of_shots": len(shots_data),
             "generation_time_sec": gen_time,
             "backend_used": "WAN 2.1 Open-Source",
             "hardware_metrics": hw_info,
             "assets": {
                 "screenplay": script_path,
+                "screenplay_script": script_path,
                 "compiled_prompts": prompts_path,
+                "shot_prompts": prompts_path,
                 "narration_audio": audio_path,
                 "shot_videos": shot_video_paths,
                 "final_export": final_video_path

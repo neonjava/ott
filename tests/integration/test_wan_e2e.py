@@ -44,7 +44,7 @@ class TestWANE2EIntegrationSuite(unittest.TestCase):
         self.assertIn("gpu_model", sidecar_data["metrics"])
         self.assertEqual(sidecar_data["prompt"], prompt)
         self.assertEqual(sidecar_data["seed"], seed)
-        self.assertEqual(sidecar_data["output_path"], output_video_path)
+        self.assertEqual(os.path.abspath(sidecar_data["output_path"]), os.path.abspath(output_video_path))
 
 if __name__ == "__main__":
     unittest.main()
