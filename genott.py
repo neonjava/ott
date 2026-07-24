@@ -19,6 +19,7 @@ from engine.model_manager.registry import ModelRegistry
 from engine.model_manager.installer import ModelInstaller
 from engine.director.demo_orchestrator import DemoOrchestrator
 from engine.director.production_pipeline import RealProductionPipeline
+from engine.director.short_film_pipeline import ShortFilmPipeline
 from engine.metrics.collector import MetricsCollector
 
 def main():
@@ -38,12 +39,12 @@ def main():
     gen_parser.add_argument("--duration", type=float, default=5.0, help="Duration in seconds")
     gen_parser.add_argument("--demo", action="store_true", help="Generate complete 30-second narration-synced cinematic demo")
 
-    # Command: render
-    render_parser = subparsers.add_parser("render", help="Render complete production from idea prompt")
+    # Command: render / film
+    render_parser = subparsers.add_parser("render", help="Render complete 2-minute short film or production from idea prompt")
     render_parser.add_argument("--idea", type=str, default="An epic sci-fi starship voyage across the galaxy", help="Idea prompt")
     render_parser.add_argument("--backend", type=str, default="wan", help="Backend plugin name")
-    render_parser.add_argument("--duration", type=float, default=30.0, help="Production duration in seconds")
-    render_parser.add_argument("--output-dir", type=str, default="outputs/production", help="Output directory")
+    render_parser.add_argument("--duration", type=float, default=120.0, help="Production duration in seconds (default: 120s / 2min)")
+    render_parser.add_argument("--output-dir", type=str, default="outputs/productions", help="Output directory")
 
     # Command: benchmark
     bench_parser = subparsers.add_parser("benchmark", help="Run model generation performance benchmark")
@@ -53,7 +54,7 @@ def main():
     doctor_parser = subparsers.add_parser("doctor", help="Run diagnostic health check on environment, PyTorch, CUDA, VRAM")
 
     # Command: demo
-    demo_parser = subparsers.add_parser("demo", help="Generate complete 30-second local demonstration video")
+    demo_parser = subparsers.add_parser("demo", help="Generate complete 2-minute local AI short film demonstration")
 
     # Command: models
     models_parser = subparsers.add_parser("models", help="Model manager & installer commands")
@@ -100,14 +101,17 @@ def main():
             print(f"[✓] Generation finished successfully! Output saved to {result['output_path']}")
 
     elif args.command == "render" or args.command == "demo":
-        idea = getattr(args, "idea", "A cinematic masterpiece of an ancient dragon in a lightning storm")
-        output_dir = getattr(args, "output_dir", "outputs/demo")
+        idea = getattr(args, "idea", "An epic sci-fi starship voyage across the galaxy")
+        output_dir = getattr(args, "output_dir", "outputs/productions")
         backend_name = getattr(args, "backend", "wan")
         
-        print(f"[GenOTT Studio] Executing Real Autonomous AI Production Pipeline ({backend_name})...")
-        pipeline = RealProductionPipeline(backend_name=backend_name, output_dir=output_dir)
-        metadata = pipeline.execute_pipeline(idea_prompt=idea, target_duration_sec=30.0)
-        print(f"[✓] Autonomous Production Complete! Final Export: {metadata['exported_assets']['final_render']}")
+        print(f"[GenOTT Autonomous Studio] Executing 2-Minute AI Short Film Pipeline ({backend_name})...")
+        pipeline = ShortFilmPipeline(backend_name=backend_name, output_dir=output_dir)
+        metadata = pipeline.produce_2min_short_film(idea_prompt=idea)
+        print(f"[✓] 2-Minute AI Short Film Production Complete! Final Export: {metadata['exported_assets']['final_render']}")
+        print(f"    Narration Audio Track: {metadata['exported_assets']['narration_audio']}")
+        print(f"    Background Music Score: {metadata['exported_assets']['background_music']}")
+        print(f"    Total Duration: {metadata['total_duration_sec']}s ({metadata['total_shots']} shots across 6 acts)")
 
     elif args.command == "doctor":
         installer = ModelInstaller()
