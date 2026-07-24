@@ -20,6 +20,7 @@ from engine.model_manager.installer import ModelInstaller
 from engine.director.demo_orchestrator import DemoOrchestrator
 from engine.director.production_pipeline import RealProductionPipeline
 from engine.director.short_film_pipeline import ShortFilmPipeline
+from engine.director.verifier import ProductionVerifier
 from engine.metrics.collector import MetricsCollector
 
 def main():
@@ -46,9 +47,9 @@ def main():
     render_parser.add_argument("--duration", type=float, default=120.0, help="Production duration in seconds (default: 120s / 2min)")
     render_parser.add_argument("--output-dir", type=str, default="outputs/productions", help="Output directory")
 
-    # Command: benchmark
-    bench_parser = subparsers.add_parser("benchmark", help="Run model generation performance benchmark")
-    bench_parser.add_argument("name", type=str, nargs="?", default="wan", help="Target model backend")
+    # Command: verify-production
+    verify_parser = subparsers.add_parser("verify-production", help="Verify production inference integrity, shots, and playable MP4 output")
+    verify_parser.add_argument("--dir", type=str, default="outputs/productions", help="Target production directory")
 
     # Command: doctor
     doctor_parser = subparsers.add_parser("doctor", help="Run diagnostic health check on environment, PyTorch, CUDA, VRAM")
@@ -111,7 +112,20 @@ def main():
         print(f"[✓] 2-Minute AI Short Film Production Complete! Final Export: {metadata['exported_assets']['final_render']}")
         print(f"    Narration Audio Track: {metadata['exported_assets']['narration_audio']}")
         print(f"    Background Music Score: {metadata['exported_assets']['background_music']}")
+        print(f"    Contact Sheet Grid: {metadata['exported_assets']['contact_sheet']}")
+        print(f"    Generation Manifest: {metadata['exported_assets']['generation_manifest']}")
         print(f"    Total Duration: {metadata['total_duration_sec']}s ({metadata['total_shots']} shots across 6 acts)")
+
+    elif args.command == "verify-production":
+        target_dir = args.dir
+        print(f"=== Verifying Production Integrity at '{target_dir}' ===")
+        report = ProductionVerifier.verify_production(target_dir)
+        print(json.dumps(report, indent=2))
+        if report["is_valid"]:
+            print("[✓] PRODUCTION VERIFICATION SUCCESSFUL! Every shot originates from real inference.")
+        else:
+            print("[X] PRODUCTION VERIFICATION FAILED. Errors found:", report["errors"])
+            sys.exit(1)
 
     elif args.command == "doctor":
         installer = ModelInstaller()
@@ -120,14 +134,6 @@ def main():
         print("=== GenOTT System Diagnostic ===")
         print(json.dumps({**sys_res, **hw}, indent=2))
         print("[✓] Diagnostic check finished.")
-
-    elif args.command == "benchmark":
-        name = args.name or "wan"
-        backend = BackendRegistry.get_backend(name)
-        backend.initialize()
-        resources = backend.estimate_resources("1080p", duration=5.0, fps=24)
-        print(f"=== Backend Benchmark ({name}) ===")
-        print(json.dumps(resources, indent=2))
 
     elif args.command == "models":
         installer = ModelInstaller()

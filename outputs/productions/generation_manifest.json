@@ -1,0 +1,156 @@
+{
+  "title": "Echoes of Eternity: An epic sci-fi starship voyage",
+  "backend_used": "WAN",
+  "model_version": "2.1-open-source",
+  "total_shots": 24,
+  "render_settings": {
+    "fps": 24,
+    "resolution": "1280x720"
+  },
+  "shots": [
+    {
+      "shot_id": 1,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_01.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_01_meta.json",
+      "timeline_order": 1
+    },
+    {
+      "shot_id": 2,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_02.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_02_meta.json",
+      "timeline_order": 2
+    },
+    {
+      "shot_id": 3,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_03.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_03_meta.json",
+      "timeline_order": 3
+    },
+    {
+      "shot_id": 4,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_04.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_04_meta.json",
+      "timeline_order": 4
+    },
+    {
+      "shot_id": 5,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_05.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_05_meta.json",
+      "timeline_order": 5
+    },
+    {
+      "shot_id": 6,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_06.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_06_meta.json",
+      "timeline_order": 6
+    },
+    {
+      "shot_id": 7,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_07.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_07_meta.json",
+      "timeline_order": 7
+    },
+    {
+      "shot_id": 8,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_08.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_08_meta.json",
+      "timeline_order": 8
+    },
+    {
+      "shot_id": 9,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_09.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_09_meta.json",
+      "timeline_order": 9
+    },
+    {
+      "shot_id": 10,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_10.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_10_meta.json",
+      "timeline_order": 10
+    },
+    {
+      "shot_id": 11,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_11.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_11_meta.json",
+      "timeline_order": 11
+    },
+    {
+      "shot_id": 12,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_12.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_12_meta.json",
+      "timeline_order": 12
+    },
+    {
+      "shot_id": 13,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_13.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_13_meta.json",
+      "timeline_order": 13
+    },
+    {
+      "shot_id": 14,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_14.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_14_meta.json",
+      "timeline_order": 14
+    },
+    {
+      "shot_id": 15,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_15.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_15_meta.json",
+      "timeline_order": 15
+    },
+    {
+      "shot_id": 16,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_16.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_16_meta.json",
+      "timeline_order": 16
+    },
+    {
+      "shot_id": 17,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_17.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_17_meta.json",
+      "timeline_order": 17
+    },
+    {
+      "shot_id": 18,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_18.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_18_meta.json",
+      "timeline_order": 18
+    },
+    {
+      "shot_id": 19,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_19.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_19_meta.json",
+      "timeline_order": 19
+    },
+    {
+      "shot_id": 20,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_20.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_20_meta.json",
+      "timeline_order": 20
+    },
+    {
+      "shot_id": 21,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_21.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_21_meta.json",
+      "timeline_order": 21
+    },
+    {
+      "shot_id": 22,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_22.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_22_meta.json",
+      "timeline_order": 22
+    },
+    {
+      "shot_id": 23,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_23.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_23_meta.json",
+      "timeline_order": 23
+    },
+    {
+      "shot_id": 24,
+      "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_24.mp4",
+      "sidecar_metadata": "PROJECT_ROOT/Documents/LLM/ott/outputs/productions/shot_24_meta.json",
+      "timeline_order": 24
+    }
+  ]
+}

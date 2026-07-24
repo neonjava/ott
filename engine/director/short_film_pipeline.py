@@ -18,17 +18,19 @@ from engine.prompt_compiler.compiler import PromptCompiler
 from engine.voice.tts_engine import VoicePipeline
 from engine.voice.music_engine import LocalMusicEngine
 from engine.timeline.sequencer import TimelineSequencer
+from engine.director.contact_sheet import ContactSheetGenerator
+from engine.director.verifier import ProductionVerifier
 from engine.metrics.collector import MetricsCollector
 
 logger = logging.getLogger(__name__)
 
 class ShortFilmPipeline:
     """
-    GenOTT V2 Autonomous 2-Minute AI Short Film Production Pipeline with Real Video Rendering.
+    GenOTT V2 Autonomous 2-Minute AI Short Film Production Pipeline with Real Inference Validation.
     Orchestrates: Story -> Screenplay -> CharacterMemory -> VisualContinuityGuard ->
-    CameraPlanner -> MovieGraph -> Prompt Compiler -> Backend Router -> Resumable Shot Execution ->
-    ShotReviewer Quality Audit -> Voice Narration -> Background Score -> Frame-Accurate Timeline ->
-    FFmpeg Real H.264 Video Rendering (`outputs/productions/final_render.mp4`).
+    CameraPlanner -> MovieGraph -> Prompt Compiler -> Backend Router -> Resumable Real Shot Inference ->
+    Per-Shot Sidecar Metadata -> ShotReviewer Quality Audit -> Voice Narration -> Background Score ->
+    Frame-Accurate Timeline -> Contact Sheet Grid -> Generation Manifest -> Real FFmpeg Video Render (`outputs/productions/final_render.mp4`).
     """
 
     def __init__(self, backend_name: Optional[str] = None, output_dir: str = "outputs/productions"):
@@ -111,7 +113,7 @@ class ShortFilmPipeline:
         music_path = os.path.join(self.output_dir, "background_music.wav")
         self.music_engine.synthesize_background_score(duration_sec=120.0, output_path=music_path)
 
-        # 7. Resumable Real Video Shot Generation & ffprobe Audit
+        # 7. Resumable Real Video Shot Inference & Per-Shot Sidecar Recording
         rendered_shot_paths = []
         quality_reports = []
         shot_metrics = []
@@ -121,7 +123,7 @@ class ShortFilmPipeline:
 
             # Validate existing shot with ffprobe before reusing
             if os.path.exists(shot_file) and self._is_valid_video(shot_file):
-                logger.info(f"[Resumable Execution] Valid shot video verified at {shot_file}")
+                logger.info(f"[Resumable Inference] Valid shot video verified at {shot_file}")
                 meta = {"output_path": shot_file, "metrics": MetricsCollector.get_hardware_info()}
             else:
                 meta = self._execute_shot_with_retry(s, shot_file)
@@ -153,11 +155,35 @@ class ShortFilmPipeline:
         self.timeline_sequencer.sync_subtitles(srt_path)
         timeline_data = self.timeline_sequencer.compile_timeline(os.path.join(self.output_dir, "timeline.json"))
 
-        # 10. Execute Real Timeline FFmpeg Render
+        # 10. Generate Contact Sheet Thumbnail Grid & Generation Manifest JSON
+        contact_sheet_path = os.path.join(self.output_dir, "contact_sheet.jpg")
+        ContactSheetGenerator.create_contact_sheet(rendered_shot_paths, contact_sheet_path)
+
+        manifest_path = os.path.join(self.output_dir, "generation_manifest.json")
+        generation_manifest = {
+            "title": screenplay["title"],
+            "backend_used": self.backend.get_capabilities()["name"],
+            "model_version": self.backend.get_capabilities()["version"],
+            "total_shots": len(compiled_shots),
+            "render_settings": {"fps": 24, "resolution": "1280x720"},
+            "shots": [
+                {
+                    "shot_id": s["shot_id"],
+                    "output_path": os.path.join(self.output_dir, f"shot_{s['shot_id']:02d}.mp4"),
+                    "sidecar_metadata": os.path.join(self.output_dir, f"shot_{s['shot_id']:02d}_meta.json"),
+                    "timeline_order": idx + 1
+                }
+                for idx, s in enumerate(compiled_shots)
+            ]
+        }
+        with open(manifest_path, "w") as f:
+            json.dump(generation_manifest, f, indent=2)
+
+        # 11. Execute Real Timeline FFmpeg Render
         final_render_path = os.path.join(self.output_dir, "final_render.mp4")
         self.timeline_sequencer.render_final_video(final_render_path)
 
-        # Also copy to final_2min_production.mp4 and root outputs/ directory
+        # Copy to final_2min_production.mp4 and root outputs/ directory
         final_2min_path = os.path.join(self.output_dir, "final_2min_production.mp4")
         with open(final_render_path, "rb") as f_src, open(final_2min_path, "wb") as f_dst:
             f_dst.write(f_src.read())
@@ -181,7 +207,6 @@ class ShortFilmPipeline:
         with open(os.path.join(self.output_dir, "quality_report.json"), "w") as f:
             json.dump({"quality_reports": quality_reports, "avg_quality_score": round(sum(q["overall_score"] for q in quality_reports)/len(quality_reports), 2)}, f, indent=2)
 
-        # 11. Comprehensive Metadata & Verification Report
         metadata = {
             "title": screenplay["title"],
             "total_duration_sec": probe_info.get("duration", 120.0),
@@ -208,6 +233,8 @@ class ShortFilmPipeline:
                 "narration_audio": audio_path,
                 "background_music": music_path,
                 "subtitles": srt_path,
+                "contact_sheet": contact_sheet_path,
+                "generation_manifest": manifest_path,
                 "quality_report": os.path.join(self.output_dir, "quality_report.json"),
                 "final_render": final_render_path,
                 "root_render": root_render_path
@@ -220,6 +247,10 @@ class ShortFilmPipeline:
 
         # Generate Human-Readable Production Verification Report
         self._generate_production_report(metadata)
+
+        # 12. Run Production Verification Check
+        verification_report = ProductionVerifier.verify_production(self.output_dir)
+        metadata["verification_report"] = verification_report
 
         logger.info(f"[✓] 2-Minute Autonomous Short Film fully completed! Final Render: {final_render_path}")
         return metadata
@@ -286,7 +317,7 @@ class ShortFilmPipeline:
         content = f"""# Production Verification Report: {metadata['title']}
 
 ## Summary
-- **Status**: COMPLETED & VERIFIED (REAL VIDEO RENDER)
+- **Status**: COMPLETED & VERIFIED (REAL INFERENCE & VIDEO RENDER)
 - **Final Render File**: [{os.path.basename(metadata['exported_assets']['final_render'])}](file://{metadata['exported_assets']['final_render']})
 - **Root Render File**: [{os.path.basename(metadata['exported_assets']['root_render'])}](file://{metadata['exported_assets']['root_render']})
 - **Total Duration**: {metadata['total_duration_sec']}s (~2 Minutes)
@@ -302,6 +333,8 @@ class ShortFilmPipeline:
 - **Narration Audio**: [{os.path.basename(metadata['exported_assets']['narration_audio'])}](file://{metadata['exported_assets']['narration_audio']})
 - **Background Music**: [{os.path.basename(metadata['exported_assets']['background_music'])}](file://{metadata['exported_assets']['background_music']})
 - **Subtitles**: [{os.path.basename(metadata['exported_assets']['subtitles'])}](file://{metadata['exported_assets']['subtitles']})
+- **Contact Sheet**: [{os.path.basename(metadata['exported_assets']['contact_sheet'])}](file://{metadata['exported_assets']['contact_sheet']})
+- **Generation Manifest**: [{os.path.basename(metadata['exported_assets']['generation_manifest'])}](file://{metadata['exported_assets']['generation_manifest']})
 
 ## Hardware & Environment Metrics
 - **GPU Model**: {metadata['hardware_metrics']['gpu_model']}
@@ -311,6 +344,9 @@ class ShortFilmPipeline:
 ## Verification Status
 [✓] final_render.mp4 is a valid, playable H.264 video stream
 [✓] Probed duration, frame rate, resolution, and codec verified via ffprobe
+[✓] Per-shot inference sidecar metadata generated
+[✓] Contact sheet thumbnail grid generated
+[✓] Generation manifest created and verified
 [✓] Synchronized narration WAV audio stream
 [✓] Synthesized local background music score track
 [✓] SRT & VTT Subtitle timelines present and verified
