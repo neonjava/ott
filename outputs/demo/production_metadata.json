@@ -1,0 +1,40 @@
+{
+  "production_title": "Echoes of the Void",
+  "total_duration_sec": 30.0,
+  "number_of_shots": 6,
+  "generation_time_sec": 11.112,
+  "model_versions": {
+    "director": "GenOTT-V2-Orchestrator",
+    "wan_backend": "2.1-open-source",
+    "prompt_compiler": "1.0.0"
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+  ],
+  "vram_gb": 34.0,
+  "settings": {
+    "resolution": "1920x1080",
+    "fps": 24,
+    "device": "cpu",
+    "precision": "fp16"
+  },
+  "assets": {
+    "screenplay_script": "PROJECT_ROOT/Documents/LLM/ott/outputs/demo/screenplay_script.json",
+    "shot_prompts": "PROJECT_ROOT/Documents/LLM/ott/outputs/demo/shot_prompts.json",
+    "narration_audio": "PROJECT_ROOT/Documents/LLM/ott/outputs/demo/narration_audio.wav",
+    "shot_videos": [
+      "PROJECT_ROOT/Documents/LLM/ott/outputs/demo/shot_01.mp4",
+      "PROJECT_ROOT/Documents/LLM/ott/outputs/demo/shot_02.mp4",
+      "PROJECT_ROOT/Documents/LLM/ott/outputs/demo/shot_03.mp4",
+      "PROJECT_ROOT/Documents/LLM/ott/outputs/demo/shot_04.mp4",
+      "PROJECT_ROOT/Documents/LLM/ott/outputs/demo/shot_05.mp4",
+      "PROJECT_ROOT/Documents/LLM/ott/outputs/demo/shot_06.mp4"
+    ],
+    "final_export": "PROJECT_ROOT/Documents/LLM/ott/outputs/demo/30s_cinematic_production.mp4"
+  }
+}

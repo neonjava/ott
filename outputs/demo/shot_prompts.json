@@ -1,0 +1,46 @@
+{
+  "compiled_prompts": [
+    {
+      "shot_id": 1,
+      "duration": 5.0,
+      "positive_prompt": "A majestic cyberpunk starship breaking through dense neon cloud cover above a megacity. Extreme Wide shot, camera moving crane up slowly. Cinematic volumetric neon cyan and magenta lighting. hyperrealistic, 8k resolution, cinematic lighting, masterwork",
+      "negative_prompt": "blurry, low quality, distorted anatomy, morphing artifacts, bad motion, low resolution, text watermark, flickering",
+      "narration": "In the dawn of a new centuries, Humanity touched the stars."
+    },
+    {
+      "shot_id": 2,
+      "duration": 5.0,
+      "positive_prompt": "Interior cockpit view: Captain V staring intently at holographic stellar navigation chart. Featuring Captain V: cyborg commander in sleek metallic jacket. Medium Closeup shot, camera moving dolly forward towards face. Holographic blue glow lighting. hyperrealistic, 8k resolution, cinematic lighting, masterwork",
+      "negative_prompt": "blurry, low quality, distorted anatomy, morphing artifacts, bad motion, low resolution, text watermark, flickering",
+      "narration": "Every signal mapped, every quantum pulse calculated."
+    },
+    {
+      "shot_id": 3,
+      "duration": 5.0,
+      "positive_prompt": "Massive hyper-jump engine core igniting with radiant golden plasma energy. Macro Closeup shot, camera moving static dynamic zoom. Intense golden energy sparks lighting. hyperrealistic, 8k resolution, cinematic lighting, masterwork",
+      "negative_prompt": "blurry, low quality, distorted anatomy, morphing artifacts, bad motion, low resolution, text watermark, flickering",
+      "narration": "The warp engine awakened, bending space and time."
+    },
+    {
+      "shot_id": 4,
+      "duration": 5.0,
+      "positive_prompt": "Starship accelerating through a shimmering wormhole corridor of warped light streams. Wide Tracking shot, camera moving pan right following trajectory. Prismatic light tunnels lighting. hyperrealistic, 8k resolution, cinematic lighting, masterwork",
+      "negative_prompt": "blurry, low quality, distorted anatomy, morphing artifacts, bad motion, low resolution, text watermark, flickering",
+      "narration": "Into the unknown void, across light years in seconds."
+    },
+    {
+      "shot_id": 5,
+      "duration": 5.0,
+      "positive_prompt": "Starship emerging into an undiscovered solar system surrounded by crystal asteroid rings. Wide Establish shot, camera moving orbiting starship. Twin suns golden dawn lighting lighting. hyperrealistic, 8k resolution, cinematic lighting, masterwork",
+      "negative_prompt": "blurry, low quality, distorted anatomy, morphing artifacts, bad motion, low resolution, text watermark, flickering",
+      "narration": "A new world revealed itself beneath twin suns."
+    },
+    {
+      "shot_id": 6,
+      "duration": 5.0,
+      "positive_prompt": "Cinematic heroic title card rising over the uncharted planet: GENOTT PRODUCTION STUDIO. Center Hero shot, camera moving slow pull back. Epic dramatic rim light lighting. hyperrealistic, 8k resolution, cinematic lighting, masterwork",
+      "negative_prompt": "blurry, low quality, distorted anatomy, morphing artifacts, bad motion, low resolution, text watermark, flickering",
+      "narration": "GenOTT V2. The future of autonomous AI filmmaking."
+    }
+  ]
+}

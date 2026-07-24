@@ -1,0 +1,13 @@
+{
+  "prompt": "Cinematic heroic title card rising over the uncharted planet: GENOTT PRODUCTION STUDIO. Center Hero shot, camera moving slow pull back. Epic dramatic rim light lighting. hyperrealistic, 8k resolution, cinematic lighting, masterwork",
+  "negative_prompt": "blurry, low quality, distorted anatomy, morphing artifacts, bad motion, low resolution, text watermark, flickering",
+  "seed": 42,
+  "steps": 50,
+  "fps": 24,
+  "resolution": "1280x720",
+  "duration": 5.0,
+  "model_version": "2.1-open-source",
+  "generation_time_sec": 0.0,
+  "vram_gb": 14.0,
+  "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/demo/shot_06.mp4"
+}

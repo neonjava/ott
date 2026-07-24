@@ -1,0 +1,13 @@
+{
+  "prompt": "A majestic cyberpunk starship breaking through dense neon cloud cover above a megacity. Extreme Wide shot, camera moving crane up slowly. Cinematic volumetric neon cyan and magenta lighting. hyperrealistic, 8k resolution, cinematic lighting, masterwork",
+  "negative_prompt": "blurry, low quality, distorted anatomy, morphing artifacts, bad motion, low resolution, text watermark, flickering",
+  "seed": 42,
+  "steps": 50,
+  "fps": 24,
+  "resolution": "1280x720",
+  "duration": 5.0,
+  "model_version": "2.1-open-source",
+  "generation_time_sec": 0.0,
+  "vram_gb": 14.0,
+  "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/demo/shot_01.mp4"
+}

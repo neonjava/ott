@@ -1,0 +1,13 @@
+{
+  "prompt": "Interior cockpit view: Captain V staring intently at holographic stellar navigation chart. Featuring Captain V: cyborg commander in sleek metallic jacket. Medium Closeup shot, camera moving dolly forward towards face. Holographic blue glow lighting. hyperrealistic, 8k resolution, cinematic lighting, masterwork",
+  "negative_prompt": "blurry, low quality, distorted anatomy, morphing artifacts, bad motion, low resolution, text watermark, flickering",
+  "seed": 42,
+  "steps": 50,
+  "fps": 24,
+  "resolution": "1280x720",
+  "duration": 5.0,
+  "model_version": "2.1-open-source",
+  "generation_time_sec": 0.0,
+  "vram_gb": 14.0,
+  "output_path": "PROJECT_ROOT/Documents/LLM/ott/outputs/demo/shot_02.mp4"
+}
