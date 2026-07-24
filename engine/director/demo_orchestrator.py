@@ -6,7 +6,7 @@ import wave
 import struct
 import math
 import logging
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from engine.backends.wan.backend import WANBackend
 from engine.prompt_compiler.compiler import PromptCompiler
 from engine.model_manager.manager import ModelManager
@@ -26,15 +26,16 @@ class DemoOrchestrator:
         self.prompt_compiler = PromptCompiler()
         self.model_manager = ModelManager()
 
-    def generate_narration_audio(self, duration_sec: float = 30.0, output_path: str = "outputs/demo/narration_audio.wav") -> str:
+    def generate_narration_audio(self, duration_sec: float = 30.0, output_path: Optional[str] = None) -> str:
         """
         Generates a valid 30-second WAV narration track (audio tone sequence simulating cinematic voiceover).
         """
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        target_path = output_path or os.path.join(self.output_dir, "narration_audio.wav")
+        os.makedirs(os.path.dirname(target_path), exist_ok=True)
         sample_rate = 44100
         n_samples = int(sample_rate * duration_sec)
         
-        with wave.open(output_path, "wb") as wav_file:
+        with wave.open(target_path, "wb") as wav_file:
             wav_file.setnchannels(1)  # Mono
             wav_file.setsampwidth(2)  # 16-bit
             wav_file.setframerate(sample_rate)
@@ -42,11 +43,10 @@ class DemoOrchestrator:
             # Generate synthetic narration wave
             for i in range(n_samples):
                 t = i / sample_rate
-                # Harmonic narration tone synthesis
                 val = int(16000 * math.sin(2 * math.pi * 220.0 * t) * math.exp(-0.05 * (t % 3.0)))
                 wav_file.writeframes(struct.pack("<h", max(-32768, min(32767, val))))
 
-        return output_path
+        return target_path
 
     def run_30s_cinematic_production(self) -> Dict[str, Any]:
         """
@@ -155,7 +155,6 @@ class DemoOrchestrator:
         # 5. Compile Final 30-Second Production Video Output
         final_video_path = os.path.join(self.output_dir, "30s_cinematic_production.mp4")
         with open(final_video_path, "wb") as f:
-            # Container header combining 30-second output stream metadata
             f.write(b"\x00\x00\x00\x20ftypisom\x00\x00\x02\x00isomiso2avc1mp41_GENOTT_30S_DEMO_COMPILATION")
 
         gen_time = round(time.time() - start_time, 3)
