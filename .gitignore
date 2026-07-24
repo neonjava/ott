@@ -9,6 +9,10 @@ __pycache__/
 db.sqlite3
 *.db
 *.log
+
+# Allow checked-in production renders and assets under outputs/productions/
+!outputs/productions/*.mp4
+
 *.mp4
 *.mp3
 *.png
