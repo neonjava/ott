@@ -27,12 +27,12 @@ logger = logging.getLogger(__name__)
 
 class ShortFilmPipeline:
     """
-    GenOTT V2 Autonomous 2-Minute AI Short Film Production Pipeline with Production QA & Auto-Regeneration.
-    Orchestrates: Story -> Screenplay -> CharacterMemory -> VisualContinuityGuard ->
-    CameraPlanner -> MovieGraph -> Prompt Compiler -> Backend Router -> Resumable Real Shot Inference ->
-    Per-Shot Sidecar Metadata -> Production QA Engine (Auto-Regeneration) -> Voice Narration -> Background Score ->
-    Frame-Accurate Timeline -> Contact Sheet Grid -> Generation Manifest -> Real FFmpeg Video Render ->
-    Strict Verification & Quality Assurance -> Final Complete Production (`outputs/productions/final_render.mp4`).
+    GenOTT V2 Autonomous 2-Minute AI Short Film Production Pipeline with AI Director Guidance.
+    Orchestrates: Story -> Screenplay -> DirectorAgent (DirectorPlan.json) -> CharacterMemory ->
+    VisualContinuityGuard -> CameraPlanner -> MovieGraph -> Prompt Compiler -> Backend Router ->
+    Resumable Real Shot Inference -> Per-Shot Sidecar Metadata -> Production QA Engine (Auto-Regeneration) ->
+    Voice Narration -> Background Score -> Frame-Accurate Timeline -> Contact Sheet Grid -> Generation Manifest ->
+    Real FFmpeg Video Render -> Strict Verification & Quality Assurance -> Final Complete Production (`outputs/productions/final_render.mp4`).
     """
 
     def __init__(self, backend_name: Optional[str] = None, output_dir: str = "outputs/productions"):
@@ -70,20 +70,29 @@ class ShortFilmPipeline:
         # 2. Generate 6-Act Screenplay (24 Shots total x 5 seconds = 120 seconds / 2 minutes)
         screenplay = self._build_2min_screenplay(idea_prompt)
 
-        # 3. Construct MovieGraph & Apply CameraPlanner Cinematography Specs
+        # 3. Autonomous AI Director Plan Generation (`DirectorPlan.json`)
+        director_plan_path = os.path.join(self.output_dir, "DirectorPlan.json")
+        director_plan = self.director_agent.generate_director_plan(screenplay, output_path=director_plan_path)
+
+        # 4. Construct MovieGraph & Apply CameraPlanner Cinematography Specs
         movie_graph = self._construct_movie_graph(screenplay)
         movie_graph["shots"] = self.camera_planner.plan_sequence(movie_graph["shots"])
 
-        # 4. Director Agent Pacing Analysis & Visual Continuity Audit
+        # 5. Director Agent Pacing Analysis & Visual Continuity Audit
         pacing_analysis = self.director_agent.analyze_screenplay_pacing(screenplay)
         continuity_audit = self.continuity_guard.audit_scene_continuity(movie_graph["shots"])
         director_notes = self.director_agent.generate_production_notes(screenplay, movie_graph)
 
-        # 5. Compile Prompts with Self-Improvement Learned Enhancements
+        # 6. Compile Prompts with Self-Improvement Learned Enhancements & Director Guidance
         learned_enhancements = self.self_improvement.get_learned_prompt_enhancements()
         compiled_shots = []
         for shot_spec in movie_graph["shots"]:
-            shot_spec["style_notes"] = ", ".join(learned_enhancements)
+            act_idx = shot_spec.get("act_id", 1) - 1
+            act_plan = director_plan["scene_plans"][act_idx] if act_idx < len(director_plan["scene_plans"]) else {}
+            
+            shot_spec["style_notes"] = f"{act_plan.get('visual_style', '')}, {act_plan.get('color_palette', '')}, {', '.join(learned_enhancements)}"
+            shot_spec["lighting"] = act_plan.get("lighting_strategy", shot_spec.get("lighting", "cinematic lighting"))
+            
             pos_prompt, neg_prompt = self.prompt_compiler.compile_for_wan(shot_spec)
             compiled_shots.append({
                 "shot_id": shot_spec["shot_id"],
@@ -106,7 +115,7 @@ class ShortFilmPipeline:
         with open(os.path.join(self.output_dir, "prompts.json"), "w") as f:
             json.dump(compiled_shots, f, indent=2)
 
-        # 6. Generate Voice Narration & Synthesize Local Background Music Score
+        # 7. Generate Voice Narration & Synthesize Local Background Music Score
         narration_lines = [{"duration": s["duration"], "text": s["narration_line"]} for s in compiled_shots]
         audio_path = os.path.join(self.output_dir, "narration_audio.wav")
         srt_path = os.path.join(self.output_dir, "subtitles.srt")
@@ -115,7 +124,7 @@ class ShortFilmPipeline:
         music_path = os.path.join(self.output_dir, "background_music.wav")
         self.music_engine.synthesize_background_score(duration_sec=120.0, output_path=music_path)
 
-        # 7. Resumable Real Video Shot Inference & Per-Shot Sidecar Recording
+        # 8. Resumable Real Video Shot Inference & Per-Shot Sidecar Recording
         rendered_shot_paths = []
         quality_reports = []
         shot_metrics = []
@@ -144,20 +153,20 @@ class ShortFilmPipeline:
             self.self_improvement.record_analytics_entry(s["positive_prompt"], score, self.backend.get_capabilities()["name"], needs_regen)
             self.production_db.record_shot_render(screenplay["title"], s["shot_id"], s["positive_prompt"], self.backend.get_capabilities()["name"], meta["output_path"], score, meta.get("metrics", {}).get("inference_duration_sec", 0.0))
 
-            # 8. Add to Frame-Accurate Timeline Sequencer
+            # 9. Add to Frame-Accurate Timeline Sequencer
             self.timeline_sequencer.add_shot(
                 shot_id=s["shot_id"],
                 video_path=meta["output_path"],
                 duration_sec=s["duration"]
             )
 
-        # 9. Sync Audio & Subtitles on Timeline
+        # 10. Sync Audio & Subtitles on Timeline
         self.timeline_sequencer.sync_audio_track(audio_path, 120.0)
         self.timeline_sequencer.sync_audio_track(music_path, 120.0)
         self.timeline_sequencer.sync_subtitles(srt_path)
         timeline_data = self.timeline_sequencer.compile_timeline(os.path.join(self.output_dir, "timeline.json"))
 
-        # 10. Run Production QA Engine & Handle Selective Shot Regeneration Loop
+        # 11. Run Production QA Engine & Handle Selective Shot Regeneration Loop
         qa_result = ProductionQAEngine.run_qa(self.output_dir)
         if not qa_result["passed"] and qa_result["shots_flagged_for_regeneration"]:
             logger.info(f"QA flagged shots for regeneration: {qa_result['shots_flagged_for_regeneration']}. Re-rendering affected shots...")
@@ -171,7 +180,7 @@ class ShortFilmPipeline:
             timeline_data = self.timeline_sequencer.compile_timeline(os.path.join(self.output_dir, "timeline.json"))
             qa_result = ProductionQAEngine.run_qa(self.output_dir)
 
-        # 11. Generate Contact Sheet Thumbnail Grid & Generation Manifest JSON
+        # 12. Generate Contact Sheet Thumbnail Grid & Generation Manifest JSON
         contact_sheet_path = os.path.join(self.output_dir, "contact_sheet.jpg")
         ContactSheetGenerator.create_contact_sheet(rendered_shot_paths, contact_sheet_path)
 
@@ -197,7 +206,7 @@ class ShortFilmPipeline:
         with open(manifest_path, "w") as f:
             json.dump(generation_manifest, f, indent=2)
 
-        # 12. Execute Real Timeline FFmpeg Render
+        # 13. Execute Real Timeline FFmpeg Render
         final_render_path = os.path.join(self.output_dir, "final_render.mp4")
         self.timeline_sequencer.render_final_video(final_render_path)
 
@@ -230,6 +239,7 @@ class ShortFilmPipeline:
             "pipeline_latency_sec": total_latency,
             "probe_details": probe_info,
             "director_intelligence": {
+                "director_plan": director_plan,
                 "pacing_analysis": pacing_analysis,
                 "continuity_audit": continuity_audit,
                 "director_notes": director_notes
@@ -241,6 +251,7 @@ class ShortFilmPipeline:
             "timeline_metadata": timeline_data,
             "shot_metrics": shot_metrics,
             "exported_assets": {
+                "director_plan": director_plan_path,
                 "screenplay": os.path.join(self.output_dir, "screenplay.json"),
                 "movie_graph": os.path.join(self.output_dir, "movie_graph.json"),
                 "scene_plans": os.path.join(self.output_dir, "scene_plans.json"),
@@ -264,7 +275,7 @@ class ShortFilmPipeline:
         # Generate Human-Readable Production Verification Report
         self._generate_production_report(metadata)
 
-        # 13. Run Strict Production Verification Check
+        # 14. Run Strict Production Verification Check
         verification_report = ProductionVerifier.verify_production(self.output_dir)
         metadata["verification_report"] = verification_report
 
@@ -344,6 +355,7 @@ class ShortFilmPipeline:
 - **Pipeline Latency**: {metadata['pipeline_latency_sec']}s
 
 ## Assets Inventory
+- **DirectorPlan**: [{os.path.basename(metadata['exported_assets'].get('director_plan', 'DirectorPlan.json'))}](file://{metadata['exported_assets'].get('director_plan', 'DirectorPlan.json')})
 - **Screenplay**: [{os.path.basename(metadata['exported_assets']['screenplay'])}](file://{metadata['exported_assets']['screenplay']})
 - **MovieGraph**: [{os.path.basename(metadata['exported_assets']['movie_graph'])}](file://{metadata['exported_assets']['movie_graph']})
 - **Narration Audio**: [{os.path.basename(metadata['exported_assets']['narration_audio'])}](file://{metadata['exported_assets']['narration_audio']})
@@ -360,6 +372,7 @@ class ShortFilmPipeline:
 ## Verification Status
 [✓] final_render.mp4 is a valid, playable H.264 video stream
 [✓] Probed duration, frame rate, resolution, and codec verified via ffprobe
+[✓] DirectorPlan.json created and verified
 [✓] Per-shot inference sidecar metadata generated
 [✓] Contact sheet thumbnail grid generated
 [✓] Generation manifest created and verified

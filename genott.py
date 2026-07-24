@@ -20,6 +20,7 @@ from engine.model_manager.installer import ModelInstaller
 from engine.director.demo_orchestrator import DemoOrchestrator
 from engine.director.production_pipeline import RealProductionPipeline
 from engine.director.short_film_pipeline import ShortFilmPipeline
+from engine.director.director_agent import DirectorAgent
 from engine.director.verifier import ProductionVerifier
 from engine.critic.qa_engine import ProductionQAEngine
 from engine.metrics.collector import MetricsCollector
@@ -32,6 +33,11 @@ def main():
     create_parser = subparsers.add_parser("create", help="Create new AI movie production project")
     create_parser.add_argument("--name", type=str, default="New Production", help="Project name")
     create_parser.add_argument("--prompt", type=str, default="A cyberpunk odyssey through neon rain", help="Idea prompt")
+
+    # Command: direct
+    direct_parser = subparsers.add_parser("direct", help="Generate complete DirectorPlan.json from screenplay")
+    direct_parser.add_argument("screenplay", type=str, help="Path to screenplay.json")
+    direct_parser.add_argument("--output", type=str, default="outputs/productions/DirectorPlan.json", help="Output path for DirectorPlan.json")
 
     # Command: generate
     gen_parser = subparsers.add_parser("generate", help="Generate cinematic video shot or complete production")
@@ -93,6 +99,17 @@ def main():
             json.dump(spec, f, indent=2)
         print(f"[✓] Project '{args.name}' created at {project_dir}")
 
+    elif args.command == "direct":
+        sp_path = args.screenplay
+        if not os.path.exists(sp_path):
+            print(f"[X] Screenplay file not found: {sp_path}")
+            sys.exit(1)
+        with open(sp_path, "r") as f:
+            screenplay_data = json.load(f)
+        agent = DirectorAgent()
+        plan = agent.generate_director_plan(screenplay_data, output_path=args.output)
+        print(f"[✓] Autonomous AI Director Plan successfully generated and saved to {args.output}")
+
     elif args.command == "generate":
         if args.demo:
             print("[GenOTT Engine] Initiating complete 30-second cinematic demo production...")
@@ -115,6 +132,7 @@ def main():
         pipeline = ShortFilmPipeline(backend_name=backend_name, output_dir=output_dir)
         metadata = pipeline.produce_2min_short_film(idea_prompt=idea)
         print(f"[✓] 2-Minute AI Short Film Production Complete! Final Export: {metadata['exported_assets']['final_render']}")
+        print(f"    Director Plan: {metadata['exported_assets']['director_plan']}")
         print(f"    Narration Audio Track: {metadata['exported_assets']['narration_audio']}")
         print(f"    Background Music Score: {metadata['exported_assets']['background_music']}")
         print(f"    Contact Sheet Grid: {metadata['exported_assets']['contact_sheet']}")
