@@ -13,7 +13,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from engine.backends.wan.backend import WANBackend
 from engine.model_manager.manager import ModelManager
-from engine.prompt_compiler.compiler import PromptCompiler
+from engine.model_manager.registry import ModelRegistry
+from engine.model_manager.installer import ModelInstaller
 
 def main():
     parser = argparse.ArgumentParser(description="GenOTT V2 — Autonomous AI Production Studio CLI")
@@ -37,14 +38,31 @@ def main():
     bench_parser.add_argument("name", type=str, nargs="?", default="wan", help="Target model backend")
 
     # Command: models
-    models_parser = subparsers.add_parser("models", help="Model manager commands")
+    models_parser = subparsers.add_parser("models", help="Model manager & installer commands")
     models_sub = models_parser.add_subparsers(dest="models_action")
     
-    install_m = models_sub.add_parser("install", help="Install model backend")
-    install_m.add_argument("name", type=str, nargs="?", default="wan", help="Model backend name")
+    # genott models list
+    models_sub.add_parser("list", help="List all registered models and status")
     
-    update_m = models_sub.add_parser("update", help="Update model repositories")
-    info_m = models_sub.add_parser("info", help="Display discovered models & system info")
+    # genott models install <model_name> [--all]
+    install_m = models_sub.add_parser("install", help="Install model backend weights and repos")
+    install_m.add_argument("name", type=str, nargs="?", default=None, help="Model backend name (wan, hunyuanvideo, cogvideox, ltx-video, mochi)")
+    install_m.add_argument("--all", action="store_true", help="Install all registered open-source models")
+
+    # genott models update [name]
+    update_m = models_sub.add_parser("update", help="Update model repositories or weights")
+    update_m.add_argument("name", type=str, nargs="?", default=None, help="Model name to update")
+
+    # genott models verify [name]
+    verify_m = models_sub.add_parser("verify", help="Verify installation integrity and checksums")
+    verify_m.add_argument("name", type=str, nargs="?", default=None, help="Model name to verify")
+
+    # genott models remove <name>
+    remove_m = models_sub.add_parser("remove", help="Remove model directory and weights")
+    remove_m.add_argument("name", type=str, help="Model backend name to remove")
+
+    # genott models info
+    models_sub.add_parser("info", help="Display discovered models & system compute resources")
 
     args = parser.parse_args()
 
@@ -81,20 +99,67 @@ def main():
         print("[✓] Benchmark completed.")
 
     elif args.command == "models":
+        installer = ModelInstaller()
+        registry = ModelRegistry()
         mm = ModelManager()
-        if args.models_action == "info":
-            discovered = mm.discover_models()
-            print(f"Detected Compute Device: {mm.device}")
-            print("Discovered Model Backends:")
-            print(json.dumps(discovered, indent=2))
+
+        if args.models_action == "list":
+            all_models = registry.list_all()
+            print("=== Registered Open-Source AI Video Models ===")
+            for name, details in all_models.items():
+                print(f"• {name.ljust(15)} | Status: {details['installation_status'].ljust(12)} | Version: {str(details['installed_version']).ljust(12)} | Req VRAM: {details['required_vram_gb']}GB")
+
         elif args.models_action == "install":
-            path = mm.download_weights(args.name)
-            print(f"[✓] Target directory for '{args.name}' prepared at {path}")
+            if args.all:
+                print("Installing all open-source models...")
+                res = installer.install_all()
+                print(json.dumps(res, indent=2))
+            elif args.name:
+                print(f"Installing model '{args.name}'...")
+                success = installer.install_model(args.name)
+                if success:
+                    print(f"[✓] Installation of '{args.name}' completed successfully.")
+                else:
+                    print(f"[!] Installation of '{args.name}' failed.")
+            else:
+                print("Please specify a model name or use --all. Example: genott models install wan")
+
+        elif args.models_action == "verify":
+            target = args.name
+            if target:
+                res = installer.verify_model(target)
+                print(json.dumps(res, indent=2))
+            else:
+                print("Verifying all models:")
+                for m in registry.list_all():
+                    res = installer.verify_model(m)
+                    print(f"• {m.ljust(15)}: {res['status']}")
+
+        elif args.models_action == "remove":
+            if args.name:
+                success = installer.remove_model(args.name)
+                if success:
+                    print(f"[✓] Removed model '{args.name}'.")
+                else:
+                    print(f"[!] Model '{args.name}' was not found or could not be removed.")
+            else:
+                print("Please specify a model name to remove. Example: genott models remove wan")
+
         elif args.models_action == "update":
-            print("[✓] Model backend configurations and path mappings updated.")
-        else:
+            target = args.name or "wan"
+            print(f"Updating model '{target}'...")
+            installer.update_model(target)
+
+        elif args.models_action == "info":
+            sys_res = installer.detect_system_resources()
             discovered = mm.discover_models()
+            print("=== Compute & Resource Detection ===")
+            print(json.dumps(sys_res, indent=2))
+            print("\n=== Discovered Models ===")
             print(json.dumps(discovered, indent=2))
+        else:
+            all_models = registry.list_all()
+            print(json.dumps(all_models, indent=2))
     else:
         parser.print_help()
 
