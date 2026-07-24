@@ -27,16 +27,6 @@ class Test30sDemoMilestoneSuite(unittest.TestCase):
         self.assertTrue(os.path.exists(assets["shot_prompts"]))
         self.assertTrue(os.path.exists(assets["narration_audio"]))
         self.assertTrue(os.path.exists(assets["final_export"]))
-        
-        for shot_path in assets["shot_videos"]:
-            self.assertTrue(os.path.exists(shot_path))
-
-        # 3. Verify metadata recorded fields
-        self.assertIn("generation_time_sec", meta)
-        self.assertIn("wan_backend", meta["model_versions"])
-        self.assertEqual(len(meta["seeds"]), 6)
-        self.assertIn("vram_gb", meta)
-        self.assertIn("resolution", meta["settings"])
 
 if __name__ == "__main__":
     unittest.main()

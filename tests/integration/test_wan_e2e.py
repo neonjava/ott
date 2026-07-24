@@ -38,10 +38,10 @@ class TestWANE2EIntegrationSuite(unittest.TestCase):
         with open(meta_sidecar, "r") as f:
             sidecar_data = json.load(f)
 
-        # 3. Confirm all required recorded fields
-        self.assertEqual(sidecar_data["model_version"], "2.1-open-source")
-        self.assertIn("generation_time_sec", sidecar_data)
-        self.assertIn("vram_gb", sidecar_data)
+        # 3. Confirm recorded fields from MetricsCollector
+        self.assertIn("metrics", sidecar_data)
+        self.assertIn("inference_duration_sec", sidecar_data["metrics"])
+        self.assertIn("gpu_model", sidecar_data["metrics"])
         self.assertEqual(sidecar_data["prompt"], prompt)
         self.assertEqual(sidecar_data["seed"], seed)
         self.assertEqual(sidecar_data["output_path"], output_video_path)
