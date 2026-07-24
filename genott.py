@@ -48,7 +48,7 @@ def main():
     render_parser.add_argument("--output-dir", type=str, default="outputs/productions", help="Output directory")
 
     # Command: verify-production
-    verify_parser = subparsers.add_parser("verify-production", help="Verify production inference integrity, shots, and playable MP4 output")
+    verify_parser = subparsers.add_parser("verify-production", help="Verify production integrity across all 10 physical deliverables")
     verify_parser.add_argument("--dir", type=str, default="outputs/productions", help="Target production directory")
 
     # Command: doctor
@@ -122,9 +122,9 @@ def main():
         report = ProductionVerifier.verify_production(target_dir)
         print(json.dumps(report, indent=2))
         if report["is_valid"]:
-            print("[✓] PRODUCTION VERIFICATION SUCCESSFUL! Every shot originates from real inference.")
+            print("PRODUCTION VERIFICATION SUCCESSFUL")
         else:
-            print("[X] PRODUCTION VERIFICATION FAILED. Errors found:", report["errors"])
+            print(f"PRODUCTION INCOMPLETE: Missing or invalid artifacts -> {report['missing_artifacts'] + report['errors']}")
             sys.exit(1)
 
     elif args.command == "doctor":

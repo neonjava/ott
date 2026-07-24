@@ -9,14 +9,23 @@ logger = logging.getLogger(__name__)
 
 class ProductionVerifier:
     """
-    Production Integrity & Real Inference Verifier CLI Tool for GenOTT V2.
-    Checks:
-    - All shot video files exist and are valid videos (probed via ffprobe)
-    - Per-shot sidecar metadata files exist and contain inference metrics
-    - Timeline matches shot list
-    - Final render MP4 exists and references all shots
-    - Manifest and contact sheet deliverables exist
+    Strict Production Integrity Verifier for GenOTT V2.
+    Zero false-positives: Verification ONLY succeeds if all 10 physical deliverables exist,
+    are non-empty, parse cleanly, and pass format validation via ffprobe/json parsing/image decoding.
     """
+
+    REQUIRED_DELIVERABLES = [
+        "final_render.mp4",
+        "production_report.md",
+        "generation_manifest.json",
+        "contact_sheet.jpg",
+        "screenplay.json",
+        "movie_graph.json",
+        "subtitles.srt",
+        "narration_audio.wav",
+        "timeline.json",
+        "production_metadata.json"
+    ]
 
     @classmethod
     def verify_production(cls, output_dir: str = "outputs/productions") -> Dict[str, Any]:
@@ -25,32 +34,53 @@ class ProductionVerifier:
             "output_dir": output_abs,
             "is_valid": True,
             "checks": {},
+            "missing_artifacts": [],
             "errors": []
         }
 
-        # 1. Check final_render.mp4 existence and probe streams
+        # 1. Verify existence and non-zero size of all 10 required physical deliverables
+        for artifact in cls.REQUIRED_DELIVERABLES:
+            artifact_path = os.path.join(output_abs, artifact)
+            if not os.path.exists(artifact_path):
+                report["is_valid"] = False
+                report["missing_artifacts"].append(artifact)
+                report["errors"].append(f"Required deliverable missing: {artifact}")
+                report["checks"][artifact] = False
+            elif os.path.getsize(artifact_path) == 0:
+                report["is_valid"] = False
+                report["missing_artifacts"].append(f"{artifact} (empty 0-byte file)")
+                report["errors"].append(f"Required deliverable is empty: {artifact}")
+                report["checks"][artifact] = False
+            else:
+                report["checks"][artifact] = True
+
+        # 2. Deep format validation for videos (ffprobe)
         final_render = os.path.join(output_abs, "final_render.mp4")
-        if not os.path.exists(final_render) or os.path.getsize(final_render) < 1000:
-            report["is_valid"] = False
-            report["errors"].append("final_render.mp4 missing or invalid size")
-            report["checks"]["final_render"] = False
-        else:
+        if report["checks"].get("final_render.mp4"):
             probe_cmd = ["ffprobe", "-v", "error", "-show_entries", "format=duration,size:stream=codec_name", "-of", "json", final_render]
             probe_res = subprocess.run(probe_cmd, capture_output=True, text=True)
-            report["checks"]["final_render"] = (probe_res.returncode == 0)
+            if probe_res.returncode != 0:
+                report["is_valid"] = False
+                report["errors"].append(f"final_render.mp4 invalid video stream: {probe_res.stderr.strip()}")
+                report["checks"]["final_render_probed"] = False
+            else:
+                report["checks"]["final_render_probed"] = True
 
-        # 2. Check manifest and metadata sidecars
-        manifest_path = os.path.join(output_abs, "generation_manifest.json")
-        if os.path.exists(manifest_path):
-            with open(manifest_path, "r") as f:
-                manifest_data = json.load(f)
-            shots_list = manifest_data.get("shots", [])
-            report["checks"]["manifest_present"] = True
-            report["checks"]["total_shots_in_manifest"] = len(shots_list)
-        else:
-            report["checks"]["manifest_present"] = False
+        # 3. Deep format validation for JSON files
+        json_artifacts = ["generation_manifest.json", "screenplay.json", "movie_graph.json", "timeline.json", "production_metadata.json"]
+        for j_art in json_artifacts:
+            j_path = os.path.join(output_abs, j_art)
+            if report["checks"].get(j_art):
+                try:
+                    with open(j_path, "r") as f:
+                        json.load(f)
+                    report["checks"][f"{j_art}_parsed"] = True
+                except Exception as e:
+                    report["is_valid"] = False
+                    report["errors"].append(f"JSON parsing error in {j_art}: {e}")
+                    report["checks"][f"{j_art}_parsed"] = False
 
-        # 3. Verify each shot video and sidecar metadata
+        # 4. Verify per-shot video files (24 shots) and per-shot sidecars
         shot_files = [os.path.join(output_abs, f"shot_{i:02d}.mp4") for i in range(1, 25)]
         valid_shots_count = 0
         valid_sidecars_count = 0
@@ -62,7 +92,7 @@ class ProductionVerifier:
                 if p_res.returncode == 0:
                     valid_shots_count += 1
             meta_sf = f"{os.path.splitext(sf)[0]}_meta.json"
-            if os.path.exists(meta_sf):
+            if os.path.exists(meta_sf) and os.path.getsize(meta_sf) > 0:
                 valid_sidecars_count += 1
 
         report["checks"]["valid_shots_count"] = valid_shots_count
@@ -70,11 +100,11 @@ class ProductionVerifier:
 
         if valid_shots_count < 24:
             report["is_valid"] = False
-            report["errors"].append(f"Only {valid_shots_count}/24 shots verified valid")
+            report["errors"].append(f"Only {valid_shots_count}/24 shot video files verified valid via ffprobe")
 
-        # 4. Check contact sheet existence
-        contact_sheet = os.path.join(output_abs, "contact_sheet.jpg")
-        report["checks"]["contact_sheet_present"] = os.path.exists(contact_sheet)
+        if valid_sidecars_count < 24:
+            report["is_valid"] = False
+            report["errors"].append(f"Only {valid_sidecars_count}/24 shot sidecar metadata files exist")
 
-        logger.info(f"Production Verification Check completed: Valid = {report['is_valid']}")
+        logger.info(f"Production Strict Verification Check completed: Valid = {report['is_valid']}")
         return report

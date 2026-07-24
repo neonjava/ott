@@ -26,11 +26,12 @@ logger = logging.getLogger(__name__)
 
 class ShortFilmPipeline:
     """
-    GenOTT V2 Autonomous 2-Minute AI Short Film Production Pipeline with Real Inference Validation.
+    GenOTT V2 Autonomous 2-Minute AI Short Film Production Pipeline with Strict Physical Verification.
     Orchestrates: Story -> Screenplay -> CharacterMemory -> VisualContinuityGuard ->
     CameraPlanner -> MovieGraph -> Prompt Compiler -> Backend Router -> Resumable Real Shot Inference ->
     Per-Shot Sidecar Metadata -> ShotReviewer Quality Audit -> Voice Narration -> Background Score ->
-    Frame-Accurate Timeline -> Contact Sheet Grid -> Generation Manifest -> Real FFmpeg Video Render (`outputs/productions/final_render.mp4`).
+    Frame-Accurate Timeline -> Contact Sheet Grid -> Generation Manifest -> Real FFmpeg Video Render ->
+    Auto-Repair Loop -> Final Verified Production (`outputs/productions/final_render.mp4`).
     """
 
     def __init__(self, backend_name: Optional[str] = None, output_dir: str = "outputs/productions"):
@@ -155,7 +156,7 @@ class ShortFilmPipeline:
         self.timeline_sequencer.sync_subtitles(srt_path)
         timeline_data = self.timeline_sequencer.compile_timeline(os.path.join(self.output_dir, "timeline.json"))
 
-        # 10. Generate Contact Sheet Thumbnail Grid & Generation Manifest JSON
+        # 10. Generate Contact Sheet Thumbnail Grid & Comprehensive Generation Manifest JSON
         contact_sheet_path = os.path.join(self.output_dir, "contact_sheet.jpg")
         ContactSheetGenerator.create_contact_sheet(rendered_shot_paths, contact_sheet_path)
 
@@ -171,6 +172,8 @@ class ShortFilmPipeline:
                     "shot_id": s["shot_id"],
                     "output_path": os.path.join(self.output_dir, f"shot_{s['shot_id']:02d}.mp4"),
                     "sidecar_metadata": os.path.join(self.output_dir, f"shot_{s['shot_id']:02d}_meta.json"),
+                    "prompt": s["positive_prompt"],
+                    "seed": 42,
                     "timeline_order": idx + 1
                 }
                 for idx, s in enumerate(compiled_shots)
@@ -248,9 +251,17 @@ class ShortFilmPipeline:
         # Generate Human-Readable Production Verification Report
         self._generate_production_report(metadata)
 
-        # 12. Run Production Verification Check
+        # 12. Run Production Verification Check with Auto-Repair capability
         verification_report = ProductionVerifier.verify_production(self.output_dir)
         metadata["verification_report"] = verification_report
+
+        if not verification_report["is_valid"]:
+            logger.warning(f"Production verification failed ({verification_report['errors']}). Attempting auto-repair...")
+            # Auto-repair missing assets
+            ContactSheetGenerator.create_contact_sheet(rendered_shot_paths, contact_sheet_path)
+            self.timeline_sequencer.render_final_video(final_render_path)
+            verification_report = ProductionVerifier.verify_production(self.output_dir)
+            metadata["verification_report"] = verification_report
 
         logger.info(f"[✓] 2-Minute Autonomous Short Film fully completed! Final Render: {final_render_path}")
         return metadata
