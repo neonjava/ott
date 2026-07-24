@@ -31,6 +31,15 @@ class CameraPlanner:
         {"shot_type": "Low Angle Hero Shot", "movement": "Slow Forward Push-In", "focal_length": "40mm cine lens"}
     ]
 
+    def plan_camera_for_shot(self, shot_spec: Dict[str, Any]) -> Dict[str, Any]:
+        preset = self.CAMERA_PRESETS[0]
+        shot_copy = dict(shot_spec)
+        shot_copy["cinematography_preset"] = "dramatic"
+        shot_copy["framing"] = "Macro Close-Up"
+        shot_copy["camera_movement"] = preset["movement"]
+        shot_copy["camera_lens"] = preset["focal_length"]
+        return shot_copy
+
     def plan_sequence(self, shots: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         planned_shots = []
         last_preset_idx = -1

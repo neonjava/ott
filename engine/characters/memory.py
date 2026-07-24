@@ -13,8 +13,8 @@ class CharacterMemory:
     personality traits, and speaking styles across multi-scene film productions.
     """
 
-    def __init__(self, storage_path: str = "configs/characters_memory.json"):
-        self.storage_path = os.path.abspath(storage_path)
+    def __init__(self, memory_file: Optional[str] = None, storage_path: str = "configs/characters_memory.json"):
+        self.storage_path = os.path.abspath(memory_file if memory_file else storage_path)
         os.makedirs(os.path.dirname(self.storage_path), exist_ok=True)
         self.characters: Dict[str, Dict[str, Any]] = self._load()
 
@@ -22,11 +22,11 @@ class CharacterMemory:
         self,
         name: str,
         appearance: str,
-        clothing: str,
+        clothing: str = "tactical outfit",
         personality: str = "",
         face: str = "chiseled jawline, sharp focused eyes",
         hairstyle: str = "cropped dark tactical hair",
-        age: str = "late 30s",
+        age: Any = 30,
         proportions: str = "athletic build, 6ft tall",
         accessories: str = "tactical comms earpiece, cybernetic wrist display",
         speaking_style: str = "authoritative, calm, direct"
@@ -37,7 +37,7 @@ class CharacterMemory:
             "clothing": clothing,
             "face": face,
             "hairstyle": hairstyle,
-            "age": age,
+            "age": str(age),
             "proportions": proportions,
             "accessories": accessories,
             "personality": personality,
@@ -55,7 +55,7 @@ class CharacterMemory:
         c = self.characters.get(name)
         if not c:
             return f"character named {name}"
-        return f"{c['name']} ({c['age']}, {c['face']}, {c['hairstyle']}, {c['proportions']}, wearing {c['clothing']}, equipped with {c['accessories']})"
+        return f"{c['name']} ({c['appearance']}, {c['clothing']})"
 
     def _save(self):
         with open(self.storage_path, "w") as f:
