@@ -1,0 +1,14 @@
+# configs/models/wan.yaml
+backend: wan
+checkpoint: "wan-t2v-14b"
+weights_dir: "models/wan"
+device: "cuda"
+precision: "fp16"
+scheduler: "ddim"
+steps: 50
+guidance_scale: 7.5
+seed: 42
+fps: 24
+resolution: "1280x720"
+duration: 5.0
+negative_prompt: "blurry, distorted, morphing artifacts, low quality, bad motion, text watermark"
