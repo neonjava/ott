@@ -1,0 +1,33 @@
+{
+  "prompt": "An epic sci-fi starship voyage across the galaxy",
+  "timestamp": 1784931866.4740963,
+  "metrics": {
+    "run_a_legacy": {
+      "render_latency_sec": 45.2,
+      "vram_mb": 5632.0,
+      "inference_time_sec": 42.0,
+      "qa_overall_score": 0.81,
+      "continuity_score": 0.78,
+      "camera_diversity_score": 0.5,
+      "prompt_adherence_score": 0.82,
+      "duplicate_shot_rate": 0.0,
+      "regenerated_shots_count": 0
+    },
+    "run_b_enhanced": {
+      "render_latency_sec": 48.5,
+      "vram_mb": 5632.0,
+      "inference_time_sec": 44.1,
+      "qa_overall_score": 0.94,
+      "continuity_score": 0.94,
+      "camera_diversity_score": 0.96,
+      "prompt_adherence_score": 0.92,
+      "duplicate_shot_rate": 0.0,
+      "regenerated_shots_count": 0
+    }
+  },
+  "deltas": {
+    "qa_score_improvement": 0.13,
+    "continuity_improvement": 0.16,
+    "camera_diversity_improvement": 0.46
+  }
+}
