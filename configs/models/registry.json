@@ -1,0 +1,120 @@
+{
+  "wan": {
+    "repo_url": "https://github.com/Wan-Video/Wan2.1.git",
+    "weight_version": "2.1-open-source",
+    "required_vram_gb": 14.0,
+    "required_disk_gb": 28.0,
+    "supported_resolutions": [
+      "720p",
+      "1080p"
+    ],
+    "supported_fps": [
+      24,
+      30
+    ],
+    "supported_modes": [
+      "text_to_video",
+      "image_to_video",
+      "video_to_video"
+    ],
+    "official_weights_url": "https://huggingface.co/Wan-AI/Wan2.1-T2V-14B/resolve/main/Wan2.1_T2V_14B_fp16.safetensors",
+    "checksum_sha256": null,
+    "installation_status": "installed",
+    "health_status": "healthy",
+    "installed_version": "2.1-open-source",
+    "local_weights_dir": "PROJECT_ROOT/Documents/LLM/ott/models/wan",
+    "local_repo_dir": "PROJECT_ROOT/Documents/LLM/ott/third_party/wan"
+  },
+  "hunyuanvideo": {
+    "repo_url": "https://github.com/Tencent/HunyuanVideo.git",
+    "weight_version": "1.0.0",
+    "required_vram_gb": 16.0,
+    "required_disk_gb": 32.0,
+    "supported_resolutions": [
+      "720p",
+      "1080p"
+    ],
+    "supported_fps": [
+      24,
+      30
+    ],
+    "supported_modes": [
+      "text_to_video",
+      "image_to_video"
+    ],
+    "official_weights_url": "https://huggingface.co/Tencent/HunyuanVideo/resolve/main/hunyuan_video.safetensors",
+    "checksum_sha256": null,
+    "installation_status": "uninstalled",
+    "health_status": "unknown",
+    "installed_version": null,
+    "local_weights_dir": "PROJECT_ROOT/Documents/LLM/ott/models/hunyuanvideo",
+    "local_repo_dir": "PROJECT_ROOT/Documents/LLM/ott/third_party/hunyuanvideo"
+  },
+  "cogvideox": {
+    "repo_url": "https://github.com/THUDM/CogVideo.git",
+    "weight_version": "5b",
+    "required_vram_gb": 12.0,
+    "required_disk_gb": 20.0,
+    "supported_resolutions": [
+      "720p"
+    ],
+    "supported_fps": [
+      24
+    ],
+    "supported_modes": [
+      "text_to_video",
+      "image_to_video"
+    ],
+    "official_weights_url": "https://huggingface.co/THUDM/CogVideoX-5b/resolve/main/cogvideox_5b.safetensors",
+    "checksum_sha256": null,
+    "installation_status": "uninstalled",
+    "health_status": "unknown",
+    "installed_version": null,
+    "local_weights_dir": "PROJECT_ROOT/Documents/LLM/ott/models/cogvideox",
+    "local_repo_dir": "PROJECT_ROOT/Documents/LLM/ott/third_party/cogvideox"
+  },
+  "ltx-video": {
+    "repo_url": "https://github.com/Lightricks/LTX-Video.git",
+    "weight_version": "0.9.1",
+    "required_vram_gb": 8.0,
+    "required_disk_gb": 14.0,
+    "supported_resolutions": [
+      "720p"
+    ],
+    "supported_fps": [
+      24
+    ],
+    "supported_modes": [
+      "text_to_video"
+    ],
+    "official_weights_url": "https://huggingface.co/Lightricks/LTX-Video/resolve/main/ltx-video-2b-v0.9.1.safetensors",
+    "checksum_sha256": null,
+    "installation_status": "uninstalled",
+    "health_status": "unknown",
+    "installed_version": null,
+    "local_weights_dir": "PROJECT_ROOT/Documents/LLM/ott/models/ltx-video",
+    "local_repo_dir": "PROJECT_ROOT/Documents/LLM/ott/third_party/ltx-video"
+  },
+  "mochi": {
+    "repo_url": "https://github.com/genmoai/mochi.git",
+    "weight_version": "1-preview",
+    "required_vram_gb": 18.0,
+    "required_disk_gb": 35.0,
+    "supported_resolutions": [
+      "720p"
+    ],
+    "supported_fps": [
+      30
+    ],
+    "supported_modes": [
+      "text_to_video"
+    ],
+    "official_weights_url": "https://huggingface.co/genmo/mochi-1-preview/resolve/main/mochi.safetensors",
+    "checksum_sha256": null,
+    "installation_status": "uninstalled",
+    "health_status": "unknown",
+    "installed_version": null,
+    "local_weights_dir": "PROJECT_ROOT/Documents/LLM/ott/models/mochi",
+    "local_repo_dir": "PROJECT_ROOT/Documents/LLM/ott/third_party/mochi"
+  }
+}
