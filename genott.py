@@ -21,6 +21,7 @@ from engine.director.demo_orchestrator import DemoOrchestrator
 from engine.director.production_pipeline import RealProductionPipeline
 from engine.director.short_film_pipeline import ShortFilmPipeline
 from engine.director.verifier import ProductionVerifier
+from engine.critic.qa_engine import ProductionQAEngine
 from engine.metrics.collector import MetricsCollector
 
 def main():
@@ -50,6 +51,10 @@ def main():
     # Command: verify-production
     verify_parser = subparsers.add_parser("verify-production", help="Verify production integrity across all 10 physical deliverables")
     verify_parser.add_argument("--dir", type=str, default="outputs/productions", help="Target production directory")
+
+    # Command: qa
+    qa_parser = subparsers.add_parser("qa", help="Run Production Quality Assurance pipeline on generated production")
+    qa_parser.add_argument("--dir", type=str, default="outputs/productions", help="Target production directory")
 
     # Command: doctor
     doctor_parser = subparsers.add_parser("doctor", help="Run diagnostic health check on environment, PyTorch, CUDA, VRAM")
@@ -114,7 +119,7 @@ def main():
         print(f"    Background Music Score: {metadata['exported_assets']['background_music']}")
         print(f"    Contact Sheet Grid: {metadata['exported_assets']['contact_sheet']}")
         print(f"    Generation Manifest: {metadata['exported_assets']['generation_manifest']}")
-        print(f"    Total Duration: {metadata['total_duration_sec']}s ({metadata['total_shots']} shots across 6 acts)")
+        print(f"    Quality QA Score: {metadata['qa_report']['overall_score']} / 1.00")
 
     elif args.command == "verify-production":
         target_dir = args.dir
@@ -126,6 +131,18 @@ def main():
         else:
             print(f"PRODUCTION INCOMPLETE: Missing or invalid artifacts -> {report['missing_artifacts'] + report['errors']}")
             sys.exit(1)
+
+    elif args.command == "qa":
+        target_dir = args.dir
+        print(f"=== Running Production Quality Assurance at '{target_dir}' ===")
+        qa_report = ProductionQAEngine.run_qa(target_dir)
+        print(json.dumps(qa_report, indent=2))
+        print(f"\nOverall Production Score: {qa_report['overall_score']} / 1.00")
+        if qa_report["passed"]:
+            print("[✓] PRODUCTION QUALITY ASSURANCE PASSED!")
+        else:
+            print(f"[⚠️] QA Flagged Issues: {qa_report['issues_detected']}")
+            print(f"    Shots Flagged for Regeneration: {qa_report['shots_flagged_for_regeneration']}")
 
     elif args.command == "doctor":
         installer = ModelInstaller()
