@@ -4,13 +4,14 @@ import json
 import logging
 import subprocess
 from typing import Dict, Any, List
+from engine.timeline.encoder_detector import FFmpegEncoderDetector
 
 logger = logging.getLogger(__name__)
 
 class TimelineSequencer:
     """
     Frame-Accurate Timeline Sequencing & Real Video Rendering Engine for GenOTT V2.
-    Supports shot ordering, FFmpeg shot concatenation, audio mixing, subtitle embedding,
+    Supports shot ordering, FFmpeg dynamic encoder auto-detection, audio mixing, subtitle embedding,
     and outputting valid H.264 / MPEG4 encoded MP4 containers.
     """
 
@@ -87,6 +88,8 @@ class TimelineSequencer:
         if not self.shots:
             raise ValueError("No video shots in timeline to render")
 
+        encoder = FFmpegEncoderDetector.get_best_encoder()
+
         # 1. Write FFmpeg Concat List
         concat_list_file = os.path.join(os.path.dirname(output_abs), "concat_shots.txt")
         with open(concat_list_file, "w") as f:
@@ -106,9 +109,7 @@ class TimelineSequencer:
                 audio_inputs.extend(["-i", track["audio_path"]])
 
         cmd.extend(audio_inputs)
-
-        # Video Codec
-        cmd.extend(["-c:v", "libopenh264", "-pix_fmt", "yuv420p"])
+        cmd.extend(["-c:v", encoder, "-pix_fmt", "yuv420p"])
 
         # Audio Mixing Filter
         if len(self.audio_tracks) == 1 and os.path.exists(self.audio_tracks[0]["audio_path"]):
@@ -120,12 +121,13 @@ class TimelineSequencer:
 
         res = subprocess.run(cmd, capture_output=True, text=True)
         if res.returncode != 0:
-            logger.warning(f"FFmpeg render with libopenh264 failed ({res.stderr[:200]}). Retrying with mpeg4 codec...")
+            logger.warning(f"FFmpeg render with encoder '{encoder}' failed ({res.stderr[:200]}). Retrying with mpeg4 codec...")
+            encoder_fallback = "mpeg4"
             cmd_fallback = [
                 "ffmpeg", "-y",
                 "-f", "concat", "-safe", "0",
                 "-i", concat_list_file
-            ] + audio_inputs + ["-c:v", "mpeg4", "-pix_fmt", "yuv420p"]
+            ] + audio_inputs + ["-c:v", encoder_fallback, "-pix_fmt", "yuv420p"]
             if len(self.audio_tracks) >= 2:
                 cmd_fallback.extend(["-filter_complex", f"amix=inputs={len(self.audio_tracks)}:duration=shortest", "-c:a", "aac"])
             cmd_fallback.append(output_abs)

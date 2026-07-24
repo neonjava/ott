@@ -7,6 +7,7 @@ import subprocess
 from typing import Dict, Any, Optional
 from models.adapters.base import BackendAdapter
 from engine.backends.plugin_framework import BackendPlugin, BackendRegistry
+from engine.timeline.encoder_detector import FFmpegEncoderDetector
 from engine.metrics.collector import MetricsCollector
 
 logger = logging.getLogger(__name__)
@@ -14,7 +15,7 @@ logger = logging.getLogger(__name__)
 class WANBackend(BackendAdapter, BackendPlugin):
     """
     Official Open-Source WAN 2.1 Model Backend Implementation for GenOTT V2.
-    Renders real encoded H.264 video MP4 streams using FFmpeg lavfi filters.
+    Renders real encoded video MP4 streams using runtime auto-detected FFmpeg encoders.
     """
 
     def __init__(self, weights_path: str = "models/wan/weights/wan_t2v.safetensors"):
@@ -97,20 +98,23 @@ class WANBackend(BackendAdapter, BackendPlugin):
         output_abs = os.path.abspath(output_path)
         os.makedirs(os.path.dirname(output_abs), exist_ok=True)
 
-        # Generate real encoded H.264 video stream via FFmpeg
+        encoder = FFmpegEncoderDetector.get_best_encoder()
+
+        # Generate real encoded video stream via FFmpeg
         cmd = [
             "ffmpeg", "-y",
             "-f", "lavfi",
             "-i", f"testsrc=duration={duration}:size={resolution}:rate={fps}",
-            "-c:v", "libopenh264",
+            "-c:v", encoder,
             "-pix_fmt", "yuv420p",
             output_abs
         ]
 
         res = subprocess.run(cmd, capture_output=True, text=True)
         if res.returncode != 0:
-            logger.warning(f"FFmpeg libopenh264 failed ({res.stderr[:200]}). Falling back to mpeg4 codec...")
-            cmd[6] = "mpeg4"
+            logger.warning(f"FFmpeg encoder '{encoder}' failed ({res.stderr[:200]}). Falling back to mpeg4 codec...")
+            encoder = "mpeg4"
+            cmd[6] = encoder
             res = subprocess.run(cmd, capture_output=True, text=True)
             if res.returncode != 0:
                 raise RuntimeError(f"Failed to encode video shot at {output_abs}: {res.stderr}")
@@ -141,6 +145,7 @@ class WANBackend(BackendAdapter, BackendPlugin):
             "fps": fps,
             "resolution": resolution,
             "duration": duration,
+            "encoder_used": encoder,
             "output_path": output_abs,
             "metrics": real_metrics
         }
