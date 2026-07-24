@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenOTT V2 — AI Production Studio Dashboard</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --accent-cyan: #06b6d4;
+            --accent-purple: #8b5cf6;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #334155;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+        .card h3 {
+            margin-top: 0;
+            color: var(--accent-cyan);
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .metric-val {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .status-badge {
+            background: #10b981;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">GENOTT V2 — Production Studio Dashboard</div>
+        <div><span class="status-badge" id="studio-status">ONLINE</span></div>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h3>Active Model Backend</h3>
+            <div class="metric-val" id="backend-name">WAN 2.1</div>
+            <p style="color: var(--text-muted);">Status: Ready | Devices: CUDA / CPU Fallback</p>
+        </div>
+        <div class="card">
+            <h3>Compute Resource Usage</h3>
+            <div class="metric-val" id="vram-usage">14.0 GB VRAM</div>
+            <p style="color: var(--text-muted);">CPU: 22% | System RAM: 7.3 GB / 23.2 GB</p>
+        </div>
+        <div class="card">
+            <h3>Production Pipeline</h3>
+            <div class="metric-val" id="shots-count">6 Shots (30s)</div>
+            <p style="color: var(--text-muted);">Narration Sync: Active | Subtitles: Generated</p>
+        </div>
+    </div>
+</body>
+</html>
