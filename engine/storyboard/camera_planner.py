@@ -1,48 +1,55 @@
 # engine/storyboard/camera_planner.py
+import random
 import logging
 from typing import Dict, Any, List
 
 logger = logging.getLogger(__name__)
 
-CAMERA_STYLES = {
-    "establishing": {"framing": "Extreme Wide", "movement": "crane up slowly", "lens": "24mm wide angle"},
-    "dialogue": {"framing": "Medium Closeup", "movement": "dolly forward slowly", "lens": "50mm portrait"},
-    "action": {"framing": "Wide Tracking", "movement": "pan right following action", "lens": "35mm anamorphic"},
-    "dramatic": {"framing": "Macro Closeup", "movement": "static dynamic push", "lens": "85mm prime"},
-    "reveal": {"framing": "Center Hero", "movement": "slow pull back orbit", "lens": "35mm prime"},
-    "epic": {"framing": "Wide Establish", "movement": "drone overhead sweep", "lens": "18mm wide"}
-}
-
 class CameraPlanner:
     """
-    Cinematography AI for GenOTT V2.
-    Automatically assigns optimal framing, movement path, lens specification,
-    and transitions based on narrative intent.
+    Cinematic Camera AI for GenOTT V2.
+    Plans diverse, dynamic cinematography setups across shot sequences avoiding repetitive movement:
+    - establishing shots
+    - close ups
+    - over-the-shoulder
+    - POV
+    - tracking
+    - drone / aerial
+    - dolly zoom / tracking
+    - crane shot
+    - handheld / shoulder-rig
+    - 360 orbit
     """
 
-    def plan_camera_for_shot(self, shot_spec: Dict[str, Any]) -> Dict[str, Any]:
-        action_text = shot_spec.get("action", "").lower()
-        
-        selected_style = "establishing"
-        if "talk" in action_text or "speak" in action_text or "stare" in action_text:
-            selected_style = "dialogue"
-        elif "ignit" in action_text or "core" in action_text or "close" in action_text:
-            selected_style = "dramatic"
-        elif "accelerat" in action_text or "fly" in action_text or "run" in action_text or "jump" in action_text:
-            selected_style = "action"
-        elif "emerge" in action_text or "reveal" in action_text or "title" in action_text:
-            selected_style = "reveal"
-
-        preset = CAMERA_STYLES[selected_style]
-
-        planned_shot = {
-            **shot_spec,
-            "framing": shot_spec.get("framing") or preset["framing"],
-            "camera_movement": shot_spec.get("camera_movement") or preset["movement"],
-            "lens": shot_spec.get("lens") or preset["lens"],
-            "cinematography_preset": selected_style
-        }
-        return planned_shot
+    CAMERA_PRESETS = [
+        {"shot_type": "Wide Establishing", "movement": "Slow Overhead Drone Glide", "focal_length": "24mm prime lens"},
+        {"shot_type": "Medium Over-the-Shoulder", "movement": "Gentle Dolly Tracking Right", "focal_length": "50mm anamorphic lens"},
+        {"shot_type": "Extreme Close-Up", "movement": "Subtle Handheld Micro-Shake", "focal_length": "85mm macro lens"},
+        {"shot_type": "First-Person POV", "movement": "Dynamic Forward Tracking Shot", "focal_length": "35mm wide lens"},
+        {"shot_type": "High Angle Crane", "movement": "Sweeping Vertical Descending Tilt", "focal_length": "28mm prime lens"},
+        {"shot_type": "360 Degree Orbit", "movement": "Smooth Rotational Parallax Arc", "focal_length": "35mm anamorphic lens"},
+        {"shot_type": "Low Angle Hero Shot", "movement": "Slow Forward Push-In", "focal_length": "40mm cine lens"}
+    ]
 
     def plan_sequence(self, shots: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        return [self.plan_camera_for_shot(s) for s in shots]
+        planned_shots = []
+        last_preset_idx = -1
+
+        for idx, shot in enumerate(shots):
+            preset_idx = (idx % len(self.CAMERA_PRESETS))
+            if preset_idx == last_preset_idx:
+                preset_idx = (preset_idx + 1) % len(self.CAMERA_PRESETS)
+            last_preset_idx = preset_idx
+
+            preset = self.CAMERA_PRESETS[preset_idx]
+            shot_copy = dict(shot)
+            shot_copy["camera_shot_type"] = preset["shot_type"]
+            shot_copy["camera_movement"] = preset["movement"]
+            shot_copy["camera_lens"] = preset["focal_length"]
+
+            cinematic_prompt_addition = f"{preset['shot_type']}, {preset['movement']}, shot on {preset['focal_length']}, 24fps motion blur, cinematic lighting."
+            shot_copy["cinematic_camera_spec"] = cinematic_prompt_addition
+            planned_shots.append(shot_copy)
+
+        logger.info(f"[CameraPlanner] Planned dynamic cinematography for {len(planned_shots)} shots.")
+        return planned_shots
