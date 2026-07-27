@@ -5,9 +5,7 @@ import json
 import logging
 import torch
 import subprocess
-from typing import Dict, Any, Optional
 from diffusers import LTXPipeline
-from diffusers.utils import export_to_video
 from PIL import Image
 
 logger = logging.getLogger(__name__)
@@ -44,8 +42,7 @@ class LTXVideoBackend:
                 self.model_id,
                 torch_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
             )
-            self.pipe.to(self.device)
-            # Enable CPU offloading and VAE slicing to optimize 8GB VRAM footprint
+            # Enable CPU offloading and VAE slicing to fit 8GB VRAM footprint
             if hasattr(self.pipe, "enable_model_cpu_offload"):
                 self.pipe.enable_model_cpu_offload()
             if hasattr(self.pipe, "enable_vae_slicing"):
@@ -56,6 +53,8 @@ class LTXVideoBackend:
             return True
         except Exception as e:
             logger.error(f"[X] Failed to load LTX-Video from HuggingFace ({e}). Falling back to PyTorch Latent Diffusion Engine...")
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
             return False
 
     def generate_video(
@@ -75,6 +74,10 @@ class LTXVideoBackend:
         if torch.cuda.is_available():
             torch.cuda.manual_seed_all(seed)
 
+        # Clear VRAM before inference
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
         # Attempt HuggingFace LTX-Video inference; if model weights download is interrupted, run optimized PyTorch CUDA Latent Diffusion Engine
         model_loaded_success = self.load_model()
 
@@ -92,6 +95,8 @@ class LTXVideoBackend:
             )
             video_frames = output.frames[0]  # List of PIL Images
         else:
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
             logger.info("[PyTorch CUDA Engine] Running PyTorch Latent Video Diffusion Engine (Optimized for RTX 4060 8GB VRAM)...")
             latent_shape = (1, 4, num_frames, height // 8, width // 8)
             latent_tensor = torch.randn(latent_shape, device=self.device, dtype=torch.float16)
