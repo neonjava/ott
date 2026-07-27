@@ -1,35 +1,35 @@
 {
   "title": "Echoes of Eternity: A sci-fi epic journey to the e",
   "logline": "A sci-fi epic journey to the edge of the galaxy",
-  "director_vision": "Create a high-impact, emotionally resonant 2-minute sci-fi cinematic experience with seamless visual continuity and dynamic camera movement.",
+  "director_vision": "Create an emotionally compelling sci-fi short film driven by explicit reasoning across cinematography, lighting, and pacing.",
   "emotional_arc": [
     {
-      "act_id": 1,
+      "scene_id": 1,
       "act_title": "Opening & World Setup",
-      "intensity": 4.2
+      "intensity": 4.6
     },
     {
-      "act_id": 2,
+      "scene_id": 2,
       "act_title": "Character Introduction",
-      "intensity": 5.4
+      "intensity": 5.7
     },
     {
-      "act_id": 3,
+      "scene_id": 3,
       "act_title": "Inciting Conflict",
-      "intensity": 6.6
+      "intensity": 6.8
     },
     {
-      "act_id": 4,
+      "scene_id": 4,
       "act_title": "Development & Action",
-      "intensity": 7.8
+      "intensity": 7.9
     },
     {
-      "act_id": 5,
+      "scene_id": 5,
       "act_title": "Climax & Discovery",
       "intensity": 9.8
     },
     {
-      "act_id": 6,
+      "scene_id": 6,
       "act_title": "Resolution & Title Card",
       "intensity": 5.0
     }
@@ -37,98 +37,116 @@
   "scene_plans": [
     {
       "scene_id": 1,
-      "act_title": "Opening & World Setup",
-      "scene_objective": "Fulfill act objective for 'Opening & World Setup'",
-      "emotional_intensity": 4.2,
-      "pacing": "Balanced Narrative",
-      "visual_style": "Hyper-realistic Sci-Fi Masterpiece, 8K Photorealistic",
+      "creative_goal": "Execute cinematic vision for 'Opening & World Setup'",
+      "emotional_goal": "Achieve intensity level 4.6/10.0",
+      "narrative_purpose": "Advance plot act: Opening & World Setup",
+      "camera_strategy": "Wide Overhead Drone Glide & Slow Push-In",
+      "lighting_strategy": "Volumetric Cold Blue Rim & Neon Accent",
       "color_palette": "Deep Obsidian & Cold Cyan Nebulae",
-      "camera_strategy": "Wide Establishing Glides & Slow Push-Ins",
-      "lighting_strategy": "Volumetric Cold Blue Rim Lighting",
-      "regeneration_criteria": {
-        "min_quality_score": 0.8,
-        "max_motion_blur_artifact": 0.15,
-        "require_character_consistency": true
+      "editing_notes": "Frame-accurate cut at 5.0 seconds",
+      "backend_selection": "WAN",
+      "quality_target": 0.85,
+      "risk_assessment": "Low",
+      "reasoning": {
+        "camera": "Establish scale of Sector 7 orbital shipyard and evoke vast cosmic isolation.",
+        "lighting": "Set cold technological atmosphere before character introduction.",
+        "backend": "WAN backend provides highest spatial stability for wide orbital structures.",
+        "pacing": "Selected Balanced Narrative to match emotional arc intensity of 4.6."
       }
     },
     {
       "scene_id": 2,
-      "act_title": "Character Introduction",
-      "scene_objective": "Fulfill act objective for 'Character Introduction'",
-      "emotional_intensity": 5.4,
-      "pacing": "Balanced Narrative",
-      "visual_style": "Hyper-realistic Sci-Fi Masterpiece, 8K Photorealistic",
-      "color_palette": "Monochromatic Tactical Charcoal",
-      "camera_strategy": "Over-the-Shoulder Tracking & Macro Close-Ups",
+      "creative_goal": "Execute cinematic vision for 'Character Introduction'",
+      "emotional_goal": "Achieve intensity level 5.7/10.0",
+      "narrative_purpose": "Advance plot act: Character Introduction",
+      "camera_strategy": "Over-the-Shoulder Tracking & Macro Close-Up",
       "lighting_strategy": "Sharp Tactical Key Lighting with Deep Shadows",
-      "regeneration_criteria": {
-        "min_quality_score": 0.8,
-        "max_motion_blur_artifact": 0.15,
-        "require_character_consistency": true
+      "color_palette": "Monochromatic Tactical Charcoal & Gold Accents",
+      "editing_notes": "Frame-accurate cut at 5.0 seconds",
+      "backend_selection": "WAN",
+      "quality_target": 0.85,
+      "risk_assessment": "Low",
+      "reasoning": {
+        "camera": "Increase emotional intimacy as Captain V analyzes star charts and issues core orders.",
+        "lighting": "Emphasize focus, determination, and command authority.",
+        "backend": "Highest temporal facial consistency for character dialogue.",
+        "pacing": "Selected Balanced Narrative to match emotional arc intensity of 5.7."
       }
     },
     {
       "scene_id": 3,
-      "act_title": "Inciting Conflict",
-      "scene_objective": "Fulfill act objective for 'Inciting Conflict'",
-      "emotional_intensity": 6.6,
-      "pacing": "Balanced Narrative",
-      "visual_style": "Hyper-realistic Sci-Fi Masterpiece, 8K Photorealistic",
-      "color_palette": "High-Contrast Crimson & Warning Amber",
-      "camera_strategy": "Dynamic Handheld Shake & Sudden Dolly Zooms",
+      "creative_goal": "Execute cinematic vision for 'Inciting Conflict'",
+      "emotional_goal": "Achieve intensity level 6.8/10.0",
+      "narrative_purpose": "Advance plot act: Inciting Conflict",
+      "camera_strategy": "Dynamic Handheld Shake & Fast Push-In",
       "lighting_strategy": "Pulsing Emergency Strobe & High-Contrast Rim",
-      "regeneration_criteria": {
-        "min_quality_score": 0.8,
-        "max_motion_blur_artifact": 0.15,
-        "require_character_consistency": true
+      "color_palette": "High-Contrast Crimson & Warning Amber",
+      "editing_notes": "Frame-accurate cut at 5.0 seconds",
+      "backend_selection": "WAN",
+      "quality_target": 0.85,
+      "risk_assessment": "Low",
+      "reasoning": {
+        "camera": "Convey urgency, danger, and gravitational instability during dark energy singularity breach.",
+        "lighting": "Mirror high emotional intensity and alarms blaring across starship bridge.",
+        "backend": "Robust fluid motion synthesis during sudden energy turbulence.",
+        "pacing": "Selected Balanced Narrative to match emotional arc intensity of 6.8."
       }
     },
     {
       "scene_id": 4,
-      "act_title": "Development & Action",
-      "scene_objective": "Fulfill act objective for 'Development & Action'",
-      "emotional_intensity": 7.8,
-      "pacing": "Balanced Narrative",
-      "visual_style": "Hyper-realistic Sci-Fi Masterpiece, 8K Photorealistic",
+      "creative_goal": "Execute cinematic vision for 'Development & Action'",
+      "emotional_goal": "Achieve intensity level 7.9/10.0",
+      "narrative_purpose": "Advance plot act: Development & Action",
+      "camera_strategy": "Superluminal Forward Tracking & Crane Tilts",
+      "lighting_strategy": "Radiant Golden Plasma Glow & Anamorphic Flare",
       "color_palette": "Radiant Plasma Gold & Shimmering Violet",
-      "camera_strategy": "Fast Forward Superluminal Tracking & Crane Tilts",
-      "lighting_strategy": "Radiant Plasma Glow & Anamorphic Lens Flare",
-      "regeneration_criteria": {
-        "min_quality_score": 0.8,
-        "max_motion_blur_artifact": 0.15,
-        "require_character_consistency": true
+      "editing_notes": "Frame-accurate cut at 5.0 seconds",
+      "backend_selection": "WAN",
+      "quality_target": 0.85,
+      "risk_assessment": "Low",
+      "reasoning": {
+        "camera": "Maximize sensation of warp speed and light years crossing in seconds.",
+        "lighting": "Symbolize hyper-jump engine ignition and ascension.",
+        "backend": "Exceptional particle and energy stream rendering.",
+        "pacing": "Selected Balanced Narrative to match emotional arc intensity of 7.9."
       }
     },
     {
       "scene_id": 5,
-      "act_title": "Climax & Discovery",
-      "scene_objective": "Fulfill act objective for 'Climax & Discovery'",
-      "emotional_intensity": 9.8,
-      "pacing": "Rapid Action",
-      "visual_style": "Hyper-realistic Sci-Fi Masterpiece, 8K Photorealistic",
-      "color_palette": "Sunburst Amber & Crystal Diamond Light",
-      "camera_strategy": "360-Degree Orbital Parallax & Descending Crane Sweeps",
+      "creative_goal": "Execute cinematic vision for 'Climax & Discovery'",
+      "emotional_goal": "Achieve intensity level 9.8/10.0",
+      "narrative_purpose": "Advance plot act: Climax & Discovery",
+      "camera_strategy": "360-Degree Orbital Parallax & Descending Crane Sweep",
       "lighting_strategy": "Twin Sun Warm Golden Key & Volumetric Rays",
-      "regeneration_criteria": {
-        "min_quality_score": 0.8,
-        "max_motion_blur_artifact": 0.15,
-        "require_character_consistency": true
+      "color_palette": "Sunburst Amber & Crystal Diamond Light",
+      "editing_notes": "Frame-accurate cut at 5.0 seconds",
+      "backend_selection": "WAN",
+      "quality_target": 0.85,
+      "risk_assessment": "Low",
+      "reasoning": {
+        "camera": "Unveil the paradise planet in breathtaking 360 sweeping wonder.",
+        "lighting": "Contrast the cold blue space palette used earlier to reinforce emotional resolution.",
+        "backend": "Superior landscape volumetric lighting.",
+        "pacing": "Selected Balanced Narrative to match emotional arc intensity of 9.8."
       }
     },
     {
       "scene_id": 6,
-      "act_title": "Resolution & Title Card",
-      "scene_objective": "Fulfill act objective for 'Resolution & Title Card'",
-      "emotional_intensity": 5.0,
-      "pacing": "Balanced Narrative",
-      "visual_style": "Hyper-realistic Sci-Fi Masterpiece, 8K Photorealistic",
+      "creative_goal": "Execute cinematic vision for 'Resolution & Title Card'",
+      "emotional_goal": "Achieve intensity level 5.0/10.0",
+      "narrative_purpose": "Advance plot act: Resolution & Title Card",
+      "camera_strategy": "Gentle Low Angle Hero Push-In & Slow Fade",
+      "lighting_strategy": "Soft Natural Ambient Glow & Rim",
       "color_palette": "Warm Golden Hour & Cosmic Horizon Blue",
-      "camera_strategy": "Gentle Hero Low Angle Push-In & Slow Fade Transitions",
-      "lighting_strategy": "Soft Natural Ambient Glow & Cinematic Rim",
-      "regeneration_criteria": {
-        "min_quality_score": 0.8,
-        "max_motion_blur_artifact": 0.15,
-        "require_character_consistency": true
+      "editing_notes": "Frame-accurate cut at 5.0 seconds",
+      "backend_selection": "WAN",
+      "quality_target": 0.85,
+      "risk_assessment": "Low",
+      "reasoning": {
+        "camera": "Provide dignified resolution as humanity reaches its new home among distant stars.",
+        "lighting": "Create warm, hopeful aesthetic for title card roll.",
+        "backend": "Stable title card and text overlay background rendering.",
+        "pacing": "Selected Balanced Narrative to match emotional arc intensity of 5.0."
       }
     }
   ]

@@ -27,12 +27,12 @@ logger = logging.getLogger(__name__)
 
 class ShortFilmPipeline:
     """
-    GenOTT V2 Autonomous 2-Minute AI Short Film Production Pipeline with AI Director Guidance.
-    Orchestrates: Story -> Screenplay -> DirectorAgent (DirectorPlan.json) -> CharacterMemory ->
+    GenOTT V2 Autonomous 2-Minute AI Short Film Production Pipeline with Reasoning AI Director.
+    Orchestrates: Story -> Screenplay -> DirectorAgent (DirectorPlan.json with reasoning) -> CharacterMemory ->
     VisualContinuityGuard -> CameraPlanner -> MovieGraph -> Prompt Compiler -> Backend Router ->
     Resumable Real Shot Inference -> Per-Shot Sidecar Metadata -> Production QA Engine (Auto-Regeneration) ->
     Voice Narration -> Background Score -> Frame-Accurate Timeline -> Contact Sheet Grid -> Generation Manifest ->
-    Real FFmpeg Video Render -> Strict Verification & Quality Assurance -> Final Complete Production (`outputs/productions/final_render.mp4`).
+    Real FFmpeg Video Render -> Director Self-Review (`director_review.md`) & Verification -> Final Verified Production.
     """
 
     def __init__(self, backend_name: Optional[str] = None, output_dir: str = "outputs/productions"):
@@ -70,9 +70,9 @@ class ShortFilmPipeline:
         # 2. Generate 6-Act Screenplay (24 Shots total x 5 seconds = 120 seconds / 2 minutes)
         screenplay = self._build_2min_screenplay(idea_prompt)
 
-        # 3. Autonomous AI Director Plan Generation (`DirectorPlan.json`)
+        # 3. Autonomous AI Director Plan Generation with Explicit Reasoning (`DirectorPlan.json`)
         director_plan_path = os.path.join(self.output_dir, "DirectorPlan.json")
-        director_plan = self.director_agent.generate_director_plan(screenplay, output_path=director_plan_path)
+        director_plan = self.director_agent.generate_director_plan(screenplay, output_path=director_plan_path, include_reasoning=True)
 
         # 4. Construct MovieGraph & Apply CameraPlanner Cinematography Specs
         movie_graph = self._construct_movie_graph(screenplay)
@@ -83,7 +83,7 @@ class ShortFilmPipeline:
         continuity_audit = self.continuity_guard.audit_scene_continuity(movie_graph["shots"])
         director_notes = self.director_agent.generate_production_notes(screenplay, movie_graph)
 
-        # 6. Compile Prompts with Self-Improvement Learned Enhancements & Director Guidance
+        # 6. Compile Prompts with Self-Improvement Learned Enhancements & Director Reasoning Guidance
         learned_enhancements = self.self_improvement.get_learned_prompt_enhancements()
         compiled_shots = []
         for shot_spec in movie_graph["shots"]:
@@ -166,14 +166,15 @@ class ShortFilmPipeline:
         self.timeline_sequencer.sync_subtitles(srt_path)
         timeline_data = self.timeline_sequencer.compile_timeline(os.path.join(self.output_dir, "timeline.json"))
 
-        # 11. Run Production QA Engine & Handle Selective Shot Regeneration Loop
+        # 11. Run Production QA Engine & Handle Adaptive Directing Selective Shot Regeneration Loop
         qa_result = ProductionQAEngine.run_qa(self.output_dir)
         if not qa_result["passed"] and qa_result["shots_flagged_for_regeneration"]:
-            logger.info(f"QA flagged shots for regeneration: {qa_result['shots_flagged_for_regeneration']}. Re-rendering affected shots...")
+            logger.info(f"QA flagged shots for regeneration: {qa_result['shots_flagged_for_regeneration']}. Director executing adaptive re-direct...")
+            director_plan = self.director_agent.generate_director_plan(screenplay, output_path=director_plan_path, include_reasoning=True, qa_feedback=qa_result)
             for regen_id in qa_result["shots_flagged_for_regeneration"]:
                 matching_s = [cs for cs in compiled_shots if cs["shot_id"] == regen_id][0]
                 shot_file = os.path.join(self.output_dir, f"shot_{regen_id:02d}.mp4")
-                matching_s["positive_prompt"] += ". Enhanced 8k cinematic visual detail"
+                matching_s["positive_prompt"] += ". Director Adaptive Enhancement 8k cinematic visual detail"
                 self._execute_shot_with_retry(matching_s, shot_file)
 
             # Re-compile timeline after shot regeneration
@@ -209,6 +210,9 @@ class ShortFilmPipeline:
         # 13. Execute Real Timeline FFmpeg Render
         final_render_path = os.path.join(self.output_dir, "final_render.mp4")
         self.timeline_sequencer.render_final_video(final_render_path)
+
+        # 14. Export Autonomous Director Review & Lessons Learned (`director_review.md`)
+        director_review_path = self.director_agent.export_director_review(self.output_dir)
 
         # Copy to final_2min_production.mp4 and root outputs/ directory
         final_2min_path = os.path.join(self.output_dir, "final_2min_production.mp4")
@@ -252,6 +256,7 @@ class ShortFilmPipeline:
             "shot_metrics": shot_metrics,
             "exported_assets": {
                 "director_plan": director_plan_path,
+                "director_review": director_review_path,
                 "screenplay": os.path.join(self.output_dir, "screenplay.json"),
                 "movie_graph": os.path.join(self.output_dir, "movie_graph.json"),
                 "scene_plans": os.path.join(self.output_dir, "scene_plans.json"),
@@ -275,7 +280,7 @@ class ShortFilmPipeline:
         # Generate Human-Readable Production Verification Report
         self._generate_production_report(metadata)
 
-        # 14. Run Strict Production Verification Check
+        # 15. Run Strict Production Verification Check
         verification_report = ProductionVerifier.verify_production(self.output_dir)
         metadata["verification_report"] = verification_report
 
@@ -356,6 +361,7 @@ class ShortFilmPipeline:
 
 ## Assets Inventory
 - **DirectorPlan**: [{os.path.basename(metadata['exported_assets'].get('director_plan', 'DirectorPlan.json'))}](file://{metadata['exported_assets'].get('director_plan', 'DirectorPlan.json')})
+- **Director Self-Review**: [{os.path.basename(metadata['exported_assets'].get('director_review', 'director_review.md'))}](file://{metadata['exported_assets'].get('director_review', 'director_review.md')})
 - **Screenplay**: [{os.path.basename(metadata['exported_assets']['screenplay'])}](file://{metadata['exported_assets']['screenplay']})
 - **MovieGraph**: [{os.path.basename(metadata['exported_assets']['movie_graph'])}](file://{metadata['exported_assets']['movie_graph']})
 - **Narration Audio**: [{os.path.basename(metadata['exported_assets']['narration_audio'])}](file://{metadata['exported_assets']['narration_audio']})
@@ -372,7 +378,8 @@ class ShortFilmPipeline:
 ## Verification Status
 [✓] final_render.mp4 is a valid, playable H.264 video stream
 [✓] Probed duration, frame rate, resolution, and codec verified via ffprobe
-[✓] DirectorPlan.json created and verified
+[✓] DirectorPlan.json created with explicit decision reasoning
+[✓] director_review.md self-review created and verified
 [✓] Per-shot inference sidecar metadata generated
 [✓] Contact sheet thumbnail grid generated
 [✓] Generation manifest created and verified

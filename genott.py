@@ -38,6 +38,7 @@ def main():
     direct_parser = subparsers.add_parser("direct", help="Generate complete DirectorPlan.json from screenplay")
     direct_parser.add_argument("screenplay", type=str, help="Path to screenplay.json")
     direct_parser.add_argument("--output", type=str, default="outputs/productions/DirectorPlan.json", help="Output path for DirectorPlan.json")
+    direct_parser.add_argument("--reasoning", action="store_true", help="Include explicit reasoning justifications per creative choice")
 
     # Command: generate
     gen_parser = subparsers.add_parser("generate", help="Generate cinematic video shot or complete production")
@@ -107,8 +108,8 @@ def main():
         with open(sp_path, "r") as f:
             screenplay_data = json.load(f)
         agent = DirectorAgent()
-        plan = agent.generate_director_plan(screenplay_data, output_path=args.output)
-        print(f"[✓] Autonomous AI Director Plan successfully generated and saved to {args.output}")
+        plan = agent.generate_director_plan(screenplay_data, output_path=args.output, include_reasoning=True)
+        print(f"[✓] Reasoning-Based AI Director Plan successfully generated and saved to {args.output}")
 
     elif args.command == "generate":
         if args.demo:
@@ -133,6 +134,7 @@ def main():
         metadata = pipeline.produce_2min_short_film(idea_prompt=idea)
         print(f"[✓] 2-Minute AI Short Film Production Complete! Final Export: {metadata['exported_assets']['final_render']}")
         print(f"    Director Plan: {metadata['exported_assets']['director_plan']}")
+        print(f"    Director Self-Review: {metadata['exported_assets']['director_review']}")
         print(f"    Narration Audio Track: {metadata['exported_assets']['narration_audio']}")
         print(f"    Background Music Score: {metadata['exported_assets']['background_music']}")
         print(f"    Contact Sheet Grid: {metadata['exported_assets']['contact_sheet']}")
