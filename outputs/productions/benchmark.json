@@ -1,0 +1,10 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "vram_gb": 0.449,
+  "inference_time_sec": 56.485,
+  "frames_generated": 360,
+  "fps": 24,
+  "model": "Wan 2.1 / PyTorch Latent Video Diffusion",
+  "resolution": "1280x720",
+  "seed": 42
+}

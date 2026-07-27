@@ -1,0 +1,1 @@
+ffmpeg -y -r 24 -i PROJECT_ROOT/Documents/LLM/ott/outputs/debug/frame_%04d.png -c:v h264_nvenc -pix_fmt yuv420p PROJECT_ROOT/Documents/LLM/ott/outputs/productions/demo_15sec.mp4

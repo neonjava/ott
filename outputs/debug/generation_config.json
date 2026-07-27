@@ -1,0 +1,15 @@
+{
+  "model": "Wan 2.1 / PyTorch Latent Video Diffusion",
+  "prompt": "A hyper-realistic cinematic 8k shot of a solitary rider on horseback riding across golden sand dunes in a vast desert during golden hour sunset",
+  "negative_prompt": "low quality, blurry, distorted, static, deformed, noisy",
+  "seed": 42,
+  "duration_sec": 15.0,
+  "fps": 24,
+  "num_frames": 360,
+  "resolution": "1280x720",
+  "diffusion_steps": 25,
+  "device": "cuda",
+  "gpu_model": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "vram_max_gb": 0.449,
+  "inference_latency_sec": 56.485
+}

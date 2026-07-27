@@ -1,0 +1,1 @@
+GPU: NVIDIA GeForce RTX 4060 Laptop GPU | Max VRAM: 0.449 GB / 8.0 GB
