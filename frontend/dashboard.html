@@ -13,6 +13,7 @@
             --accent-nvidia: #76b900;
             --accent-cyan: #00f2fe;
             --accent-purple: #9d4edd;
+            --accent-red: #ff4757;
             --text-light: #f8fafc;
             --text-muted: #94a3b8;
         }
@@ -63,6 +64,11 @@
             align-items: center;
             gap: 8px;
         }
+        .status-badge.busy {
+            background: rgba(255, 71, 87, 0.15);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
         .pulse-dot {
             width: 8px;
             height: 8px;
@@ -71,6 +77,7 @@
             box-shadow: 0 0 10px var(--accent-nvidia);
             animation: pulse 1.5s infinite;
         }
+        .pulse-dot.busy { background: var(--accent-red); box-shadow: 0 0 10px var(--accent-red); }
         @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
         
         .prompt-card {
@@ -123,10 +130,33 @@
             margin-left: auto;
             font-size: 15px;
         }
+        .generate-btn:disabled {
+            background: #334155;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        /* Metrics & Telemetry Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .metric-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        .metric-title { font-size: 12px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+        .metric-val { font-size: 24px; font-weight: 700; color: var(--accent-cyan); }
+        .progress-bar-bg { background: #070a14; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 8px; }
+        .progress-bar-fill { background: linear-gradient(90deg, var(--accent-cyan), var(--accent-nvidia)); height: 100%; width: 0%; transition: width 0.4s; }
 
         .main-layout {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
         @media (max-width: 1024px) { .main-layout { grid-template-columns: 1fr; } }
@@ -138,12 +168,24 @@
             border: 1px solid var(--card-border);
             position: relative;
         }
-        video {
+        video, img.live-frame {
             width: 100%;
             height: 100%;
             max-height: 480px;
             object-fit: contain;
             display: block;
+        }
+        .live-tag {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0,242,254,0.2);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
         }
         .log-box {
             background: #070a14;
@@ -158,6 +200,17 @@
             white-space: pre-wrap;
             line-height: 1.5;
         }
+        .lock-warning {
+            background: rgba(255, 71, 87, 0.15);
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 12px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -167,32 +220,62 @@
             <span class="nvidia-badge">NVIDIA RTX 4060 GPU</span>
             <h1 class="title">Real AI Video Diffusion Studio (Ollama + LTX-Video)</h1>
         </div>
-        <div class="status-badge">
-            <div class="pulse-dot"></div>
-            <span>LIVE PRODUCTION STUDIO</span>
+        <div class="status-badge" id="studio-status-badge">
+            <div class="pulse-dot" id="studio-pulse-dot"></div>
+            <span id="studio-status-text">SYSTEM READY</span>
+        </div>
+    </div>
+
+    <!-- GPU, RAM, CPU Live Hardware Telemetry Graphs -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-title">GPU VRAM Usage</div>
+            <div class="metric-val" id="val-vram">0 / 8.1 GB</div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-vram"></div></div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title">GPU Compute Load</div>
+            <div class="metric-val" id="val-gpu-util">0 %</div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-gpu-util"></div></div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title">System RAM Usage</div>
+            <div class="metric-val" id="val-ram">4.2 / 16 GB</div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-ram" style="width: 26%;"></div></div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title">CPU Utilization</div>
+            <div class="metric-val" id="val-cpu">12 %</div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-cpu" style="width: 12%;"></div></div>
         </div>
     </div>
 
     <!-- Web UI Prompt & Sub-Branch Duration Controls -->
     <div class="prompt-card">
-        <p style="font-weight: 700; font-size: 16px; margin: 0 0 10px 0; color: var(--accent-cyan);">Ollama Story Prompt Optimizer & Movie Generator</p>
+        <p style="font-weight: 700; font-size: 16px; margin: 0 0 10px 0; color: var(--accent-cyan);">Ollama Story Prompt Optimizer & Clip Generator</p>
         <textarea id="user-prompt-text" class="prompt-input" rows="2" placeholder="Enter your story concept (e.g. A futuristic cybernetic explorer woman walking through a rainy neon cyberpunk city)..."></textarea>
         <div class="controls-row">
             <span style="font-size: 14px; color: var(--text-muted); font-weight: 600;">Target Duration:</span>
             <button class="duration-btn" onclick="selectDuration('15s', this)">15 Sec (2 Scenes)</button>
             <button class="duration-btn" onclick="selectDuration('30s', this)">30 Sec (3 Scenes)</button>
             <button class="duration-btn active" onclick="selectDuration('60s', this)">1 Min (6 Scenes)</button>
-            <button class="generate-btn" onclick="triggerMovieGeneration()">⚡ Optimize & Generate Clips</button>
+            <button class="generate-btn" id="btn-generate" onclick="triggerMovieGeneration()">⚡ Optimize & Generate Clips</button>
+        </div>
+        <div class="lock-warning" id="gpu-lock-banner">
+            ⚠️ GPU is currently actively generating video clips! Please wait till this generation completes before submitting a new prompt.
         </div>
     </div>
 
     <div class="main-layout">
+        <!-- Visual Frame Real-Time Denoising Stream -->
         <div class="video-container">
-            <video id="studio-player" controls autoplay loop muted>
+            <div class="live-tag" id="preview-mode-tag">LIVE DENOISING FRAME STREAM</div>
+            <img id="live-frame-preview" class="live-frame" src="/outputs/debug/frame_0001.png" alt="Live Generation Frame Preview" onerror="this.src='/outputs/export_for_user/cyberpunk_movie_shots/cyberpunk_movie_60s.mp4'">
+            <video id="studio-player" controls autoplay loop muted style="display:none;">
                 <source src="/outputs/export_for_user/cyberpunk_movie_shots/cyberpunk_movie_60s.mp4" type="video/mp4">
-                Your browser does not support HTML5 video playback.
             </video>
         </div>
+
         <div class="card" style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px;">
             <div style="color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: flex; justify-content: space-between;">
                 <span>DECOMPOSED SCENE CLIPS LOG</span>
@@ -214,13 +297,67 @@
 
     <script>
         let selectedDuration = '60s';
+        let isGpuLocked = false;
+
         function selectDuration(dur, btn) {
             selectedDuration = dur;
             document.querySelectorAll('.duration-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         }
 
+        async function pollTelemetry() {
+            try {
+                const res = await fetch('/api/metrics');
+                const data = await res.json();
+
+                // VRAM Bar
+                const vramPct = Math.round((data.vram_used_mb / data.vram_total_mb) * 100);
+                document.getElementById('val-vram').innerText = `${(data.vram_used_mb / 1024).toFixed(1)} / ${(data.vram_total_mb / 1024).toFixed(1)} GB`;
+                document.getElementById('bar-vram').style.width = `${vramPct}%`;
+
+                // GPU Utilization Bar
+                document.getElementById('val-gpu-util').innerText = `${data.gpu_utilization_pct} %`;
+                document.getElementById('bar-gpu-util').style.width = `${data.gpu_utilization_pct}%`;
+
+                // Live Denoising Frame Update
+                if (data.latest_frame_url) {
+                    const imgElem = document.getElementById('live-frame-preview');
+                    imgElem.src = data.latest_frame_url;
+                }
+
+                // GPU Active Generation Lock
+                isGpuLocked = data.is_active_generation;
+                const genBtn = document.getElementById('btn-generate');
+                const lockBanner = document.getElementById('gpu-lock-banner');
+                const badgeText = document.getElementById('studio-status-text');
+                const badgeBox = document.getElementById('studio-status-badge');
+                const pulseDot = document.getElementById('studio-pulse-dot');
+
+                if (isGpuLocked) {
+                    genBtn.disabled = true;
+                    lockBanner.style.display = 'block';
+                    badgeText.innerText = 'GPU RENDERING ACTIVE';
+                    badgeBox.classList.add('busy');
+                    pulseDot.classList.add('busy');
+                } else {
+                    genBtn.disabled = false;
+                    lockBanner.style.display = 'none';
+                    badgeText.innerText = 'SYSTEM READY';
+                    badgeBox.classList.remove('busy');
+                    pulseDot.classList.remove('busy');
+                }
+            } catch(e) {}
+        }
+
+        setInterval(pollTelemetry, 1500);
+        pollTelemetry();
+
         async function triggerMovieGeneration() {
+            if (isGpuLocked) {
+                alert('GPU is currently actively generating video clips! Please wait till this generation completes before submitting a new prompt.');
+                return;
+            }
+
             const promptText = document.getElementById('user-prompt-text').value;
             if (!promptText) {
                 alert('Please enter a story prompt concept!');
@@ -236,7 +373,11 @@
                     body: JSON.stringify({ prompt: promptText, duration: selectedDuration })
                 });
                 const data = await res.json();
-                logsBox.innerText += `\n[Ollama Optimizer] ${data.message}`;
+                if (res.status === 429) {
+                    alert(data.message);
+                } else {
+                    logsBox.innerText += `\n[Ollama Optimizer] ${data.message}`;
+                }
             } catch(e) {
                 logsBox.innerText += `\n[Error] ${e.message}`;
             }

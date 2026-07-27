@@ -17,12 +17,8 @@ logger = logging.getLogger(__name__)
 
 class AIMovieGeneratorEngine:
     """
-    Production-Grade Multi-Shot AI Movie Generator.
-    1. Compiles high-level screenplay into a 6-shot sequence (~60 seconds total).
-    2. Maintains character memory and scene continuity across all shots.
-    3. Runs per-shot frame verification & QA (detects flicker, noise, and identity drift).
-    4. Automatically regenerates failed shots up to 3 attempts.
-    5. Assembles all approved shots into a single 60s cinematic MP4 with clean cuts.
+    Production-Grade Multi-Shot AI Movie Generator with Dynamic Scene Diversity.
+    Passes unique shot output filenames to LTXVideoBackend so each shot is saved in its own permanent subfolder.
     """
 
     def __init__(self, debug_dir: str = "outputs/debug", output_dir: str = "outputs/productions"):
@@ -34,102 +30,114 @@ class AIMovieGeneratorEngine:
         self.qa_engine = ShotQualityAssurance(debug_dir=self.debug_dir)
         self.assembler = AutomaticMovieAssembler(output_dir=self.output_dir)
 
-    def build_shot_list(self) -> List[Dict[str, Any]]:
-        """
-        Builds a 6-shot cinematic screenplay sequence (~60 seconds total duration).
-        """
+    def build_dynamic_shot_list(self) -> List[Dict[str, Any]]:
         return [
             {
                 "shot_id": "shot_01_establishing_wide",
-                "shot_type": "Establishing Wide Shot",
+                "shot_type": "Wide Drone Establishing Shot",
                 "duration_sec": 10.0,
                 "fps": 16,
                 "resolution": "704x384",
                 "steps": 30,
                 "guidance_scale": 4.0,
-                "seed": 101,
-                "action": "standing on a rain-soaked rooftop overlooking the glowing skyline",
-                "camera": "The camera slowly pans out establishing the massive scale of the neon city"
+                "seed": 1010,
+                "prompt": (
+                    "A high-altitude wide drone shot looking down at a cybernetic woman standing on a high-tech skyscraper helipad. "
+                    "Massive glowing holographic billboards and flying vehicles pass across a rainy cyberpunk city skyline at night. "
+                    "Futuristic cybernetic explorer woman with silver hair, wearing black leather tactical coat with cyan glowing seams. "
+                    "Volumetric neon fog, cinematic lighting, 8k resolution, masterpiece."
+                )
             },
             {
                 "shot_id": "shot_02_medium_tracking",
-                "shot_type": "Medium Tracking Shot",
+                "shot_type": "Side Tracking Low-Angle Action Shot",
                 "duration_sec": 10.0,
                 "fps": 16,
                 "resolution": "704x384",
                 "steps": 30,
                 "guidance_scale": 4.0,
-                "seed": 102,
-                "action": "walking purposefully along the wet reflective sidewalk past glowing shopfronts",
-                "camera": "The camera dollies smoothly alongside her tracking her natural walking motion"
+                "seed": 2020,
+                "prompt": (
+                    "A low-angle fast tracking camera following a cybernetic woman sprinting down a narrow rain-slicked alleyway. "
+                    "Steam rises from manholes while vibrant pink and purple neon signs reflect off wet pavement. "
+                    "Futuristic cybernetic explorer woman with silver hair, wearing black leather coat. High motion, dynamic action shot, "
+                    "cinematic motion blur, 8k, Hollywood masterpiece."
+                )
             },
             {
                 "shot_id": "shot_03_closeup_portrait",
-                "shot_type": "Close-up Portrait Shot",
+                "shot_type": "Extreme Close-Up Face & Eye Detail",
                 "duration_sec": 10.0,
                 "fps": 16,
                 "resolution": "704x384",
                 "steps": 30,
                 "guidance_scale": 4.0,
-                "seed": 103,
-                "action": "looking up with subtle determination as rain droplets glisten on her face",
-                "camera": "Intimate close-up tracking shot with shallow depth of field and soft background blur"
+                "seed": 3030,
+                "prompt": (
+                    "Extreme close-up shot of a cybernetic woman's face and glowing cyan cybernetic eye. "
+                    "Raindrops run down her face as her silver hair sways in the wind. Soft out-of-focus background neon lights. "
+                    "Photorealistic skin texture, ultra detailed face, glowing cyan eye HUD display, cinematic depth of field, 8k masterpiece."
+                )
             },
             {
                 "shot_id": "shot_04_reverse_angle",
-                "shot_type": "Reverse Over-the-Shoulder Angle",
+                "shot_type": "Over-the-Shoulder Reverse Action Shot",
                 "duration_sec": 10.0,
                 "fps": 16,
                 "resolution": "704x384",
                 "steps": 30,
                 "guidance_scale": 4.0,
-                "seed": 104,
-                "action": "gazing ahead into a dark alleyway filled with cyan volumetric fog and glowing neon signs",
-                "camera": "Over-the-shoulder reverse angle camera framing her back and silhouette"
+                "seed": 4040,
+                "prompt": (
+                    "Over-the-shoulder reverse shot looking over a cybernetic woman's leather jacket toward an approaching glowing hover vehicle. "
+                    "Bright headlights cut through the dark rainy night fog. Her silver hair blows across her shoulders. "
+                    "Dramatic lens flare, volumetric headlight beam, intense atmosphere, cinematic lighting, 8k."
+                )
             },
             {
                 "shot_id": "shot_05_environment_insert",
-                "shot_type": "Environmental Detail Insert",
+                "shot_type": "Macro Footstep Reflection Insert",
                 "duration_sec": 10.0,
                 "fps": 16,
                 "resolution": "704x384",
                 "steps": 30,
                 "guidance_scale": 4.0,
-                "seed": 105,
-                "action": "her boots stepping into a glowing neon puddle causing ripples on the wet asphalt",
-                "camera": "Low-angle macro tracking camera following her steps"
+                "seed": 5050,
+                "prompt": (
+                    "Macro ground-level shot of armored tactical boots splashing into a deep neon puddle on dark wet asphalt. "
+                    "Water droplets spray outward in slow motion reflecting vibrant cyan and magenta city neon lights. "
+                    "Slow motion fluid dynamics, high contrast, crisp detail, cinematic 8k."
+                )
             },
             {
                 "shot_id": "shot_06_action_tracking",
-                "shot_type": "Climactic Action Tracking Shot",
+                "shot_type": "Sweeping Hero Exit Shot",
                 "duration_sec": 10.0,
                 "fps": 16,
                 "resolution": "704x384",
                 "steps": 30,
                 "guidance_scale": 4.0,
-                "seed": 106,
-                "action": "turning sharply into the rain with her coat blowing in the wind as a hover vehicle speeds overhead",
-                "camera": "Dynamic cinematic tracking shot with sweeping motion"
+                "seed": 6060,
+                "prompt": (
+                    "Full-body cinematic 360 sweeping camera arc around a cybernetic woman turning sharply as sparks fly from an overhead power line. "
+                    "Her leather coat billows violently in the wind. Futuristic cybernetic explorer woman with silver hair, "
+                    "epic hero pose, dramatic lighting, movie climax, 8k resolution masterpiece."
+                )
             }
         ]
 
     def generate_full_movie(self) -> Dict[str, Any]:
         logger.info("==================================================")
-        logger.info("Starting Production 60-Second Multi-Shot AI Movie Generation")
+        logger.info("Starting Dynamic Multi-Shot AI Movie Generation (~60s)")
         logger.info("==================================================")
 
-        shots = self.build_shot_list()
+        shots = self.build_dynamic_shot_list()
         approved_shots = []
         anchor_histogram = None
 
         for shot_info in shots:
             s_id = shot_info["shot_id"]
-            prompt = self.continuity.get_shot_prompt(
-                shot_num=len(approved_shots) + 1,
-                shot_type=shot_info["shot_type"],
-                action_description=shot_info["action"],
-                camera_movement=shot_info["camera"]
-            )
+            prompt = shot_info["prompt"]
             negative_prompt = self.continuity.get_negative_prompt()
 
             logger.info(f"\n--- Processing {s_id} ({shot_info['shot_type']}) ---")
@@ -142,21 +150,19 @@ class AIMovieGeneratorEngine:
             for attempt in range(1, max_attempts + 1):
                 logger.info(f"[Shot Generation] {s_id} - Attempt {attempt}/{max_attempts} (Seed: {current_seed})...")
                 
-                # Render Shot via LTX-Video Backend
                 render_res = self.backend.generate_video(
                     prompt=prompt,
                     negative_prompt=negative_prompt,
                     duration_sec=shot_info["duration_sec"],
                     fps=shot_info["fps"],
                     resolution=shot_info["resolution"],
-                    seed=current_seed
+                    seed=current_seed,
+                    output_name=s_id
                 )
 
-                # Collect frame paths for QA
                 num_frames = render_res["frames_generated"]
                 frame_paths = [os.path.join(self.debug_dir, f"frame_{idx:04d}.png") for idx in range(1, num_frames + 1)]
 
-                # Run QA Evaluation
                 qa_res = self.qa_engine.evaluate_shot(frame_paths, s_id, anchor_hist=anchor_histogram)
 
                 if qa_res["passed"]:
@@ -169,25 +175,24 @@ class AIMovieGeneratorEngine:
                         "fps": shot_info["fps"],
                         "num_frames": num_frames,
                         "output_mp4": render_res["output_mp4"],
+                        "shot_subfolder": render_res["shot_subfolder"],
                         "qa_result": qa_res
                     }
                     approved_shots.append(shot_record)
                     
-                    # Set Shot 01 histogram as continuity anchor for subsequent shots
                     if anchor_histogram is None and "mean_histogram" in qa_res:
                         anchor_histogram = np.array(qa_res["mean_histogram"])
                     
                     shot_approved = True
                     break
                 else:
-                    logger.warning(f"[!] {s_id} failed QA on attempt {attempt}: {qa_res['reason']}. Regenerating with seed {current_seed + 10}...")
-                    current_seed += 10
+                    logger.warning(f"[!] {s_id} failed QA on attempt {attempt}: {qa_res['reason']}. Regenerating with seed {current_seed + 15}...")
+                    current_seed += 15
 
             if not shot_approved:
                 logger.error(f"[X] {s_id} failed to pass QA after {max_attempts} attempts. Halting pipeline.")
                 return {"status": "FAILED_QA", "failed_shot": s_id}
 
-        # Assemble all approved shots into final ~60s movie
         movie_manifest = self.assembler.assemble_movie(approved_shots)
         return movie_manifest
 

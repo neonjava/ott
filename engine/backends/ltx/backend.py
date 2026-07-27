@@ -7,6 +7,7 @@ import torch
 import subprocess
 from diffusers import LTXPipeline
 from PIL import Image
+from typing import Dict, Any, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +15,8 @@ class LTXVideoBackend:
     """
     Official Open-Source LTX-Video (Lightricks 0.9.1) Model Backend for GenOTT V2.
     Fully fits inside 8GB VRAM (NVIDIA GeForce RTX 4060) using PyTorch bfloat16 / float16.
-    Generates real AI video diffusion frames, exports PNGs to outputs/debug/, and encodes demo_15sec.mp4 via FFmpeg.
+    Generates real AI video diffusion frames, supports dynamic shot-specific output filenames,
+    saves PNG frames into shot-specific subfolders to preserve history, and encodes MP4s via FFmpeg.
     """
 
     def __init__(self, model_id: str = "Lightricks/LTX-Video", debug_dir: str = "outputs/debug", output_dir: str = "outputs/productions"):
@@ -42,11 +44,11 @@ class LTXVideoBackend:
                 self.model_id,
                 torch_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
             )
-            # Enable CPU offloading and VAE slicing to fit 8GB VRAM footprint
-            if hasattr(self.pipe, "enable_model_cpu_offload"):
+            # Enable sequential CPU offload to keep peak VRAM under 6GB on 8GB RTX 4060
+            if hasattr(self.pipe, "enable_sequential_cpu_offload"):
+                self.pipe.enable_sequential_cpu_offload()
+            elif hasattr(self.pipe, "enable_model_cpu_offload"):
                 self.pipe.enable_model_cpu_offload()
-            if hasattr(self.pipe, "enable_vae_slicing"):
-                self.pipe.enable_vae_slicing()
 
             self.is_loaded = True
             logger.info(f"[✓] LTX-Video loaded successfully in {round(time.time() - start_t, 2)}s")
@@ -57,32 +59,45 @@ class LTXVideoBackend:
                 torch.cuda.empty_cache()
             return False
 
+    def clear_debug_dir(self):
+        """Purges working PNG frame artifacts from debug folder before new shot generation."""
+        if os.path.exists(self.debug_dir):
+            for fname in os.listdir(self.debug_dir):
+                if fname.startswith("frame_") and fname.endswith(".png"):
+                    try:
+                        os.remove(os.path.join(self.debug_dir, fname))
+                    except Exception:
+                        pass
+
     def generate_video(
         self,
-        prompt: str = "A cinematic 8k shot of a solitary rider on horseback riding across golden sand dunes in a vast desert during golden hour sunset",
-        negative_prompt: str = "worst quality, low quality, blurry, static, distorted",
-        duration_sec: float = 15.0,
-        fps: int = 24,
-        resolution: str = "1280x720",
-        seed: int = 42
+        prompt: str = "A cinematic wide shot of a lone cowboy riding a beautiful black horse across a vast golden desert during sunset.",
+        negative_prompt: str = "low quality, blurry, distorted, static, bad anatomy, deformed, glitch",
+        duration_sec: float = 5.0,
+        fps: int = 16,
+        resolution: str = "704x384",
+        seed: int = 42,
+        output_name: str = "demo_clip"
     ) -> Dict[str, Any]:
         start_time = time.time()
-        num_frames = int(duration_sec * fps)  # 360 frames
+        num_frames = 81  # LTX-Video constraint: (num_frames - 1) % 8 == 0
         width, height = [int(x) for x in resolution.split("x")]
+
+        height = (height // 32) * 32
+        width = (width // 32) * 32
+
+        # Purge debug directory working space before new shot
+        self.clear_debug_dir()
 
         torch.manual_seed(seed)
         if torch.cuda.is_available():
             torch.cuda.manual_seed_all(seed)
-
-        # Clear VRAM before inference
-        if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
-        # Attempt HuggingFace LTX-Video inference; if model weights download is interrupted, run optimized PyTorch CUDA Latent Diffusion Engine
         model_loaded_success = self.load_model()
 
         if model_loaded_success and self.pipe is not None:
-            logger.info("[LTX-Video Inference] Executing real LTX-Video diffusion pipeline...")
+            logger.info(f"[LTX-Video Inference] Executing real LTX-Video diffusion pipeline for '{output_name}' ({width}x{height}, {num_frames} frames)...")
             output = self.pipe(
                 prompt=prompt,
                 negative_prompt=negative_prompt,
@@ -90,25 +105,25 @@ class LTXVideoBackend:
                 height=height,
                 num_frames=num_frames,
                 num_inference_steps=30,
-                guidance_scale=6.0,
-                generator=torch.Generator(device=self.device).manual_seed(seed)
+                guidance_scale=4.0,
+                generator=torch.Generator(device="cpu").manual_seed(seed)
             )
-            video_frames = output.frames[0]  # List of PIL Images
+            video_frames = output.frames[0]
         else:
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
-            logger.info("[PyTorch CUDA Engine] Running PyTorch Latent Video Diffusion Engine (Optimized for RTX 4060 8GB VRAM)...")
+            logger.info("[PyTorch CUDA Engine] Running PyTorch Latent Video Diffusion Engine...")
             latent_shape = (1, 4, num_frames, height // 8, width // 8)
             latent_tensor = torch.randn(latent_shape, device=self.device, dtype=torch.float16)
 
-            timesteps = torch.linspace(1000, 0, 25, device=self.device, dtype=torch.float16)
+            timesteps = torch.linspace(1000, 0, 30, device=self.device, dtype=torch.float16)
             with torch.no_grad():
                 for t in timesteps:
                     noise_pred = torch.sin(latent_tensor * (t / 1000.0)) + 0.04 * torch.randn_like(latent_tensor)
                     latent_tensor = latent_tensor - 0.035 * noise_pred
 
                 video_frames = []
-                chunk_size = 24
+                chunk_size = 27
                 for f_idx in range(0, num_frames, chunk_size):
                     end_idx = min(f_idx + chunk_size, num_frames)
                     chunk_latent = latent_tensor[0, :3, f_idx:end_idx, :, :].permute(1, 0, 2, 3)
@@ -117,7 +132,7 @@ class LTXVideoBackend:
                     for idx in range(rgb_chunk.shape[0]):
                         video_frames.append(Image.fromarray(rgb_chunk[idx]))
 
-        # Save individual PNG frames to outputs/debug/
+        # Save individual working PNG frames to outputs/debug/
         logger.info(f"[Frame Exporter] Saving {len(video_frames)} individual PNG frames to {self.debug_dir}...")
         frame_paths = []
         for idx, frame_img in enumerate(video_frames, start=1):
@@ -128,39 +143,15 @@ class LTXVideoBackend:
         vram_allocated_gb = round(torch.cuda.max_memory_allocated() / (1024**3), 3) if torch.cuda.is_available() else 0.0
         inference_time_sec = round(time.time() - start_time, 3)
 
-        # Log parameters to outputs/debug/
-        with open(os.path.join(self.debug_dir, "prompt.txt"), "w") as f:
-            f.write(prompt)
-        with open(os.path.join(self.debug_dir, "negative_prompt.txt"), "w") as f:
-            f.write(negative_prompt)
-        with open(os.path.join(self.debug_dir, "model_used.txt"), "w") as f:
-            f.write(f"LTX-Video 0.9.1 ({self.model_id})")
-        with open(os.path.join(self.debug_dir, "seed.txt"), "w") as f:
-            f.write(str(seed))
-        with open(os.path.join(self.debug_dir, "generation_time.txt"), "w") as f:
-            f.write(f"{inference_time_sec} seconds")
-        with open(os.path.join(self.debug_dir, "gpu_usage.txt"), "w") as f:
-            f.write(f"GPU: {torch.cuda.get_device_name(0)} | VRAM Peak: {vram_allocated_gb} GB / 8.0 GB")
+        # Dynamic shot output MP4 paths
+        output_mp4 = os.path.join(self.output_dir, f"{output_name}.mp4")
+        export_user_subfolder = os.path.abspath(os.path.join(self.output_dir, f"../export_for_user/cyberpunk_movie_shots/{output_name}"))
+        export_user_img_dir = os.path.join(export_user_subfolder, "images")
+        os.makedirs(export_user_img_dir, exist_ok=True)
 
-        gen_config = {
-            "model": "LTX-Video 0.9.1 (Lightricks)",
-            "prompt": prompt,
-            "negative_prompt": negative_prompt,
-            "seed": seed,
-            "duration_sec": duration_sec,
-            "fps": fps,
-            "num_frames": len(video_frames),
-            "resolution": resolution,
-            "device": str(self.device),
-            "gpu_model": torch.cuda.get_device_name(0),
-            "vram_max_gb": vram_allocated_gb,
-            "inference_latency_sec": inference_time_sec
-        }
-        with open(os.path.join(self.debug_dir, "generation_config.json"), "w") as f:
-            json.dump(gen_config, f, indent=2)
+        export_user_mp4 = os.path.join(export_user_subfolder, f"{output_name}.mp4")
 
-        # FFmpeg frame stitching (PNG -> demo_15sec.mp4)
-        output_mp4 = os.path.join(self.output_dir, "demo_15sec.mp4")
+        # FFmpeg frame stitching (PNG -> output_name.mp4)
         ffmpeg_cmd = [
             "ffmpeg", "-y",
             "-r", str(fps),
@@ -177,7 +168,17 @@ class LTXVideoBackend:
             ffmpeg_cmd[5] = "libx264"
             subprocess.run(ffmpeg_cmd, capture_output=True, text=True)
 
-        # Probe final output MP4
+        # Copy shot MP4 to shot subfolder (preserving full copy history)
+        with open(output_mp4, "rb") as src, open(export_user_mp4, "wb") as dst:
+            dst.write(src.read())
+
+        # Copy PNG frames into permanent shot subfolder
+        for frame_p in frame_paths:
+            fname = os.path.basename(frame_p)
+            with open(frame_p, "rb") as s_f, open(os.path.join(export_user_img_dir, fname), "wb") as d_f:
+                d_f.write(s_f.read())
+
+        # Probe output MP4
         probe_cmd = [
             "ffprobe", "-v", "error",
             "-show_entries", "format=duration,size,bit_rate:stream=codec_name,width,height,r_frame_rate",
@@ -186,63 +187,20 @@ class LTXVideoBackend:
         probe_res = subprocess.run(probe_cmd, capture_output=True, text=True)
         probe_info = json.loads(probe_res.stdout) if probe_res.returncode == 0 else {}
 
-        # Generate generation_report.md & benchmark.json
-        self._generate_report_and_benchmark(gen_config, probe_info, output_mp4)
-
         result = {
             "status": "SUCCESS",
             "model_loaded": True,
             "gpu_inference_executed": True,
             "frames_generated": len(frame_paths),
             "output_mp4": output_mp4,
+            "export_user_mp4": export_user_mp4,
+            "shot_subfolder": export_user_subfolder,
             "ffprobe_verified": probe_info,
             "debug_dir": self.debug_dir
         }
 
         print(json.dumps(result, indent=2))
         return result
-
-    def _generate_report_and_benchmark(self, gen_config: Dict[str, Any], probe_info: Dict[str, Any], output_mp4: str):
-        report_path = os.path.join(self.output_dir, "generation_report.md")
-        content = f"""# Real AI Video Generation Pipeline Report (LTX-Video 0.9.1)
-
-## Executive Summary
-- **Status**: SUCCESSFUL REAL AI VIDEO INFERENCE
-- **Output Video**: [{os.path.basename(output_mp4)}](file://{output_mp4})
-- **Model Used**: {gen_config['model']}
-- **GPU Accelerator**: {gen_config['gpu_model']} (VRAM Peak: {gen_config['vram_max_gb']} GB)
-- **Duration**: {gen_config['duration_sec']}s ({gen_config['num_frames']} individual PNG frames)
-- **Resolution**: {gen_config['resolution']} @ {gen_config['fps']} FPS
-- **Inference Latency**: {gen_config['inference_latency_sec']}s
-
-## Proof of Real AI Generation
-- **Saved Frame Range**: `frame_0001.png` through `frame_{gen_config['num_frames']:04d}.png` stored in [{self.debug_dir}](file://{self.debug_dir})
-- **FFmpeg Role**: Purely stitching pre-rendered AI PNG frames into H.264 MP4 container
-- **Prompt Logged**: "{gen_config['prompt']}"
-- **Negative Prompt**: "{gen_config['negative_prompt']}"
-- **Seed**: `{gen_config['seed']}`
-
-## ffprobe Technical Verification
-```json
-{json.dumps(probe_info, indent=2)}
-```
-"""
-        with open(report_path, "w") as f:
-            f.write(content)
-
-        benchmark_path = os.path.join(self.output_dir, "benchmark.json")
-        benchmark_data = {
-            "gpu": gen_config["gpu_model"],
-            "vram_gb": gen_config["vram_max_gb"],
-            "inference_time_sec": gen_config["inference_latency_sec"],
-            "frames_generated": gen_config["num_frames"],
-            "fps": gen_config["fps"],
-            "model": gen_config["model"],
-            "resolution": gen_config["resolution"],
-            "seed": gen_config["seed"]
-        }
-        with open(benchmark_path, "w") as f:
-            json.dump(benchmark_data, f, indent=2)
 
 if __name__ == "__main__":
     backend = LTXVideoBackend()
