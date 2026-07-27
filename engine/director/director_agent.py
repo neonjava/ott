@@ -203,11 +203,23 @@ class DirectorAgent:
 
     def review_movie_graph(self, movie_graph: Dict[str, Any]) -> Dict[str, Any]:
         shots = movie_graph.get("shots", [])
+        weak_scenes = []
+        improvements = []
+
+        for idx, shot in enumerate(shots, start=1):
+            action = shot.get("action", "")
+            framing = shot.get("framing", "")
+            if len(action) < 15:
+                weak_scenes.append({"shot_id": idx, "reason": "Action description lacks sensory/visual depth."})
+                improvements.append(f"Shot {idx}: Enrich action details with lighting and atmospheric specs.")
+            if not framing:
+                improvements.append(f"Shot {idx}: Assign explicit cinematography framing.")
+
         return {
             "total_reviewed": len(shots),
-            "weak_scenes_detected": [],
-            "improvement_suggestions": [],
-            "director_approval": True
+            "weak_scenes_detected": weak_scenes,
+            "improvement_suggestions": improvements,
+            "director_approval": len(weak_scenes) == 0
         }
 
     def generate_production_notes(self, screenplay: Dict[str, Any], movie_graph: Dict[str, Any]) -> List[str]:
