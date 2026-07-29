@@ -168,6 +168,18 @@ impl Timeline {
         }
         outdated
     }
+
+    pub fn get_outdated_clips(&self) -> Vec<&Clip> {
+        let mut result = Vec::new();
+        for track in self.tracks.values() {
+            for clip in &track.clips {
+                if clip.status == RenderStatus::Outdated || clip.status == RenderStatus::Pending {
+                    result.push(clip);
+                }
+            }
+        }
+        result
+    }
 }
 
 #[cfg(test)]
