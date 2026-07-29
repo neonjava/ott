@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package genott.v2;
+
+service AiWorkerService {
+  rpc AnalyzeMovie (MovieAnalysisRequest) returns (MovieAnalysisResponse);
+  rpc RenderShot (ShotRenderRequest) returns (ShotRenderResponse);
+}
+
+message MovieAnalysisRequest {
+  string movie_file_path = 1;
+}
+
+message MovieAnalysisResponse {
+  int32 scenes_detected = 1;
+  int32 characters_detected = 2;
+  string movie_graph_json = 3;
+}
+
+message ShotRenderRequest {
+  string shot_id = 1;
+  string prompt = 2;
+  float duration_sec = 3;
+  int32 seed = 4;
+  string backend_name = 5;
+}
+
+message ShotRenderResponse {
+  string shot_id = 1;
+  bool success = 2;
+  string video_path = 3;
+}

@@ -1,0 +1,43 @@
+{
+    "movie_id": "05c11861-023d-4525-83c7-95a95716c56e",
+    "name": "Untitled Movie",
+    "project_id": "37e01173-5bd9-476d-8333-72dcd7b8b64e",
+    "project_version": "1.0.0",
+    "created_at": 1785132711.1096745,
+    "updated_at": 1785132711.1102307,
+    "author": "System",
+    "engine_version": "2.0.0",
+    "supported_backends": [
+        "Blender"
+    ],
+    "language": "en",
+    "style": "cinematic",
+    "target_platform": "YouTube Shorts",
+    "target_duration": 30.0,
+    "resolution": "1080x1920",
+    "fps": 24,
+    "status": "Draft",
+    "scenes": {
+        "0d60b479-3c5c-44ae-9dd8-bdc379443003": {
+            "uuid": "0d60b479-3c5c-44ae-9dd8-bdc379443003",
+            "name": "Intro Scene",
+            "script": "Hero leaps into the dynamic fog",
+            "shots": {
+                "0f1ea2e8-f45c-48b4-a095-fc9746003578": {
+                    "uuid": "0f1ea2e8-f45c-48b4-a095-fc9746003578",
+                    "camera_shot": "wide_shot",
+                    "duration": 3.5,
+                    "status": "pending"
+                }
+            }
+        }
+    },
+    "metadata": {},
+    "story": {},
+    "shots": {},
+    "shot_specs": [],
+    "backend_decisions": [],
+    "generation_history": [],
+    "review_history": [],
+    "movie_graph": "{\n    \"movie\": null,\n    \"acts\": [],\n    \"scenes\": {},\n    \"shots\": {},\n    \"characters\": {},\n    \"locations\": {},\n    \"assets\": {},\n    \"timeline\": null,\n    \"backend_tasks\": {},\n    \"generation_tasks\": {},\n    \"review_tasks\": {},\n    \"outputs\": []\n}"
+}
