@@ -1,6 +1,7 @@
 pub mod analyzer;
 pub mod asset;
 pub mod character;
+pub mod editor;
 pub mod events;
 pub mod execution;
 pub mod graph;
@@ -14,6 +15,7 @@ pub mod scene;
 pub mod state;
 pub mod timeline;
 
+use editor::EditEngine;
 use events::EventBus;
 use execution::ExecutionEngine;
 use importer::MovieImporter;
@@ -23,7 +25,7 @@ use std::sync::Arc;
 use timeline::engine::Timeline;
 
 fn main() {
-    println!("[GenOTT V2 Intelligence Engine] Initializing End-to-End Movie Intelligence...");
+    println!("[GenOTT V2 Edit Engine] Initializing End-to-End Movie Editing & Regeneration System...");
 
     // 1. Initialize Event Bus & Execution Engine
     let event_bus = Arc::new(EventBus::new());
@@ -34,13 +36,12 @@ fn main() {
     println!("  [Step 1] Media File Imported: {}", dummy_path);
     let (info, _frame_db) = MovieImporter::import_file(dummy_path).unwrap();
 
-    // 3. Build Timeline
+    // 3. Build Timeline & Knowledge Graph
     let mut timeline = Timeline::new(info.fps);
-    let clip_id = timeline
+    let _clip_id = timeline
         .add_clip("video_main", "Establishing Shot", 81, "Elden walking in valley", vec!["char_elden".to_string()])
         .unwrap();
 
-    // 4. Construct Movie Knowledge Graph
     let mut knowledge_graph = MovieKnowledgeGraph::new("movie_elden_journey");
     let elden_k = CharacterKnowledge {
         character_id: "char_elden".to_string(),
@@ -50,7 +51,6 @@ fn main() {
         presence_scenes: vec!["scene_01".to_string()],
         action_timeline: vec!["Walking in green valley".to_string()],
     };
-
     let scene1_k = SceneKnowledge {
         scene_id: "scene_01".to_string(),
         location: "Lush Valley Meadow".to_string(),
@@ -58,26 +58,30 @@ fn main() {
         story_phase: "Beginning".to_string(),
         primary_characters: vec!["char_elden".to_string()],
     };
-
     knowledge_graph.register_character_knowledge(elden_k);
     knowledge_graph.register_scene_knowledge(scene1_k);
-    println!("  [Step 2] Synthesized Movie Knowledge Graph (1 Character, 1 Scene)");
 
-    // 5. Query Intelligence Layer
-    let queried = knowledge_graph.query_scenes_by_character("char_elden");
-    println!("  [Step 3] Query Scenes for Elden: Found {} scene ('{}')", queried.len(), queried[0].location);
+    // 4. Parse Natural Language Edit Instruction
+    let nl_input = "Make Elden wear a blue jacket";
+    println!("  [Step 2] User Submits Natural Language Edit: '{}'", nl_input);
+    let edit_op = EditEngine::parse_natural_language_edit(nl_input).unwrap();
 
-    // 6. Verify Continuity
-    let continuity = knowledge_graph.verify_continuity();
-    println!("  [Step 4] Continuity Audit Complete: {} Inconsistencies Found", continuity.inconsistencies_found);
+    // 5. Generate Regeneration Plan & Impact Analysis
+    let regen_plan = EditEngine::create_regeneration_plan(edit_op.clone(), &timeline, &knowledge_graph);
+    println!(
+        "  [Step 3] Edit Engine Plan Created: {} Affected Shot(s), Estimated Render Time: {}s (GPU: {}%)",
+        regen_plan.impact.affected_shots.len(),
+        regen_plan.impact.estimated_render_time_sec,
+        regen_plan.impact.estimated_gpu_usage_pct
+    );
 
-    // 7. Plan Edit & Execute
-    let plan = execution_engine.plan_character_edit(&mut timeline, "char_elden", "Emerald Armor");
-    println!("  [Step 5] Execution Planner Dispatched Plan {}: {} Job Queued", plan.plan_id, plan.total_jobs);
+    // 6. Execute Plan via Worker Jobs
+    let plan = execution_engine.plan_character_edit(&mut timeline, "char_elden", "blue jacket");
+    println!("  [Step 4] Execution Engine Dispatched Plan {}: {} Job(s) Queued", plan.plan_id, plan.total_jobs);
 
     while let Some(job_id) = execution_engine.execute_next_job() {
-        println!("  [Step 6] Worker Completed Job {}", job_id);
+        println!("  [Step 5] Worker Completed Job {}", job_id);
     }
 
-    println!("[GenOTT V2 Intelligence Engine] Movie Knowledge Synthesis Successful!");
+    println!("[GenOTT V2 Edit Engine] End-to-End Editing & Partial Regeneration Successful!");
 }
