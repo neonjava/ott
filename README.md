@@ -1,31 +1,20 @@
-# GenOTT V2 — Autonomous AI Production Studio
+# GenOTT
 
-GenOTT V2 is an orchestration platform capable of planning, directing, generating, evaluating, and exporting professional cinematic short-form videos using interchangeable open-source AI generation models.
+Experimental local production studio that plans scenes and renders short cinematic videos with interchangeable model backends.
 
-## Core Features
-- **MovieGraph Orchestration**: Model-agnostic scene, shot, and character specification graph.
-- **Interchangeable Backends**: Native support for open-source WAN backend (`engine/backends/wan/`), Blender 3D (`models/blender/`), and modular diffusion models (`third_party/`).
-- **Model Manager**: Automated device detection, weight discovery, lazy loading, and hot unloading (`engine/model_manager/`).
-- **Prompt Compiler**: Automatic compilation of canonical `MovieGraph` shot specs into model-tailored positive and negative prompts (`engine/prompt_compiler/`).
-- **CLI & Local Execution**: Executable via `python3 run.py` or `./genott.py`.
+![Project workflow](docs/workflow.svg)
 
-## Quick Start
-```bash
-# Setup WAN environment & verify dependencies
-python3 scripts/setup_wan.py
+## Workflow
 
-# Run diagnostic suite
-python3 genott.py backend test wan
+1. Define a script or shot prompt.
+2. Compile scenes and model prompts.
+3. Render shots with a configured backend.
+4. Review and export the video.
 
-# Generate cinematic shot
-python3 genott.py generate --prompt "A cyberpunk detective walking through neon rain" --output outputs/shot_01.mp4
+## Getting started
 
-# Run unit tests
-python3 -m unittest discover -s tests/unit
-```
+Run `python3 genott.py --help` to inspect available commands. Model weights and GPU dependencies must be installed separately.
 
-## Structure
-- `engine/`: Core planning, director pipeline, prompt compiler, model manager, and backend adapters.
-- `third_party/`: Submodule/upstream integration directories for `wan/`, `hunyuanvideo/`, `cogvideox/`, `ltx-video/`, `mochi/`.
-- `configs/`: Model configurations (`configs/models/wan.yaml`).
-- `docs/`: Technical and backend documentation (`docs/backends/wan.md`).
+## License
+
+Original code is licensed under AGPL-3.0-only. Third party files in `third_party/` retain their upstream licenses.

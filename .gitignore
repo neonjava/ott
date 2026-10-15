@@ -32,3 +32,6 @@ db.sqlite3
 *SadTalker/checkpoints/
 *static/videos/
 *static/faces/
+
+ai-logs.txt
+brain/
